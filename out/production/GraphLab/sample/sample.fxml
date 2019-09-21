@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="225.0" prefWidth="345.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox id="options" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="130.0">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <RadioButton fx:id="rb_createVertex" mnemonicParsing="false" onAction="#onAction" text="Вершины">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="tg" />
+                           </toggleGroup></RadioButton>
+                        <RadioButton fx:id="rb_createEdge" mnemonicParsing="false" onAction="#onAction" text="Ребра" toggleGroup="$tg" />
+                        <RadioButton fx:id="rb_delete" mnemonicParsing="false" onAction="#onAction" text="Удалить" toggleGroup="$tg" />
+                        <RadioButton fx:id="rb_move" mnemonicParsing="false" onAction="#onAction" text="Переместить" toggleGroup="$tg" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <AnchorPane fx:id="anchorPane" prefHeight="200.0" prefWidth="200.0" />
+         </children>
+      </HBox>
+   </center>
+</BorderPane>
