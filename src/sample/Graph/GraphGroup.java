@@ -69,6 +69,7 @@ public class GraphGroup extends Group {
 
     private void addEdge(Vertex firstVertex, Vertex secondVertex) {
         Edge edge = new Edge(this, firstVertex, secondVertex);
+        //getChildren().add(edge);
         getChildren().add(1, edge); //0-background
     }
 

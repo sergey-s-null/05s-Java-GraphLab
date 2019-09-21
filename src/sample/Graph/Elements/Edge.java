@@ -5,30 +5,38 @@ import Jama.Matrix;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 
 
 public class Edge extends Group {
-    private static final double radiusCircle = 8, strokeWidthCircle = 2, strokeWidth = 2;
-    private static final double defaultArcRadius = 20000;
+    private static final double radiusCircle = 8, strokeWidthCircle = 2,
+            strokeWidth = 2,
+            defaultArcRadius = 20000,
+            arrowLength = 9, arrowRotateAngle = 0.4;
 
     private Vertex firstVertex, secondVertex;
-    //private Path firstArrow = new Path(), secondArrow = new Path();
-    private MoveTo moveTo = new MoveTo();
-    private ArcTo arcTo = new ArcTo();
+    private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo()),
+                 secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
+    private Path arc = new Path(new MoveTo(), new ArcTo());
     private Circle circle = new Circle(radiusCircle);
+
     private double pointAngle = 0, pointRadiusCoef = 0.5;
 
     private void initArc() {
-
+        arc.setStrokeWidth(strokeWidth);
     }
 
     private void initArrows() {
-
+        firstArrow.setStrokeWidth(strokeWidth);
+        secondArrow.setStrokeWidth(strokeWidth);
     }
-    private void initCircle() {
 
+    private void initCircle() {
+        circle.setFill(Color.RED);
+        circle.setStrokeWidth(strokeWidthCircle);
+        circle.setStroke(Color.BLACK);
     }
 
     public Edge(GraphGroup graphGroup, Vertex firstVertex, Vertex secondVertex) {
@@ -39,37 +47,36 @@ public class Edge extends Group {
         this.firstVertex.addIncidentEdge(this);
         this.secondVertex.addIncidentEdge(this);
 
-        Path path = new Path(moveTo, arcTo);
-        path.setStrokeWidth(strokeWidth);
-
-        circle.setFill(Color.RED);
-        circle.setStrokeWidth(strokeWidthCircle);
-        circle.setStroke(Color.BLACK);
-
-
-
-        getChildren().addAll(path, circle);
+        initArc();
+        initArrows();
+        initCircle();
+        getChildren().addAll(arc, circle, firstArrow, secondArrow);
         update();
 
         setOnMouseClicked(graphGroup::onMouseClick_edge);
         setOnMousePressed(graphGroup::onMousePress_edge);
     }
 
-    private Vector2D calculateCircleCenter() {
+    private Vector2D rotate(Vector2D vector, double angle) {
         Matrix rotateMatrix = new Matrix(new double[][] {
-                {Math.cos(pointAngle), Math.sin(pointAngle)},
-                {-Math.sin(pointAngle), Math.cos(pointAngle)},
+                {Math.cos(angle), Math.sin(angle)},
+                {-Math.sin(angle), Math.cos(angle)},
         });
-        Matrix v2Matrix = new Matrix(new double[][] {
-                {secondVertex.getCenterX() - firstVertex.getCenterX()},
-                {secondVertex.getCenterY() - firstVertex.getCenterY()},
+        Matrix vectorMatrix = new Matrix(new double[][] {
+                {vector.getX()},
+                {vector.getY()},
         });
-        Matrix resMatrix = rotateMatrix.times(v2Matrix);
-        return new Vector2D(firstVertex.getCenterX() + resMatrix.getArray()[0][0] * pointRadiusCoef,
-                            firstVertex.getCenterY() + resMatrix.getArray()[1][0] * pointRadiusCoef);
+        Matrix res = rotateMatrix.times(vectorMatrix);
+        return new Vector2D(res.getArray()[0][0], res.getArray()[1][0]);
     }
 
-    private double calculateArcRadius(Vector2D circlePos) {
+    private Vector2D calculateCircleCenter() {
+        Vector2D afterRotate = rotate(new Vector2D(secondVertex.getCenterX() - firstVertex.getCenterX(),
+                secondVertex.getCenterY() - firstVertex.getCenterY()), pointAngle);
+        return afterRotate.scalarMultiply(pointRadiusCoef).add(new Vector2D(firstVertex.getCenterX(), firstVertex.getCenterY()));
+    }
+
+    private Vector2D calculateArcCenter(Vector2D circlePos) {
         double A1 = circlePos.getX() - firstVertex.getCenterX(), B1 = circlePos.getY() - firstVertex.getCenterY(),
                C1 = -A1*(firstVertex.getCenterX() + circlePos.getX())*0.5 - B1*(firstVertex.getCenterY() + circlePos.getY())*0.5,
                A2 = secondVertex.getCenterX() - circlePos.getX(), B2 = secondVertex.getCenterY() - circlePos.getY(),
@@ -86,13 +93,11 @@ public class Edge extends Group {
 
         try {
             Matrix res = mCoef.solve(mFreeMembers);
-            double x_center = res.getArray()[0][0],
-                    y_center = res.getArray()[1][0];
-            return Math.sqrt(Math.pow(circlePos.getX() - x_center, 2) + Math.pow(circlePos.getY() - y_center, 2));
+            return new Vector2D(res.getArray()[0][0], res.getArray()[1][0]);
         }
         catch (RuntimeException e) {
             //System.out.println("Ahh shit, here we go again...");
-            return defaultArcRadius;
+            return null;
         }
     }
 
@@ -111,22 +116,108 @@ public class Edge extends Group {
         return cos_A >= 0;
     }
 
-    public void update() {
-        Vector2D circleCenter = calculateCircleCenter();
-        double radius = calculateArcRadius(circleCenter);
-
-        circle.setCenterX(circleCenter.getX());
-        circle.setCenterY(circleCenter.getY());
-
+    private void updateArc(double arcRadius, boolean sweepFlag, boolean largeFlag) {
+        MoveTo moveTo = (MoveTo)arc.getElements().get(0);
         moveTo.setX(firstVertex.getCenterX());
         moveTo.setY(firstVertex.getCenterY());
 
-        arcTo.setRadiusX(radius);
-        arcTo.setRadiusY(radius);
+        ArcTo arcTo = (ArcTo)arc.getElements().get(1);
+        arcTo.setRadiusX(arcRadius);
+        arcTo.setRadiusY(arcRadius);
         arcTo.setX(secondVertex.getCenterX());
         arcTo.setY(secondVertex.getCenterY());
-        arcTo.setSweepFlag(calculateSweepFlag(circleCenter));
-        arcTo.setLargeArcFlag(calculateLargeFlag(circleCenter));
+        arcTo.setSweepFlag(sweepFlag);
+        arcTo.setLargeArcFlag(largeFlag);
+    }
+
+    private void updateArrow(Path arrow, Vertex owner, Vertex another) {
+        // TODO think about upgrade this + updateArrow(second)
+        Vector2D ownerToAnotherNormal = null;
+        try {
+            ownerToAnotherNormal = new Vector2D(another.getCenterX() - owner.getCenterX(),
+                    another.getCenterY() - owner.getCenterY()).normalize();
+        }
+        catch (MathArithmeticException e) {
+            return;
+        }
+
+        Vector2D arrowPos = new Vector2D(owner.getCenterX(), owner.getCenterY())
+                .add(ownerToAnotherNormal.scalarMultiply(Vertex.radius));
+
+        Vector2D baseTail = ownerToAnotherNormal.scalarMultiply(arrowLength);
+        Vector2D tail1Pos = rotate(baseTail, arrowRotateAngle).add(arrowPos);
+        Vector2D tail2Pos = rotate(baseTail, -arrowRotateAngle).add(arrowPos);
+
+        MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
+        LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
+        LineTo lineTo = (LineTo)arrow.getElements().get(2);
+
+        moveTo.setX(tail1Pos.getX());
+        moveTo.setY(tail1Pos.getY());
+        lineToArrowPos.setX(arrowPos.getX());
+        lineToArrowPos.setY(arrowPos.getY());
+        lineTo.setX(tail2Pos.getX());
+        lineTo.setY(tail2Pos.getY());
+    }
+
+    private void updateArrow(Vertex vertex, Path arrow, Vector2D arcCenter, double angle) {
+        if (arcCenter == null)
+            return;
+
+        Vector2D vertexPos = new Vector2D(vertex.getCenterX(), vertex.getCenterY());
+        Vector2D arrowPos = rotate(vertexPos.subtract(arcCenter), angle).
+                add(arcCenter);
+        Vector2D baseTail = null;
+        try {
+            baseTail = arrowPos.subtract(vertexPos).normalize().scalarMultiply(arrowLength);
+        }
+        catch (MathArithmeticException e) {
+            return;
+        }
+        Vector2D tail1Pos = rotate(baseTail, arrowRotateAngle).add(arrowPos);
+        Vector2D tail2Pos = rotate(baseTail, -arrowRotateAngle).add(arrowPos);
+
+        MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
+        LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
+        LineTo lineTo = (LineTo)arrow.getElements().get(2);
+
+        moveTo.setX(tail1Pos.getX());
+        moveTo.setY(tail1Pos.getY());
+        lineToArrowPos.setX(arrowPos.getX());
+        lineToArrowPos.setY(arrowPos.getY());
+        lineTo.setX(tail2Pos.getX());
+        lineTo.setY(tail2Pos.getY());
+    }
+
+    private void updateArrows(double arcRadius, Vector2D arcCenter, boolean sweepFlag) {
+        if (arcCenter == null) {
+            updateArrow(firstArrow, firstVertex, secondVertex);
+            updateArrow(secondArrow, secondVertex, firstVertex);
+        }
+        else {
+            double cos_A = 1 - 0.5 * Math.pow(Vertex.radius / arcRadius, 2);
+            double angle = sweepFlag ? -Math.acos(cos_A) : Math.acos(cos_A); //between vertex center and arrow position relatively arc center
+
+            updateArrow(firstVertex, firstArrow, arcCenter, angle);
+            updateArrow(secondVertex, secondArrow, arcCenter, -angle);
+        }
+    }
+
+    private void updateCircle(Vector2D circlePos) {
+        circle.setCenterX(circlePos.getX());
+        circle.setCenterY(circlePos.getY());
+    }
+
+    public void update() {
+        Vector2D circleCenter = calculateCircleCenter();
+        Vector2D arcCenter = calculateArcCenter(circleCenter);
+        double arcRadius = arcCenter == null ? defaultArcRadius : circleCenter.subtract(arcCenter).getNorm();
+        boolean sweepFlag = calculateSweepFlag(circleCenter),
+                largeFlag = calculateLargeFlag(circleCenter);
+
+        updateCircle(circleCenter);
+        updateArrows(arcRadius, arcCenter, sweepFlag);
+        updateArc(arcRadius, sweepFlag, largeFlag);
     }
 
     public void move(double x, double y) {
