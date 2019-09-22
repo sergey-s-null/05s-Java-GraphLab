@@ -8,6 +8,7 @@ import javafx.scene.shape.*;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
+import sample.Main;
 
 
 public class Edge extends Group {
@@ -57,21 +58,8 @@ public class Edge extends Group {
         setOnMousePressed(graphGroup::onMousePress_edge);
     }
 
-    private Vector2D rotate(Vector2D vector, double angle) {
-        Matrix rotateMatrix = new Matrix(new double[][] {
-                {Math.cos(angle), Math.sin(angle)},
-                {-Math.sin(angle), Math.cos(angle)},
-        });
-        Matrix vectorMatrix = new Matrix(new double[][] {
-                {vector.getX()},
-                {vector.getY()},
-        });
-        Matrix res = rotateMatrix.times(vectorMatrix);
-        return new Vector2D(res.getArray()[0][0], res.getArray()[1][0]);
-    }
-
     private Vector2D calculateCircleCenter() {
-        Vector2D afterRotate = rotate(new Vector2D(secondVertex.getCenterX() - firstVertex.getCenterX(),
+        Vector2D afterRotate = Main.rotate(new Vector2D(secondVertex.getCenterX() - firstVertex.getCenterX(),
                 secondVertex.getCenterY() - firstVertex.getCenterY()), pointAngle);
         return afterRotate.scalarMultiply(pointRadiusCoef).add(new Vector2D(firstVertex.getCenterX(), firstVertex.getCenterY()));
     }
@@ -145,8 +133,8 @@ public class Edge extends Group {
                 .add(ownerToAnotherNormal.scalarMultiply(Vertex.radius));
 
         Vector2D baseTail = ownerToAnotherNormal.scalarMultiply(arrowLength);
-        Vector2D tail1Pos = rotate(baseTail, arrowRotateAngle).add(arrowPos);
-        Vector2D tail2Pos = rotate(baseTail, -arrowRotateAngle).add(arrowPos);
+        Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
+        Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
 
         MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
         LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
@@ -165,7 +153,7 @@ public class Edge extends Group {
             return;
 
         Vector2D vertexPos = new Vector2D(vertex.getCenterX(), vertex.getCenterY());
-        Vector2D arrowPos = rotate(vertexPos.subtract(arcCenter), angle).
+        Vector2D arrowPos = Main.rotate(vertexPos.subtract(arcCenter), angle).
                 add(arcCenter);
         Vector2D baseTail = null;
         try {
@@ -174,8 +162,8 @@ public class Edge extends Group {
         catch (MathArithmeticException e) {
             return;
         }
-        Vector2D tail1Pos = rotate(baseTail, arrowRotateAngle).add(arrowPos);
-        Vector2D tail2Pos = rotate(baseTail, -arrowRotateAngle).add(arrowPos);
+        Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
+        Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
 
         MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
         LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
