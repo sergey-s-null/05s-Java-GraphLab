@@ -61,6 +61,10 @@ public class Vertex extends Circle {
         incidentEdges.remove(edge);
     }
 
+    public void removeAllIncidentEdges() {
+        incidentEdges.clear();
+    }
+
     public Set<Edge> getEdges() {
         return incidentEdges;
     }

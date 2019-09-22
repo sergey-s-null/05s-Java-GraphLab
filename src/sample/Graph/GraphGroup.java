@@ -7,7 +7,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
+import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
 
 
@@ -52,9 +54,9 @@ public class GraphGroup extends Group {
 
     private void removeVertex(Vertex vertex) {
         for (Edge edge : vertex.getEdges()) {
-            edge.disconnectVertexes();
             getChildren().remove(edge);
         }
+        vertex.removeAllIncidentEdges();
         getChildren().remove(vertex);
     }
 
@@ -67,8 +69,14 @@ public class GraphGroup extends Group {
         getChildren().add(new Vertex(this, x, y));
     }
 
+    private void addEdge(Vertex vertex) {
+        UnaryEdge edge = new UnaryEdge(this, vertex);
+//        getChildren().add(1, edge);
+        getChildren().add(edge);
+    }
+
     private void addEdge(Vertex firstVertex, Vertex secondVertex) {
-        Edge edge = new Edge(this, firstVertex, secondVertex);
+        BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
         //getChildren().add(edge);
         getChildren().add(1, edge); //0-background
     }
@@ -95,7 +103,8 @@ public class GraphGroup extends Group {
                     // TODO colorful vertex
                 }
                 else if (selected == event.getSource()) {
-                    // TODO
+                    addEdge(selected);
+                    selected = null;
                 }
                 else {
                     addEdge(selected, (Vertex)event.getSource());
