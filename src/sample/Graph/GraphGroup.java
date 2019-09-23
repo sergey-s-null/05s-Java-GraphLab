@@ -1,16 +1,20 @@
 package sample.Graph;
 
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import sample.Graph.ContextMenus.EdgeContextMenu;
+import sample.Graph.ContextMenus.VertexContextMenu;
 import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
+
 
 
 public class GraphGroup extends Group {
@@ -25,13 +29,16 @@ public class GraphGroup extends Group {
     public static double width = 400, height = 400;
 
     private Action currentAction = Action.Empty;
-    private Vertex selected = null;
+    private Vertex selected = null; //dangerous
 
-    private Vertex movingVertex = null;
+    private Edge movingEdge = null; //dangerous
+
+    private Vertex movingVertex = null; //dangerous
     private Vector2D mousePressedPos = new Vector2D(0, 0),
                      vertexStartPos = new Vector2D(0, 0);
 
-    private Edge movingEdge = null;
+    private VertexContextMenu vertexContextMenu = new VertexContextMenu(this);
+    private EdgeContextMenu edgeContextMenu = new EdgeContextMenu(this);
 
     public GraphGroup() {
         super();
@@ -47,9 +54,6 @@ public class GraphGroup extends Group {
         setOnMouseClicked(this::onMouseClick);
         setOnMouseDragged(this::onMouseDrag);
         setOnMouseReleased(this::onMouseRelease);
-
-
-
     }
 
     private void removeVertex(Vertex vertex) {
@@ -116,7 +120,10 @@ public class GraphGroup extends Group {
             }
         }
         else if (event.getButton() == MouseButton.SECONDARY) {
-            // TODO
+            if (selected != null || movingVertex != null || movingEdge != null)
+                return;
+            vertexContextMenu.configureFor((Vertex) event.getSource());
+            vertexContextMenu.show((Vertex) event.getSource(), event.getScreenX(), event.getScreenY());
         }
 
     }
@@ -128,7 +135,10 @@ public class GraphGroup extends Group {
             }
         }
         else if (event.getButton() == MouseButton.SECONDARY) {
-            // TODO
+            if (selected != null || movingVertex != null || movingEdge != null)
+                return;
+            edgeContextMenu.configureFor((Edge) event.getSource());
+            edgeContextMenu.show((Edge) event.getSource(), event.getScreenX(), event.getScreenY());
         }
     }
 
@@ -173,6 +183,29 @@ public class GraphGroup extends Group {
             movingEdge = null;
     }
 
+    public void onVertexContextMenuAction(Vertex vertex, VertexContextMenu.Action action) {
+        switch (action) {
+            case MakeLoop:
+                addEdge(vertex);
+                break;
+            case Delete:
+                removeVertex(vertex);
+                break;
+        }
+    }
 
+    public void onEdgeContextMenuAction(Edge edge, EdgeContextMenu.Action action) {
+        switch (action) {
+            case SelectBothDirection:
+                break;
+            case SelectFirstDirection:
+                break;
+            case SelectSecondDirection:
+                break;
+            case Delete:
+                break;
+        }
+
+    }
 
 }

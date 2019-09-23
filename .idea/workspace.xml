@@ -2,15 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/sample/Graph/Elements/UnaryEdge.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/EdgeContextMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/GraphLab/sample/Graph/Elements/Edge.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GraphLab/sample/Graph/Elements/Edge.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/GraphLab/sample/Graph/GraphGroup$Action.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GraphLab/sample/Graph/GraphGroup$Action.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/GraphLab/sample/Graph/GraphGroup.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GraphLab/sample/Graph/GraphGroup.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/LoopEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/GraphGroup.java" afterDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
@@ -97,8 +95,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/sample/Graph/GraphGroup.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="316">
-                  <caret line="54" column="45" selection-start-line="54" selection-start-column="45" selection-end-line="54" selection-end-column="45" />
+                <state relative-caret-position="422">
+                  <caret line="141" column="9" lean-forward="true" selection-start-line="141" selection-start-column="9" selection-end-line="141" selection-end-column="9" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="class#Action#0;class#GraphGroup#0" />
@@ -106,11 +104,10 @@
                     <element signature="method#removeVertex#0;class#GraphGroup#0" />
                     <element signature="method#removeEdge#0;class#GraphGroup#0" />
                     <element signature="method#addEdge#0;class#GraphGroup#0" />
-                    <element signature="method#addEdge#0;class#GraphGroup#0" />
+                    <element signature="method#addEdge#1;class#GraphGroup#0" />
                     <element signature="method#setCurrentAction#0;class#GraphGroup#0" />
                     <element signature="method#onMouseClick#0;class#GraphGroup#0" />
                     <element signature="method#onMouseClick_vertex#0;class#GraphGroup#0" />
-                    <element signature="method#onMouseClick_edge#0;class#GraphGroup#0" />
                     <element signature="method#onMousePress_vertex#0;class#GraphGroup#0" />
                     <element signature="method#onMousePress_edge#0;class#GraphGroup#0" />
                     <element signature="method#onMouseDrag#0;class#GraphGroup#0" />
@@ -123,23 +120,32 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="475">
-                  <caret line="161" selection-start-line="161" selection-end-line="161" />
+                <state relative-caret-position="187">
+                  <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="method#initArrows#0;class#Edge#0" />
+                    <element signature="method#initArrows#0;class#BinaryEdge#0" />
                     <element signature="method#BinaryEdge#0;class#BinaryEdge#0" />
-                    <element signature="method#calculateCircleCenter#0;class#Edge#0" />
-                    <element signature="method#calculateArcCenter#0;class#Edge#0" />
-                    <element signature="method#calculateSweepFlag#0;class#Edge#0" />
-                    <element signature="method#calculateLargeFlag#0;class#Edge#0" />
-                    <element signature="method#updateArc#0;class#Edge#0" />
-                    <element signature="method#updateArrow#0;class#Edge#0" />
-                    <element signature="method#updateArrow#1;class#Edge#0" />
-                    <element signature="method#updateArrows#0;class#Edge#0" />
-                    <element signature="method#updateCircle#0;class#Edge#0" />
-                    <element signature="method#move#0;class#Edge#0" />
-                    <element signature="method#disconnectVertexes#0;class#Edge#0" />
+                    <element signature="method#calculateCircleCenter#0;class#BinaryEdge#0" />
+                    <element signature="method#calculateArcCenter#0;class#BinaryEdge#0" />
+                    <element signature="e#2404#2544#0" />
+                    <element signature="e#2580#2683#0" />
+                    <element signature="method#calculateSweepFlag#0;class#BinaryEdge#0" />
+                    <element signature="method#calculateLargeFlag#0;class#BinaryEdge#0" />
+                    <element signature="method#updateArc#0;class#BinaryEdge#0" />
+                    <element signature="method#updateArrow#0;class#BinaryEdge#0" />
+                    <element signature="e#4263#4441#0" />
+                    <element signature="e#4484#4515#0" />
+                    <element signature="method#updateArrow#1;class#BinaryEdge#0" />
+                    <element signature="e#5745#5849#0" />
+                    <element signature="e#5892#5923#0" />
+                    <element signature="method#updateArrows#0;class#BinaryEdge#0" />
+                    <element signature="e#6652#6792#1" />
+                    <element signature="e#6806#7176#1" />
+                    <element signature="method#updateCircle#0;class#BinaryEdge#0" />
+                    <element signature="method#update#0;class#BinaryEdge#0" />
+                    <element signature="method#move#0;class#BinaryEdge#0" />
+                    <element signature="method#disconnectVertexes#0;class#BinaryEdge#0" />
                   </folding>
                 </state>
               </provider>
@@ -148,8 +154,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="442">
-                  <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
+                <state relative-caret-position="187">
+                  <caret line="11" column="29" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="method#Vertex#0;class#Vertex#0" />
@@ -164,42 +170,50 @@
       <split-second>
         <leaf>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/UnaryEdge.java">
+            <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
+              <provider editor-type-id="text-editor">
+                <state relative-caret-position="839">
+                  <caret line="53" column="20" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+                </state>
+              </provider>
+              <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="557">
-                  <caret line="118" column="43" selection-start-line="118" selection-start-column="43" selection-end-line="118" selection-end-column="43" />
+                <state relative-caret-position="374">
+                  <caret line="34" column="29" selection-start-line="34" selection-start-column="29" selection-end-line="34" selection-end-column="29" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="method#initCircle#0;class#UnaryEdge#0" />
-                    <element signature="method#UnaryEdge#0;class#UnaryEdge#0" />
-                    <element signature="method#UnaryEdge#0;class#UnaryEdge#0" />
-                    <element signature="method#updateArc#0;class#UnaryEdge#0" />
-                    <element signature="method#updateArrow#0;class#UnaryEdge#0" />
-                    <element signature="method#updateCircle#0;class#UnaryEdge#0" />
-                    <element signature="method#update#0;class#UnaryEdge#0" />
-                    <element signature="method#move#0;class#UnaryEdge#0" />
+                    <element signature="method#initMenuItems#0;class#VertexContextMenu#0" />
+                    <element signature="method#VertexContextMenu#0;class#VertexContextMenu#0" />
+                    <element signature="method#onActionMakeLoop#0;class#VertexContextMenu#0" />
+                    <element signature="method#onActionDelete#0;class#VertexContextMenu#0" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="68">
-                  <caret line="4" column="7" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
-              <provider editor-type-id="text-editor">
-                <state relative-caret-position="657">
-                  <caret line="53" column="20" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+            <entry file="file://$PROJECT_DIR$/src/sample/Graph/ContextMenus/EdgeContextMenu.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="527">
+                  <caret line="81" selection-start-line="81" selection-end-line="81" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="class#Action#0;class#EdgeContextMenu#0" />
+                    <element signature="method#initMenuItems#0;class#EdgeContextMenu#0" />
+                    <element signature="method#EdgeContextMenu#0;class#EdgeContextMenu#0" />
+                    <element signature="method#setDirectionItemsVisible#0;class#EdgeContextMenu#0" />
+                    <element signature="method#configureFor#0;class#EdgeContextMenu#0" />
+                    <element signature="method#onActionBothDirection#0;class#EdgeContextMenu#0" />
+                    <element signature="method#onActionFirstDirection#0;class#EdgeContextMenu#0" />
+                    <element signature="method#onActionSecondDirection#0;class#EdgeContextMenu#0" />
+                    <element signature="method#onActionDelete#0;class#EdgeContextMenu#0" />
+                  </folding>
                 </state>
               </provider>
-              <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
             </entry>
           </file>
         </leaf>
@@ -245,10 +259,13 @@
         <option value="$PROJECT_DIR$/src/sample/Graph/Vertex.java" />
         <option value="$PROJECT_DIR$/src/sample/Main.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/Elements/LoopEdge.java" />
-        <option value="$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/Elements/UnaryEdge.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java" />
+        <option value="$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java" />
+        <option value="$PROJECT_DIR$/src/sample/Graph/GraphContextMenu.java" />
+        <option value="$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java" />
+        <option value="$PROJECT_DIR$/src/sample/Graph/ContextMenus/EdgeContextMenu.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/GraphGroup.java" />
       </list>
     </option>
@@ -276,8 +293,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -308,6 +325,14 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="sample" type="462c0819:PsiDirectoryNode" />
               <item name="Graph" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="GraphLab" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GraphLab" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+              <item name="Graph" type="462c0819:PsiDirectoryNode" />
+              <item name="ContextMenus" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -443,7 +468,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.11886994" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.12100213" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" />
       <window_info id="Designer" order="3" />
@@ -451,8 +476,8 @@
       <window_info id="UI Designer" order="5" />
       <window_info id="Capture Tool" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.1971831" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.1971831" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -537,27 +562,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
-          <folding>
-            <element signature="method#main#0;class#Main#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Java_libs/commons-math3-3.6.1/commons-math3-3.6.1.jar!/org/apache/commons/math3/geometry/euclidean/twod/Vector2D.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="120" selection-start-line="120" selection-end-line="120" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="50" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
         </state>
       </provider>
     </entry>
@@ -579,10 +594,59 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding>
+            <element signature="method#main#0;class#Main#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="19" selection-start-line="11" selection-start-column="19" selection-end-line="11" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#initArrows#0;class#BinaryEdge#0" />
+            <element signature="method#BinaryEdge#0;class#BinaryEdge#0" />
+            <element signature="method#calculateCircleCenter#0;class#BinaryEdge#0" />
+            <element signature="method#calculateArcCenter#0;class#BinaryEdge#0" />
+            <element signature="e#2404#2544#0" />
+            <element signature="e#2580#2683#0" />
+            <element signature="method#calculateSweepFlag#0;class#BinaryEdge#0" />
+            <element signature="method#calculateLargeFlag#0;class#BinaryEdge#0" />
+            <element signature="method#updateArc#0;class#BinaryEdge#0" />
+            <element signature="method#updateArrow#0;class#BinaryEdge#0" />
+            <element signature="e#4263#4441#0" />
+            <element signature="e#4484#4515#0" />
+            <element signature="method#updateArrow#1;class#BinaryEdge#0" />
+            <element signature="e#5745#5849#0" />
+            <element signature="e#5892#5923#0" />
+            <element signature="method#updateArrows#0;class#BinaryEdge#0" />
+            <element signature="e#6652#6792#1" />
+            <element signature="e#6806#7176#1" />
+            <element signature="method#updateCircle#0;class#BinaryEdge#0" />
+            <element signature="method#update#0;class#BinaryEdge#0" />
+            <element signature="method#move#0;class#BinaryEdge#0" />
+            <element signature="method#disconnectVertexes#0;class#BinaryEdge#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
+        <state relative-caret-position="187">
+          <caret line="11" column="29" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#Vertex#0;class#Vertex#0" />
@@ -591,33 +655,68 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java">
+    <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="839">
+          <caret line="53" column="20" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Graph/GraphContextMenu.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="161" selection-start-line="161" selection-end-line="161" />
+        <state relative-caret-position="-179">
+          <caret line="42" column="30" lean-forward="true" selection-start-line="42" selection-start-column="30" selection-end-line="42" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#initArrows#0;class#Edge#0" />
-            <element signature="method#BinaryEdge#0;class#BinaryEdge#0" />
-            <element signature="method#calculateCircleCenter#0;class#Edge#0" />
-            <element signature="method#calculateArcCenter#0;class#Edge#0" />
-            <element signature="method#calculateSweepFlag#0;class#Edge#0" />
-            <element signature="method#calculateLargeFlag#0;class#Edge#0" />
-            <element signature="method#updateArc#0;class#Edge#0" />
-            <element signature="method#updateArrow#0;class#Edge#0" />
-            <element signature="method#updateArrow#1;class#Edge#0" />
-            <element signature="method#updateArrows#0;class#Edge#0" />
-            <element signature="method#updateCircle#0;class#Edge#0" />
-            <element signature="method#move#0;class#Edge#0" />
-            <element signature="method#disconnectVertexes#0;class#Edge#0" />
+            <element signature="e#395#405#0" expanded="true" />
+            <element signature="e#2232#2233#0" expanded="true" />
+            <element signature="e#2282#2283#0" expanded="true" />
+            <element signature="e#2326#2327#0" expanded="true" />
+            <element signature="e#2374#2375#0" expanded="true" />
+            <element signature="e#2419#2420#0" expanded="true" />
+            <element signature="e#2467#2468#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="34" column="29" selection-start-line="34" selection-start-column="29" selection-end-line="34" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#initMenuItems#0;class#VertexContextMenu#0" />
+            <element signature="method#VertexContextMenu#0;class#VertexContextMenu#0" />
+            <element signature="method#onActionMakeLoop#0;class#VertexContextMenu#0" />
+            <element signature="method#onActionDelete#0;class#VertexContextMenu#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Graph/ContextMenus/EdgeContextMenu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="81" selection-start-line="81" selection-end-line="81" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="class#Action#0;class#EdgeContextMenu#0" />
+            <element signature="method#initMenuItems#0;class#EdgeContextMenu#0" />
+            <element signature="method#EdgeContextMenu#0;class#EdgeContextMenu#0" />
+            <element signature="method#setDirectionItemsVisible#0;class#EdgeContextMenu#0" />
+            <element signature="method#configureFor#0;class#EdgeContextMenu#0" />
+            <element signature="method#onActionBothDirection#0;class#EdgeContextMenu#0" />
+            <element signature="method#onActionFirstDirection#0;class#EdgeContextMenu#0" />
+            <element signature="method#onActionSecondDirection#0;class#EdgeContextMenu#0" />
+            <element signature="method#onActionDelete#0;class#EdgeContextMenu#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Graph/GraphGroup.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="54" column="45" selection-start-line="54" selection-start-column="45" selection-end-line="54" selection-end-column="45" />
+        <state relative-caret-position="422">
+          <caret line="141" column="9" lean-forward="true" selection-start-line="141" selection-start-column="9" selection-end-line="141" selection-end-column="9" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#Action#0;class#GraphGroup#0" />
@@ -625,11 +724,10 @@
             <element signature="method#removeVertex#0;class#GraphGroup#0" />
             <element signature="method#removeEdge#0;class#GraphGroup#0" />
             <element signature="method#addEdge#0;class#GraphGroup#0" />
-            <element signature="method#addEdge#0;class#GraphGroup#0" />
+            <element signature="method#addEdge#1;class#GraphGroup#0" />
             <element signature="method#setCurrentAction#0;class#GraphGroup#0" />
             <element signature="method#onMouseClick#0;class#GraphGroup#0" />
             <element signature="method#onMouseClick_vertex#0;class#GraphGroup#0" />
-            <element signature="method#onMouseClick_edge#0;class#GraphGroup#0" />
             <element signature="method#onMousePress_vertex#0;class#GraphGroup#0" />
             <element signature="method#onMousePress_edge#0;class#GraphGroup#0" />
             <element signature="method#onMouseDrag#0;class#GraphGroup#0" />
@@ -637,28 +735,6 @@
           </folding>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="7" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="30" selection-start-line="2" selection-start-column="30" selection-end-line="2" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="657">
-          <caret line="53" column="20" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
     </entry>
   </component>
   <component name="masterDetails">
