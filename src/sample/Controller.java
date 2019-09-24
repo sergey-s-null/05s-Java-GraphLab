@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
 import sample.Graph.GraphGroup;
 
 
@@ -20,7 +21,8 @@ public class Controller {
     void init() {
         graphGroup = new GraphGroup();
         anchorPane.getChildren().add(graphGroup);
-        AnchorPane.setLeftAnchor(graphGroup.getClip(), 0.0);
+//        AnchorPane.setLeftAnchor(graphGroup.getClip(), 0.0);
+//        AnchorPane.setRightAnchor(graphGroup.getClip(), 0.0);
     }
 
     @FXML private void onAction(ActionEvent event) {

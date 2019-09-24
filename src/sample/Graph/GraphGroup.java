@@ -1,7 +1,6 @@
 package sample.Graph;
 
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -30,9 +29,7 @@ public class GraphGroup extends Group {
 
     private Action currentAction = Action.Empty;
     private Vertex selected = null; //dangerous
-
     private Edge movingEdge = null; //dangerous
-
     private Vertex movingVertex = null; //dangerous
     private Vector2D mousePressedPos = new Vector2D(0, 0),
                      vertexStartPos = new Vector2D(0, 0);
@@ -54,6 +51,7 @@ public class GraphGroup extends Group {
         setOnMouseClicked(this::onMouseClick);
         setOnMouseDragged(this::onMouseDrag);
         setOnMouseReleased(this::onMouseRelease);
+
     }
 
     private void removeVertex(Vertex vertex) {
@@ -86,9 +84,15 @@ public class GraphGroup extends Group {
     }
 
     public void setCurrentAction(Action currentAction) {
+        if (selected != null) {
+            selected.setSelected(false);
+            selected = null;
+        }
+        movingVertex = null;
+        movingEdge = null;
+
         this.currentAction = currentAction;
         // TODO проверка текущего действия для защиты от смены Action во время создания ребра или тп
-
     }
 
     private void onMouseClick(MouseEvent event) {
@@ -104,14 +108,16 @@ public class GraphGroup extends Group {
             if (currentAction == Action.CreateEdge) {
                 if (selected == null) {
                     selected = (Vertex)event.getSource();
-                    // TODO colorful vertex
+                    selected.setSelected(true);
                 }
                 else if (selected == event.getSource()) {
-                    addEdge(selected);
+                    //addEdge(selected);
+                    selected.setSelected(false);
                     selected = null;
                 }
                 else {
                     addEdge(selected, (Vertex)event.getSource());
+                    selected.setSelected(false);
                     selected = null;
                 }
             }
@@ -145,8 +151,6 @@ public class GraphGroup extends Group {
     public void onMousePress_vertex(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.Move) {
-                if (movingVertex != null)
-                    System.out.println("WARNING! movingVertex != null");// TODO
 
                 movingVertex = (Vertex) event.getSource();
                 mousePressedPos = new Vector2D(event.getX(), event.getY());
@@ -157,9 +161,6 @@ public class GraphGroup extends Group {
 
     public void onMousePress_edge(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && currentAction == Action.Move) {
-            if (movingEdge != null)
-                System.out.println("WARNING! movingEdge != null"); // TODO
-
             movingEdge = (Edge)event.getSource();
         }
     }
@@ -197,12 +198,16 @@ public class GraphGroup extends Group {
     public void onEdgeContextMenuAction(Edge edge, EdgeContextMenu.Action action) {
         switch (action) {
             case SelectBothDirection:
+                edge.setDirection(Edge.Direction.Both);
                 break;
             case SelectFirstDirection:
+                edge.setDirection(Edge.Direction.FirstVertex);
                 break;
             case SelectSecondDirection:
+                edge.setDirection(Edge.Direction.SecondVertex);
                 break;
             case Delete:
+                removeEdge(edge);
                 break;
         }
 

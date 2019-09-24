@@ -3,7 +3,6 @@ package sample.Graph.Elements;
 
 import Jama.Matrix;
 import javafx.scene.shape.*;
-import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 import sample.Main;
@@ -16,6 +15,8 @@ public class BinaryEdge extends UnaryEdge {
     private Path secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
 
     private double pointAngle = 0, pointRadiusCoef = 0.5;
+    private Direction direction = Direction.Both;
+
 
     protected void initArrows() {
         super.initArrows();
@@ -38,6 +39,8 @@ public class BinaryEdge extends UnaryEdge {
 
         setOnMouseClicked(graphGroup::onMouseClick_edge);
         setOnMousePressed(graphGroup::onMousePress_edge);
+
+        setDirection(Direction.SecondVertex);
     }
 
     private Vector2D calculateCircleCenter() {
@@ -102,14 +105,8 @@ public class BinaryEdge extends UnaryEdge {
 
     private void updateArrow(Path arrow, Vertex owner, Vertex another) {
         // TODO think about upgrade this + updateArrow(second)
-        Vector2D ownerToAnotherNormal = null;
-        try {
-            ownerToAnotherNormal = new Vector2D(another.getCenterX() - owner.getCenterX(),
-                    another.getCenterY() - owner.getCenterY()).normalize();
-        }
-        catch (MathArithmeticException e) {
-            return;
-        }
+        Vector2D ownerToAnotherNormal = Main.normalizeOrZero(new Vector2D(another.getCenterX() - owner.getCenterX(),
+                another.getCenterY() - owner.getCenterY()));
 
         Vector2D arrowPos = new Vector2D(owner.getCenterX(), owner.getCenterY())
                 .add(ownerToAnotherNormal.scalarMultiply(Vertex.radius));
@@ -137,13 +134,8 @@ public class BinaryEdge extends UnaryEdge {
         Vector2D vertexPos = new Vector2D(vertex.getCenterX(), vertex.getCenterY());
         Vector2D arrowPos = Main.rotate(vertexPos.subtract(arcCenter), angle).
                 add(arcCenter);
-        Vector2D baseTail = null;
-        try {
-            baseTail = arrowPos.subtract(vertexPos).normalize().scalarMultiply(arrowLength);
-        }
-        catch (MathArithmeticException e) {
-            return;
-        }
+
+        Vector2D baseTail = Main.normalizeOrZero(arrowPos.subtract(vertexPos)).scalarMultiply(arrowLength);
         Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
         Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
 
@@ -203,8 +195,6 @@ public class BinaryEdge extends UnaryEdge {
         else if (y > GraphGroup.height - radiusCircle)
             y = GraphGroup.height - radiusCircle;
 
-        // TODO pushing out
-
         pointRadiusCoef = Math.sqrt(Math.pow(x - firstVertex.getCenterX(), 2) + Math.pow(y - firstVertex.getCenterY(), 2)) /
             Math.sqrt(Math.pow(secondVertex.getCenterX() - firstVertex.getCenterX(), 2) + Math.pow(secondVertex.getCenterY() - firstVertex.getCenterY(), 2));
         pointAngle = Math.atan2(x - firstVertex.getCenterX(), y - firstVertex.getCenterY()) -
@@ -217,4 +207,31 @@ public class BinaryEdge extends UnaryEdge {
         firstVertex.removeIncidentEdge(this);
         secondVertex.removeIncidentEdge(this);
     }
+
+    @Override
+    public void setDirection(Direction direction) {
+        switch (direction) {
+            case Both:
+                firstArrow.setVisible(true);
+                secondArrow.setVisible(true);
+                break;
+            case FirstVertex:
+                firstArrow.setVisible(true);
+                secondArrow.setVisible(false);
+                break;
+            case SecondVertex:
+                firstArrow.setVisible(false);
+                secondArrow.setVisible(true);
+                break;
+        }
+        this.direction = direction;
+    }
+
+    @Override
+    public Direction getDirection() {
+        return direction;
+    }
+
+
+
 }

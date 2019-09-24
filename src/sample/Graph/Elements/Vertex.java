@@ -10,6 +10,11 @@ import java.util.Set;
 
 
 public class Vertex extends Circle {
+//    private static final String defaultName = "unnamed";
+    private static final Color selectedFillColor = Color.ORANGE,
+                               defaultFillColor = Color.GRAY,
+                               strokeColor = Color.GREEN;
+    private static final double strokeWidth = 2;
     public static final double radius = 12;
 
     private Set<Edge> incidentEdges = new HashSet<>();
@@ -20,9 +25,9 @@ public class Vertex extends Circle {
         move(x, y);
 
         setStrokeType(StrokeType.INSIDE);
-        setStrokeWidth(2);
-        setStroke(Color.GREEN);
-        setFill(Color.GRAY);
+        setStrokeWidth(strokeWidth);
+        setStroke(strokeColor);
+        setFill(defaultFillColor);
 
         setOnMouseClicked(graphGroup::onMouseClick_vertex);
         setOnMousePressed(graphGroup::onMousePress_vertex);
@@ -67,5 +72,12 @@ public class Vertex extends Circle {
 
     public Set<Edge> getEdges() {
         return incidentEdges;
+    }
+
+    public void setSelected(boolean selected) {
+        if (selected)
+            setFill(selectedFillColor);
+        else
+            setFill(defaultFillColor);
     }
 }

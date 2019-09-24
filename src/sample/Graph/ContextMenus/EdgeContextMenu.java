@@ -62,6 +62,20 @@ public class EdgeContextMenu extends ContextMenu {
         else if (this.edge.getClass() == BinaryEdge.class) {
             setDirectionItemsVisible(true);
         }
+
+        // TODO set names of vertexes
+        switch (edge.getDirection()) {
+            case Both:
+                ((RadioMenuItem) getItems().get(0)).setSelected(true);
+                break;
+            case FirstVertex:
+                ((RadioMenuItem) getItems().get(1)).setSelected(true);
+                break;
+            case SecondVertex:
+                ((RadioMenuItem) getItems().get(2)).setSelected(true);
+                break;
+        }
+
     }
 
     private void onActionBothDirection(ActionEvent event) {

@@ -2,6 +2,7 @@ package sample.Graph.Elements;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 import sample.Main;
@@ -19,7 +20,6 @@ public class UnaryEdge extends Edge {
         arc.setStrokeWidth(strokeWidth);
         ArcTo arcTo = (ArcTo)arc.getElements().get(1);
         arcTo.setLargeArcFlag(true);
-//        arcTo.setSweepFlag(true);
     }
 
     protected void initArrows() {
@@ -65,8 +65,9 @@ public class UnaryEdge extends Edge {
     }
 
     private void updateArrow(Vector2D arrowPos, double angle) {
-        Vector2D normalArrow = new Vector2D(circlePosRelativeVertex.getY(), -circlePosRelativeVertex.getX())
-                .normalize().scalarMultiply(arrowLength);
+        Vector2D normalArrow = Main.normalizeOrZero(new Vector2D(circlePosRelativeVertex.getY(), -circlePosRelativeVertex.getX()))
+                .scalarMultiply(arrowLength);
+
         normalArrow = Main.rotate(normalArrow, -angle);
         Vector2D tailPos1 = Main.rotate(normalArrow, arrowRotateAngle).add(arrowPos);
         Vector2D tailPos2 = Main.rotate(normalArrow, -arrowRotateAngle).add(arrowPos);
@@ -96,9 +97,10 @@ public class UnaryEdge extends Edge {
         double angle_A = Math.acos(cos_A);
 
         Vector2D vertexCenter = new Vector2D(firstVertex.getCenterX(), firstVertex.getCenterY());
-        Vector2D arcCenter = circlePosRelativeVertex.normalize().scalarMultiply(arcRadius + 0.5 * Vertex.radius)
-                .add(vertexCenter);
-        Vector2D baseArcRadius = circlePosRelativeVertex.normalize().scalarMultiply(-arcRadius);
+        Vector2D arcCenter = Main.normalizeOrZero(circlePosRelativeVertex)
+                .scalarMultiply(arcRadius + 0.5 * Vertex.radius).add(vertexCenter);
+
+        Vector2D baseArcRadius = Main.normalizeOrZero(circlePosRelativeVertex).scalarMultiply(-arcRadius);
         Vector2D firstArcConnectPos = Main.rotate(baseArcRadius, angle_A).add(arcCenter);
         Vector2D secondArcConnectPos = Main.rotate(baseArcRadius, -angle_A).add(arcCenter);
 
@@ -109,7 +111,16 @@ public class UnaryEdge extends Edge {
 
     @Override
     public void move(double x, double y) {
-        // TODO check x, y
+        // validate x, y
+        if (x < radiusCircle)
+            x = radiusCircle;
+        else if (x > GraphGroup.width - radiusCircle)
+            x = GraphGroup.width - radiusCircle;
+        if (y < radiusCircle)
+            y = radiusCircle;
+        else if (y > GraphGroup.height - radiusCircle)
+            y = GraphGroup.height - radiusCircle;
+
         circlePosRelativeVertex = new Vector2D(x - firstVertex.getCenterX(), y - firstVertex.getCenterY());
         update();
     }
@@ -117,5 +128,15 @@ public class UnaryEdge extends Edge {
     @Override
     public void disconnectVertexes() {
         firstVertex.removeIncidentEdge(this);
+    }
+
+    @Override
+    public void setDirection(Direction direction) {
+        // ignore, because direction cant be changed for unary edge
+    }
+
+    @Override
+    public Direction getDirection() {
+        return Direction.FirstVertex;
     }
 }

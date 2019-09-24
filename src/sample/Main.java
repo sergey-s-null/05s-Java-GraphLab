@@ -6,7 +6,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
 
 public class Main extends Application {
 
@@ -21,6 +23,15 @@ public class Main extends Application {
         });
         Matrix res = rotateMatrix.times(vectorMatrix);
         return new Vector2D(res.getArray()[0][0], res.getArray()[1][0]);
+    }
+
+    public static Vector2D normalizeOrZero(Vector2D vector) {
+        try {
+            return vector.normalize();
+        }
+        catch (MathArithmeticException e) {
+            return new Vector2D(0, 0);
+        }
     }
 
     @Override
@@ -42,49 +53,6 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-//        Matrix a = new Matrix(new double[][] {
-//                {3, 2},
-//                {-2, 1},
-//        });
-//        Matrix b = new Matrix(new double[][] {
-//                {1},
-//                {4},
-//        });
-//
-//        Matrix res = a.solve(b);
-//        for (double[] arr : res.getArray()) {
-//            for (double val : arr) {
-//                System.out.print(val + "   ");
-//            }
-//            System.out.println();
-//        }
-//        Matrix a = new Matrix(new double[][] {
-//                {3, 2},
-//                {-6, -4},
-//        });
-//        Matrix b = new Matrix(new double[][] {
-//                {0},
-//                {1},
-//        });
-//
-//
-//        try {
-//            Matrix res = a.solve(b);
-//            for (double[] arr : res.getArray()) {
-//                for (double val : arr) {
-//                    System.out.print(val + "   ");
-//                }
-//                System.out.println();
-//            }
-//        }
-//        catch (RuntimeException e) {
-//            System.out.println(e.getMessage());
-//        }
-
-
-
-
-
         launch(args);
     }
 }
