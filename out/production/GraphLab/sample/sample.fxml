@@ -5,6 +5,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -19,6 +20,20 @@
               <MenuItem mnemonicParsing="false" text="Выход" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Редактировать">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#onUndoAction" text="Отмена">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#onRedoAction" text="Вернуть">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Задачи теории графов" />
           <Menu mnemonicParsing="false" text="?">
             <items>

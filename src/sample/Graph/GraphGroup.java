@@ -13,7 +13,12 @@ import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
+import sample.Graph.GraphActions.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 public class GraphGroup extends Group {
@@ -37,6 +42,9 @@ public class GraphGroup extends Group {
     private VertexContextMenu vertexContextMenu = new VertexContextMenu(this);
     private EdgeContextMenu edgeContextMenu = new EdgeContextMenu(this);
 
+    private Map<String, Vertex> nameToVertex = new HashMap<>();
+    private Set<Edge> edges = new HashSet<>();
+
     public GraphGroup() {
         super();
 
@@ -54,33 +62,9 @@ public class GraphGroup extends Group {
 
     }
 
-    private void removeVertex(Vertex vertex) {
-        for (Edge edge : vertex.getEdges()) {
-            getChildren().remove(edge);
-        }
-        vertex.removeAllIncidentEdges();
-        getChildren().remove(vertex);
-    }
-
-    private void removeEdge(Edge edge) {
-        edge.disconnectVertexes();
-        getChildren().remove(edge);
-    }
-
-    private void addVertex(double x, double y) {
-        getChildren().add(new Vertex(this, x, y));
-    }
-
-    private void addEdge(Vertex vertex) {
-        UnaryEdge edge = new UnaryEdge(this, vertex);
-//        getChildren().add(1, edge);
-        getChildren().add(edge);
-    }
-
-    private void addEdge(Vertex firstVertex, Vertex secondVertex) {
-        BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
-        //getChildren().add(edge);
-        getChildren().add(1, edge); //0-background
+    public GraphGroup(GraphGroup other) {
+        currentAction = other.currentAction;
+        // TODO
     }
 
     public void setCurrentAction(Action currentAction) {
@@ -95,10 +79,95 @@ public class GraphGroup extends Group {
         // TODO проверка текущего действия для защиты от смены Action во время создания ребра или тп
     }
 
+    //----------------|
+    //   add/remove   |
+    //----------------|
+    private void addNewVertex(double x, double y) {
+        getChildren().add(new Vertex(this, x, y));
+    }
+
+    public void addVertex(Vertex vertex) {
+        getChildren().add(vertex);
+    }
+
+    private void addNewEdge(Vertex vertex) {
+        UnaryEdge edge = new UnaryEdge(this, vertex);
+        getChildren().add(1, edge);
+    }
+
+    private void addNewEdge(Vertex firstVertex, Vertex secondVertex) {
+        BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
+        //getChildren().add(edge);
+        getChildren().add(1, edge); //0-background
+    }
+
+    public void addEdge(Edge edge) {
+        edge.connectVertexes();
+        getChildren().add(1, edge);
+
+    }
+
+    public void removeVertexWithEdges(Vertex vertex) {
+        for (Edge edge : vertex.getEdges()) {
+            getChildren().remove(edge);
+        }
+        vertex.removeAllIncidentEdges();
+        getChildren().remove(vertex);
+    }
+
+    public void removeEdge(Edge edge) {
+        edge.disconnectVertexes();
+        getChildren().remove(edge);
+    }
+
+    //-------------------|
+    //   create/delete   |
+    //-------------------|
+    //controls actions in GraphActionController in contrast add/remove
+    private void createVertex(double x, double y) {
+        Vertex vertex = new Vertex(this, x, y);
+        GraphActionsController.addAction(new CreateVertex(vertex, this));
+        addVertex(vertex);
+    }
+
+    private void createEdge(Vertex firstVertex, Vertex secondVertex) {
+        BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
+        GraphActionsController.addAction(new CreateEdge(edge, this));
+        addEdge(edge);
+    }
+
+    private void createEdge(Vertex vertex) {
+        UnaryEdge edge = new UnaryEdge(this,vertex);
+        GraphActionsController.addAction(new CreateEdge(edge, this));
+        addEdge(edge);
+    }
+
+    private void deleteVertex(Vertex vertex) {
+        GraphActionsController.addAction(new DeleteVertex(vertex, vertex.getEdges(), this));
+        removeVertexWithEdges(vertex);
+    }
+
+    private void deleteEdge(Edge edge) {
+        GraphActionsController.addAction(new DeleteEdge(edge, this));
+        removeEdge(edge);
+    }
+
+    //some methods with control of actions in GraphActionsController
+    private void changeEdgeDirection(Edge edge, Edge.Direction direction) {
+        if (!edge.equalsDirection(direction)) {
+            GraphActionsController.addAction(new ChangeDirectionEdge(edge,
+                    edge.getDirection(), direction));
+            edge.setDirection(direction);
+        }
+    }
+
+    //------------|
+    //   events   |
+    //------------|
     private void onMouseClick(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.CreateVertex) {
-                addVertex(event.getX(), event.getY());
+                createVertex(event.getX(), event.getY());
             }
         }
     }
@@ -111,18 +180,18 @@ public class GraphGroup extends Group {
                     selected.setSelected(true);
                 }
                 else if (selected == event.getSource()) {
-                    //addEdge(selected);
+                    //addNewEdge(selected);
                     selected.setSelected(false);
                     selected = null;
                 }
                 else {
-                    addEdge(selected, (Vertex)event.getSource());
+                    createEdge(selected, (Vertex) event.getSource());
                     selected.setSelected(false);
                     selected = null;
                 }
             }
             else if (currentAction == Action.Delete) {
-                removeVertex((Vertex)event.getSource());
+                deleteVertex((Vertex) event.getSource());
             }
         }
         else if (event.getButton() == MouseButton.SECONDARY) {
@@ -131,13 +200,12 @@ public class GraphGroup extends Group {
             vertexContextMenu.configureFor((Vertex) event.getSource());
             vertexContextMenu.show((Vertex) event.getSource(), event.getScreenX(), event.getScreenY());
         }
-
     }
 
     public void onMouseClick_edge(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.Delete) {
-                removeEdge((Edge)event.getSource());
+                deleteEdge((Edge) event.getSource());
             }
         }
         else if (event.getButton() == MouseButton.SECONDARY) {
@@ -151,10 +219,10 @@ public class GraphGroup extends Group {
     public void onMousePress_vertex(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.Move) {
-
                 movingVertex = (Vertex) event.getSource();
                 mousePressedPos = new Vector2D(event.getX(), event.getY());
                 vertexStartPos = new Vector2D(movingVertex.getCenterX(), movingVertex.getCenterY());
+                MoveVertex.savePos(vertexStartPos);
             }
         }
     }
@@ -162,6 +230,13 @@ public class GraphGroup extends Group {
     public void onMousePress_edge(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && currentAction == Action.Move) {
             movingEdge = (Edge)event.getSource();
+            if (movingEdge.getClass() == UnaryEdge.class) {
+                MoveUnaryEdge.saveCirclePos(((UnaryEdge) movingEdge).getCirclePosRelativeVertex());
+            }
+            else if (movingEdge.getClass() == BinaryEdge.class) {
+                BinaryEdge edge = (BinaryEdge) movingEdge;
+                MoveBinaryEdge.saveParams(edge.getPointAngle(), edge.getPointRadiusCoef());
+            }
         }
     }
 
@@ -178,19 +253,32 @@ public class GraphGroup extends Group {
     }
 
     private void onMouseRelease(MouseEvent event) {
-        if (movingVertex != null)
+        if (movingVertex != null) {
+            GraphActionsController.addAction(new MoveVertex(movingVertex));
             movingVertex = null;
-        if (movingEdge != null)
+        }
+
+        if (movingEdge != null) {
+            if (movingEdge.getClass() == UnaryEdge.class) {
+                UnaryEdge edge = (UnaryEdge) movingEdge;
+                GraphActionsController.addAction(new MoveUnaryEdge(edge));
+            }
+            else if (movingEdge.getClass() == BinaryEdge.class) {
+                BinaryEdge edge = (BinaryEdge) movingEdge;
+                GraphActionsController.addAction(new MoveBinaryEdge(edge));
+            }
             movingEdge = null;
+        }
+
     }
 
     public void onVertexContextMenuAction(Vertex vertex, VertexContextMenu.Action action) {
         switch (action) {
             case MakeLoop:
-                addEdge(vertex);
+                createEdge(vertex);
                 break;
             case Delete:
-                removeVertex(vertex);
+                deleteVertex(vertex);
                 break;
         }
     }
@@ -198,16 +286,16 @@ public class GraphGroup extends Group {
     public void onEdgeContextMenuAction(Edge edge, EdgeContextMenu.Action action) {
         switch (action) {
             case SelectBothDirection:
-                edge.setDirection(Edge.Direction.Both);
+                changeEdgeDirection(edge, Edge.Direction.Both);
                 break;
             case SelectFirstDirection:
-                edge.setDirection(Edge.Direction.FirstVertex);
+                changeEdgeDirection(edge, Edge.Direction.FirstVertex);
                 break;
             case SelectSecondDirection:
-                edge.setDirection(Edge.Direction.SecondVertex);
+                changeEdgeDirection(edge, Edge.Direction.SecondVertex);
                 break;
             case Delete:
-                removeEdge(edge);
+                deleteEdge(edge);
                 break;
         }
 

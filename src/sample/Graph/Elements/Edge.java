@@ -19,8 +19,12 @@ public abstract class Edge extends Group {
 
     abstract public void disconnectVertexes();
 
+    abstract public void connectVertexes();
+
     abstract public void setDirection(Direction direction);
 
     abstract public Direction getDirection();
+
+    abstract public boolean equalsDirection(Direction direction);
 
 }

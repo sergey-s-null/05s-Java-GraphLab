@@ -125,9 +125,19 @@ public class UnaryEdge extends Edge {
         update();
     }
 
+    public void move(Vector2D circlePosRelativeVertex) {
+        this.circlePosRelativeVertex = circlePosRelativeVertex;
+        update();
+    }
+
     @Override
     public void disconnectVertexes() {
         firstVertex.removeIncidentEdge(this);
+    }
+
+    @Override
+    public void connectVertexes() {
+        firstVertex.addIncidentEdge(this);
     }
 
     @Override
@@ -138,5 +148,14 @@ public class UnaryEdge extends Edge {
     @Override
     public Direction getDirection() {
         return Direction.FirstVertex;
+    }
+
+    @Override
+    public boolean equalsDirection(Direction direction) {
+        return direction == Direction.FirstVertex;
+    }
+
+    public Vector2D getCirclePosRelativeVertex() {
+        return circlePosRelativeVertex;
     }
 }

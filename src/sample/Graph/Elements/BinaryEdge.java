@@ -202,10 +202,22 @@ public class BinaryEdge extends UnaryEdge {
         update();
     }
 
+    public void moveByPointData(double pointAngle, double pointRadiusCoef) {
+        this.pointAngle = pointAngle;
+        this.pointRadiusCoef = pointRadiusCoef;
+        update();
+    }
+
     @Override
     public void disconnectVertexes() {
         firstVertex.removeIncidentEdge(this);
         secondVertex.removeIncidentEdge(this);
+    }
+
+    @Override
+    public void connectVertexes() {
+        firstVertex.addIncidentEdge(this);
+        secondVertex.addIncidentEdge(this);
     }
 
     @Override
@@ -232,6 +244,16 @@ public class BinaryEdge extends UnaryEdge {
         return direction;
     }
 
+    @Override
+    public boolean equalsDirection(Direction direction) {
+        return direction == this.direction;
+    }
 
+    public double getPointAngle() {
+        return pointAngle;
+    }
 
+    public double getPointRadiusCoef() {
+        return pointRadiusCoef;
+    }
 }

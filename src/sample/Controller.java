@@ -4,7 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.shape.Rectangle;
+import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
 
 
@@ -40,6 +40,14 @@ public class Controller {
                 graphGroup.setCurrentAction(GraphGroup.Action.Move);
                 break;
         }
+    }
+
+    @FXML private void onUndoAction(ActionEvent event) {
+        GraphActionsController.undo();
+    }
+
+    @FXML private void onRedoAction(ActionEvent event) {
+        GraphActionsController.redo();
     }
 
 
