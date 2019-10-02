@@ -2,7 +2,7 @@ package sample.Graph.GraphActions;
 
 import sample.Graph.Elements.Vertex;
 
-// TODO add this
+
 public class RenameVertex extends VertexAction {
     private String oldName, newName;
 

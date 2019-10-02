@@ -1,55 +1,42 @@
 package sample.Graph.Elements;
 
-import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 import sample.Main;
 
 public class UnaryEdge extends Edge {
-    private final static double minCircleDistance = 50;
+    private static final double minCircleDistance = 50;
 
-    protected Vertex firstVertex;
-    protected Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
-    protected Path arc = new Path(new MoveTo(), new ArcTo());
-    protected Circle circle = new Circle(radiusCircle);
+
+    private Vertex vertex;
+    private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
+
     private Vector2D circlePosRelativeVertex = new Vector2D(minCircleDistance, -minCircleDistance);
-
-    protected void initArc() {
-        arc.setStrokeWidth(strokeWidth);
-        ArcTo arcTo = (ArcTo)arc.getElements().get(1);
-        arcTo.setLargeArcFlag(true);
-    }
 
     protected void initArrows() {
         firstArrow.setStrokeWidth(strokeWidth);
-    }
-
-    protected void initCircle() {
-        circle.setFill(Color.RED);
-        circle.setStrokeWidth(strokeWidthCircle);
-        circle.setStroke(Color.BLACK);
-    }
-
-    protected UnaryEdge() {
-
+        firstArrow.setStroke(lineColor);
     }
 
     public UnaryEdge(GraphGroup graphGroup, Vertex vertex) {
         super();
 
-        this.firstVertex = vertex;
-        this.firstVertex.addIncidentEdge(this);
+        this.vertex = vertex;
+        this.vertex.addIncidentEdge(this);
 
         initArc();
         initArrows();
         initCircle();
-        getChildren().addAll(arc, circle, firstArrow);
+        initWeight();
+        getChildren().addAll(arc, circle, firstArrow, weightText);
         update();
 
         setOnMouseClicked(graphGroup::onMouseClick_edge);
         setOnMousePressed(graphGroup::onMousePress_edge);
+        weight.addListener((obj, prevValue, newValue) -> {
+            updateWeight();
+        });
     }
 
     private void updateArc(double arcRadius, Vector2D firstPoint, Vector2D secondPoint) {
@@ -85,8 +72,16 @@ public class UnaryEdge extends Edge {
     }
 
     private void updateCircle() {
-        circle.setCenterX(firstVertex.getCenterX() + circlePosRelativeVertex.getX());
-        circle.setCenterY(firstVertex.getCenterY() + circlePosRelativeVertex.getY());
+        circle.setCenterX(vertex.getCenterX() + circlePosRelativeVertex.getX());
+        circle.setCenterY(vertex.getCenterY() + circlePosRelativeVertex.getY());
+    }
+
+    private void updateWeight() {
+        weightText.setText(Double.toString(weight.get()));
+        double x = vertex.getCenterX() + circlePosRelativeVertex.getX(),
+               y = vertex.getCenterY() + circlePosRelativeVertex.getY();
+        weightText.setX(x - weightText.getLayoutBounds().getWidth() / 2);
+        weightText.setY(y);
     }
 
     @Override
@@ -96,7 +91,7 @@ public class UnaryEdge extends Edge {
                 (8 * Math.pow(arcRadius, 2) + 4 * Vertex.radius * arcRadius);
         double angle_A = Math.acos(cos_A);
 
-        Vector2D vertexCenter = new Vector2D(firstVertex.getCenterX(), firstVertex.getCenterY());
+        Vector2D vertexCenter = new Vector2D(vertex.getCenterX(), vertex.getCenterY());
         Vector2D arcCenter = Main.normalizeOrZero(circlePosRelativeVertex)
                 .scalarMultiply(arcRadius + 0.5 * Vertex.radius).add(vertexCenter);
 
@@ -107,6 +102,7 @@ public class UnaryEdge extends Edge {
         updateCircle();
         updateArc(arcRadius, firstArcConnectPos, secondArcConnectPos);
         updateArrow(secondArcConnectPos, angle_A);
+        updateWeight();
     }
 
     @Override
@@ -121,7 +117,7 @@ public class UnaryEdge extends Edge {
         else if (y > GraphGroup.height - radiusCircle)
             y = GraphGroup.height - radiusCircle;
 
-        circlePosRelativeVertex = new Vector2D(x - firstVertex.getCenterX(), y - firstVertex.getCenterY());
+        circlePosRelativeVertex = new Vector2D(x - vertex.getCenterX(), y - vertex.getCenterY());
         update();
     }
 
@@ -132,12 +128,12 @@ public class UnaryEdge extends Edge {
 
     @Override
     public void disconnectVertexes() {
-        firstVertex.removeIncidentEdge(this);
+        vertex.removeIncidentEdge(this);
     }
 
     @Override
     public void connectVertexes() {
-        firstVertex.addIncidentEdge(this);
+        vertex.addIncidentEdge(this);
     }
 
     @Override
@@ -155,7 +151,22 @@ public class UnaryEdge extends Edge {
         return direction == Direction.FirstVertex;
     }
 
+    @Override
+    public Vertex getFirstVertex() {
+        return vertex;
+    }
+
+    @Override
+    public Vertex getSecondVertex() {
+        return vertex;
+    }
+
     public Vector2D getCirclePosRelativeVertex() {
         return circlePosRelativeVertex;
     }
+
+    public Vertex getVertex() {
+        return vertex;
+    }
+
 }

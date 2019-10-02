@@ -47,7 +47,7 @@
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox id="options" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="130.0">
+            <VBox id="options" fx:id="leftPanel" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="130.0">
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>

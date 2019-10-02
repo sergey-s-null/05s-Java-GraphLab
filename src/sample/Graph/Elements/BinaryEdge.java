@@ -8,19 +8,20 @@ import sample.Graph.GraphGroup;
 import sample.Main;
 
 
-public class BinaryEdge extends UnaryEdge {
+public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
 
-    private Vertex secondVertex;
-    private Path secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
-
+    private Vertex firstVertex, secondVertex;
+    private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo()),
+                secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
     private double pointAngle = 0, pointRadiusCoef = 0.5;
     private Direction direction = Direction.Both;
 
-
-    protected void initArrows() {
-        super.initArrows();
+    private void initArrows() {
+        firstArrow.setStrokeWidth(strokeWidth);
+        firstArrow.setStroke(lineColor);
         secondArrow.setStrokeWidth(strokeWidth);
+        secondArrow.setStroke(lineColor);
     }
 
     public BinaryEdge(GraphGroup graphGroup, Vertex firstVertex, Vertex secondVertex) {
@@ -34,11 +35,15 @@ public class BinaryEdge extends UnaryEdge {
         initArc();
         initArrows();
         initCircle();
-        getChildren().addAll(arc, circle, firstArrow, secondArrow);
+        initWeight();
+        getChildren().addAll(arc, circle, firstArrow, secondArrow, weightText);
         update();
 
         setOnMouseClicked(graphGroup::onMouseClick_edge);
         setOnMousePressed(graphGroup::onMousePress_edge);
+        weight.addListener((obj, prevValuew, newValue) -> {
+            updateWeight(new Vector2D(circle.getCenterX(), circle.getCenterY()));
+        });
 
         setDirection(Direction.SecondVertex);
     }
@@ -170,6 +175,12 @@ public class BinaryEdge extends UnaryEdge {
         circle.setCenterY(circlePos.getY());
     }
 
+    private void updateWeight(Vector2D circleCenter) {
+        weightText.setText(Double.toString(weight.get()));
+        weightText.setX(circleCenter.getX() - weightText.getLayoutBounds().getWidth() / 2);
+        weightText.setY(circleCenter.getY());
+    }
+
     @Override
     public void update() {
         Vector2D circleCenter = calculateCircleCenter();
@@ -181,6 +192,7 @@ public class BinaryEdge extends UnaryEdge {
         updateCircle(circleCenter);
         updateArrows(arcRadius, arcCenter, sweepFlag);
         updateArc(arcRadius, sweepFlag, largeFlag);
+        updateWeight(circleCenter);
     }
 
     @Override
@@ -256,4 +268,15 @@ public class BinaryEdge extends UnaryEdge {
     public double getPointRadiusCoef() {
         return pointRadiusCoef;
     }
+
+    @Override
+    public Vertex getFirstVertex() {
+        return firstVertex;
+    }
+
+    @Override
+    public Vertex getSecondVertex() {
+        return secondVertex;
+    }
+
 }

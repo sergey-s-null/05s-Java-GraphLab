@@ -9,6 +9,7 @@ import sample.Graph.GraphGroup;
 
 public class VertexContextMenu extends ContextMenu {
     public enum Action {
+        Rename,
         MakeLoop,
         Delete
     }
@@ -17,12 +18,18 @@ public class VertexContextMenu extends ContextMenu {
     private Vertex vertex = null;
 
     private void initMenuItems() {
-        getItems().add(new MenuItem("Петля"));
-        getItems().add(new SeparatorMenuItem());
-        getItems().add(new MenuItem("Удалить"));
+        MenuItem rename = new MenuItem("Переименовать"),
+                 loop = new MenuItem("Петля"),
+                 delete = new MenuItem("Удалить");
 
-        getItems().get(0).setOnAction(this::onActionMakeLoop);
-        getItems().get(2).setOnAction(this::onActionDelete);
+        getItems().add(rename);
+        getItems().add(loop);
+        getItems().add(new SeparatorMenuItem());
+        getItems().add(delete);
+
+        loop.setOnAction(this::onActionMakeLoop);
+        rename.setOnAction(this::onActionRename);
+        delete.setOnAction(this::onActionDelete);
     }
 
     public VertexContextMenu(GraphGroup owner) {
@@ -35,12 +42,17 @@ public class VertexContextMenu extends ContextMenu {
         this.vertex = vertex;
     }
 
-    private void onActionMakeLoop(ActionEvent event) {
+    private void onActionRename(ActionEvent ignored) {
+        if (vertex != null)
+            graphGroup.onVertexContextMenuAction(vertex, Action.Rename);
+    }
+
+    private void onActionMakeLoop(ActionEvent ignored) {
         if (vertex != null)
             graphGroup.onVertexContextMenuAction(vertex, Action.MakeLoop);
     }
 
-    private void onActionDelete(ActionEvent event) {
+    private void onActionDelete(ActionEvent ignored) {
         if (vertex != null)
             graphGroup.onVertexContextMenuAction(vertex, Action.Delete);
     }

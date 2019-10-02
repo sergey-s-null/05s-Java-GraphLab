@@ -11,6 +11,7 @@ import sample.Graph.GraphGroup;
 
 public class EdgeContextMenu extends ContextMenu {
     public enum Action {
+        ChangeWeight,
         SelectBothDirection,
         SelectFirstDirection,
         SelectSecondDirection,
@@ -19,19 +20,23 @@ public class EdgeContextMenu extends ContextMenu {
 
     private GraphGroup graphGroup;
     private Edge edge = null;
+    private RadioMenuItem radioBothDirection, radioFirstDirection, radioSecondDirection;
 
     private void initMenuItems() {
-        RadioMenuItem radioBothDirection = new RadioMenuItem("В обе стороны"),
-                      radioFirstDirection = new RadioMenuItem("В сторону v1"),
-                      radioSecondDirection = new RadioMenuItem("В сторону v2");
+        MenuItem changeWeight = new MenuItem("Изменить вес");
+        radioBothDirection = new RadioMenuItem("В обе стороны");
+        radioFirstDirection = new RadioMenuItem("В сторону v1");
+        radioSecondDirection = new RadioMenuItem("В сторону v2");
         MenuItem delete = new MenuItem("Удалить");
 
+        getItems().add(changeWeight);
         getItems().add(radioBothDirection);
         getItems().add(radioFirstDirection);
         getItems().add(radioSecondDirection);
         getItems().add(new SeparatorMenuItem());
         getItems().add(delete);
 
+        changeWeight.setOnAction(this::onActionChangeWeight);
         radioBothDirection.setOnAction(this::onActionBothDirection);
         radioFirstDirection.setOnAction(this::onActionFirstDirection);
         radioSecondDirection.setOnAction(this::onActionSecondDirection);
@@ -50,50 +55,62 @@ public class EdgeContextMenu extends ContextMenu {
     }
 
     private void setDirectionItemsVisible(boolean flag) {
-        for (int i = 0; i < 3; ++i)
-            getItems().get(i).setVisible(flag);
+        radioBothDirection.setVisible(flag);
+        radioFirstDirection.setVisible(flag);
+        radioSecondDirection.setVisible(flag);
     }
 
     public void configureFor(Edge edge) {
         this.edge = edge;
+
         if (this.edge.getClass() == UnaryEdge.class) {
             setDirectionItemsVisible(false);
         }
         else if (this.edge.getClass() == BinaryEdge.class) {
             setDirectionItemsVisible(true);
-        }
 
-        // TODO set names of vertexes
-        switch (edge.getDirection()) {
-            case Both:
-                ((RadioMenuItem) getItems().get(0)).setSelected(true);
-                break;
-            case FirstVertex:
-                ((RadioMenuItem) getItems().get(1)).setSelected(true);
-                break;
-            case SecondVertex:
-                ((RadioMenuItem) getItems().get(2)).setSelected(true);
-                break;
-        }
+            switch (edge.getDirection()) {
+                case Both:
+                    radioBothDirection.setSelected(true);
+                    break;
+                case FirstVertex:
+                    radioFirstDirection.setSelected(true);
+                    break;
+                case SecondVertex:
+                    radioSecondDirection.setSelected(true);
+                    break;
+            }
 
+            BinaryEdge binaryEdge = (BinaryEdge) this.edge;
+            radioFirstDirection.setText("В сторону \"" + binaryEdge.getFirstVertex().getName() + "\"");
+            radioSecondDirection.setText("В сторону \"" + binaryEdge.getSecondVertex().getName() + "\"");
+        }
     }
 
-    private void onActionBothDirection(ActionEvent event) {
+    //------------|
+    //   events   |
+    //------------|
+    private void onActionChangeWeight(ActionEvent ignored) {
+        if (edge != null)
+            graphGroup.onEdgeContextMenuAction(edge, Action.ChangeWeight);
+    }
+
+    private void onActionBothDirection(ActionEvent ignored) {
         if (edge != null)
             graphGroup.onEdgeContextMenuAction(edge, Action.SelectBothDirection);
     }
 
-    private void onActionFirstDirection(ActionEvent event) {
+    private void onActionFirstDirection(ActionEvent ignored) {
         if (edge != null)
             graphGroup.onEdgeContextMenuAction(edge, Action.SelectFirstDirection);
     }
 
-    private void onActionSecondDirection(ActionEvent event) {
+    private void onActionSecondDirection(ActionEvent ignored) {
         if (edge != null)
             graphGroup.onEdgeContextMenuAction(edge, Action.SelectSecondDirection);
     }
 
-    private void onActionDelete(ActionEvent event) {
+    private void onActionDelete(ActionEvent ignored) {
         if (edge != null)
             graphGroup.onEdgeContextMenuAction(edge, Action.Delete);
     }

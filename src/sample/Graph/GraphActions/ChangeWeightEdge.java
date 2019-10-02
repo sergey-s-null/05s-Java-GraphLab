@@ -2,7 +2,7 @@ package sample.Graph.GraphActions;
 
 import sample.Graph.Elements.Edge;
 
-// TODO add this to graphGroup
+
 public class ChangeWeightEdge extends EdgeAction {
     private double oldWeight, newWeight;
 
@@ -15,11 +15,11 @@ public class ChangeWeightEdge extends EdgeAction {
 
     @Override
     public void undo() {
-        // TODO changeEdgeWeight
+        edge.setWeight(oldWeight);
     }
 
     @Override
     public void redo() {
-        // TODO changeEdgeWeight
+        edge.setWeight(newWeight);
     }
 }

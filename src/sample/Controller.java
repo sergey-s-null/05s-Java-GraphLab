@@ -4,8 +4,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
+import sample.MatrixView.MatrixView;
 
 
 //rb_createVertex
@@ -16,11 +18,13 @@ import sample.Graph.GraphGroup;
 public class Controller {
 
     private GraphGroup graphGroup;
+    @FXML private VBox leftPanel;
     @FXML private AnchorPane anchorPane;
 
     void init() {
         graphGroup = new GraphGroup();
         anchorPane.getChildren().add(graphGroup);
+
 //        AnchorPane.setLeftAnchor(graphGroup.getClip(), 0.0);
 //        AnchorPane.setRightAnchor(graphGroup.getClip(), 0.0);
     }

@@ -10,6 +10,7 @@ import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 
+
 public class Main extends Application {
 
     public static Vector2D rotate(Vector2D vector, double angle) {
@@ -44,9 +45,12 @@ public class Main extends Application {
         controller.init();
 
 
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Графойд by Laiser399");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
+
+        primaryStage.setMinWidth(600);
+        primaryStage.setMinHeight(520);
 
 
     }
