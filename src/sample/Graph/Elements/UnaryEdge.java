@@ -9,18 +9,21 @@ public class UnaryEdge extends Edge {
     private static final double minCircleDistance = 50;
 
 
-    private Vertex vertex;
-    private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
+    private final Vertex vertex;
+    private Path arrow = new Path(new MoveTo(), new LineTo(), new LineTo());
 
     private Vector2D circlePosRelativeVertex = new Vector2D(minCircleDistance, -minCircleDistance);
 
+    // init
     protected void initArrows() {
-        firstArrow.setStrokeWidth(strokeWidth);
-        firstArrow.setStroke(lineColor);
+        arrow.setStrokeWidth(strokeWidth);
+        arrow.setStroke(lineColor);
     }
 
+    // constructor
     public UnaryEdge(GraphGroup graphGroup, Vertex vertex) {
         super();
+        direction.setValue(Direction.FirstVertex);
 
         this.vertex = vertex;
         this.vertex.addIncidentEdge(this);
@@ -29,16 +32,20 @@ public class UnaryEdge extends Edge {
         initArrows();
         initCircle();
         initWeight();
-        getChildren().addAll(arc, circle, firstArrow, weightText);
+        getChildren().addAll(arc, circle, arrow, weightText);
         update();
 
         setOnMouseClicked(graphGroup::onMouseClick_edge);
         setOnMousePressed(graphGroup::onMousePress_edge);
         weight.addListener((obj, prevValue, newValue) -> {
-            updateWeight();
+            wasChangedWeight();
+        });
+        direction.addListener((observable, oldValue, newValue) -> {
+            wasChangedDirection(newValue);
         });
     }
 
+    // updates
     private void updateArc(double arcRadius, Vector2D firstPoint, Vector2D secondPoint) {
         MoveTo moveTo = (MoveTo)arc.getElements().get(0);
         ArcTo arcTo = (ArcTo)arc.getElements().get(1);
@@ -59,9 +66,9 @@ public class UnaryEdge extends Edge {
         Vector2D tailPos1 = Main.rotate(normalArrow, arrowRotateAngle).add(arrowPos);
         Vector2D tailPos2 = Main.rotate(normalArrow, -arrowRotateAngle).add(arrowPos);
 
-        MoveTo moveToArrow = (MoveTo)firstArrow.getElements().get(0);
-        LineTo lineTo1 = (LineTo)firstArrow.getElements().get(1);
-        LineTo lineTo2 = (LineTo)firstArrow.getElements().get(2);
+        MoveTo moveToArrow = (MoveTo) arrow.getElements().get(0);
+        LineTo lineTo1 = (LineTo) arrow.getElements().get(1);
+        LineTo lineTo2 = (LineTo) arrow.getElements().get(2);
 
         moveToArrow.setX(tailPos1.getX());
         moveToArrow.setY(tailPos1.getY());
@@ -105,6 +112,7 @@ public class UnaryEdge extends Edge {
         updateWeight();
     }
 
+    // move
     @Override
     public void move(double x, double y) {
         // validate x, y
@@ -126,31 +134,7 @@ public class UnaryEdge extends Edge {
         update();
     }
 
-    @Override
-    public void disconnectVertexes() {
-        vertex.removeIncidentEdge(this);
-    }
-
-    @Override
-    public void connectVertexes() {
-        vertex.addIncidentEdge(this);
-    }
-
-    @Override
-    public void setDirection(Direction direction) {
-        // ignore, because direction cant be changed for unary edge
-    }
-
-    @Override
-    public Direction getDirection() {
-        return Direction.FirstVertex;
-    }
-
-    @Override
-    public boolean equalsDirection(Direction direction) {
-        return direction == Direction.FirstVertex;
-    }
-
+    // vertices
     @Override
     public Vertex getFirstVertex() {
         return vertex;
@@ -161,6 +145,33 @@ public class UnaryEdge extends Edge {
         return vertex;
     }
 
+    @Override
+    public void disconnectVertices() {
+        vertex.removeIncidentEdge(this);
+    }
+
+    @Override
+    public void connectVertices() {
+        vertex.addIncidentEdge(this);
+    }
+
+    // weight
+    private void wasChangedWeight() {
+        updateWeight();
+    }
+
+    // direction
+    private void wasChangedDirection(Direction newDirection) {
+        if (!newDirection.equals(Direction.FirstVertex))
+            setDirection(Direction.FirstVertex);
+    }
+
+    @Override
+    public boolean isDirectionTo(Vertex vertex) {
+        return this.vertex == vertex;
+    }
+
+    // unary edges methods
     public Vector2D getCirclePosRelativeVertex() {
         return circlePosRelativeVertex;
     }
@@ -168,5 +179,6 @@ public class UnaryEdge extends Edge {
     public Vertex getVertex() {
         return vertex;
     }
+
 
 }

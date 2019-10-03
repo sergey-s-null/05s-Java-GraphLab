@@ -1,7 +1,9 @@
 package sample.Graph.Elements;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -11,6 +13,9 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import sample.Graph.GraphActions.ChangeDirectionEdge;
+import sample.Graph.GraphActions.ChangeWeightEdge;
+import sample.Graph.GraphActionsController;
 
 
 public abstract class Edge extends Group {
@@ -31,7 +36,9 @@ public abstract class Edge extends Group {
     protected Circle circle = new Circle(radiusCircle);
     protected Text weightText = new Text();
     protected DoubleProperty weight = new SimpleDoubleProperty(1.0);
+    protected Property<Direction> direction = new SimpleObjectProperty<>();
 
+    // init
     protected void initArc() {
         arc.setStrokeWidth(strokeWidth);
         arc.setStroke(lineColor);
@@ -58,16 +65,16 @@ public abstract class Edge extends Group {
 
     abstract public void move(double x, double y);
 
-    abstract public void disconnectVertexes();
+    // vertices
+    abstract public Vertex getFirstVertex();
 
-    abstract public void connectVertexes();
+    abstract public Vertex getSecondVertex();
 
-    abstract public void setDirection(Direction direction);
+    abstract public void disconnectVertices();
 
-    abstract public Direction getDirection();
+    abstract public void connectVertices();
 
-    abstract public boolean equalsDirection(Direction direction);
-
+    // weight
     public void setWeight(double weight) {
         this.weight.set(weight);
     }
@@ -76,12 +83,39 @@ public abstract class Edge extends Group {
         return weight.get();
     }
 
-    abstract public Vertex getFirstVertex();
-
-    abstract public Vertex getSecondVertex();
+    public void changeWeight(double weight) {
+        GraphActionsController.addAction(new ChangeWeightEdge(this,
+                this.weight.get(), weight));
+        setWeight(weight);
+    }
 
     public DoubleProperty weightProperty() {
         return weight;
+    }
+
+    // direction
+    public void setDirection(Direction direction) {
+        this.direction.setValue(direction);
+    }
+
+    public Direction getDirection() {
+        return direction.getValue();
+    }
+
+    public void changeDirection(Direction direction) {
+        GraphActionsController.addAction(new ChangeDirectionEdge(this,
+                this.direction.getValue(), direction));
+        setDirection(direction);
+    }
+
+    abstract public boolean isDirectionTo(Vertex vertex);
+
+    public boolean equalsDirection(Direction direction) {
+        return direction.equals(this.direction.getValue());
+    }
+
+    public Property<Direction> directionProperty() {
+        return direction;
     }
 
 }

@@ -11,12 +11,12 @@ import sample.Main;
 public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
 
-    private Vertex firstVertex, secondVertex;
+    private final Vertex firstVertex, secondVertex;
     private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo()),
                 secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
     private double pointAngle = 0, pointRadiusCoef = 0.5;
-    private Direction direction = Direction.Both;
 
+    // init
     private void initArrows() {
         firstArrow.setStrokeWidth(strokeWidth);
         firstArrow.setStroke(lineColor);
@@ -24,6 +24,7 @@ public class BinaryEdge extends Edge {
         secondArrow.setStroke(lineColor);
     }
 
+    // constructors
     public BinaryEdge(GraphGroup graphGroup, Vertex firstVertex, Vertex secondVertex) {
         super();
 
@@ -42,12 +43,16 @@ public class BinaryEdge extends Edge {
         setOnMouseClicked(graphGroup::onMouseClick_edge);
         setOnMousePressed(graphGroup::onMousePress_edge);
         weight.addListener((obj, prevValuew, newValue) -> {
-            updateWeight(new Vector2D(circle.getCenterX(), circle.getCenterY()));
+            wasChangedWeight();
+        });
+        direction.addListener((observable, oldValue, newValue) -> {
+            wasChangedDirection(newValue);
         });
 
         setDirection(Direction.SecondVertex);
     }
 
+    // some calculations
     private Vector2D calculateCircleCenter() {
         Vector2D afterRotate = Main.rotate(new Vector2D(secondVertex.getCenterX() - firstVertex.getCenterX(),
                 secondVertex.getCenterY() - firstVertex.getCenterY()), pointAngle);
@@ -94,6 +99,7 @@ public class BinaryEdge extends Edge {
         return cos_A >= 0;
     }
 
+    // updates
     private void updateArc(double arcRadius, boolean sweepFlag, boolean largeFlag) {
         MoveTo moveTo = (MoveTo)arc.getElements().get(0);
         moveTo.setX(firstVertex.getCenterX());
@@ -195,6 +201,7 @@ public class BinaryEdge extends Edge {
         updateWeight(circleCenter);
     }
 
+    // move
     @Override
     public void move(double x, double y) {
         //validate x, y
@@ -220,20 +227,36 @@ public class BinaryEdge extends Edge {
         update();
     }
 
+    // vertices
     @Override
-    public void disconnectVertexes() {
+    public Vertex getFirstVertex() {
+        return firstVertex;
+    }
+
+    @Override
+    public Vertex getSecondVertex() {
+        return secondVertex;
+    }
+
+    @Override
+    public void disconnectVertices() {
         firstVertex.removeIncidentEdge(this);
         secondVertex.removeIncidentEdge(this);
     }
 
     @Override
-    public void connectVertexes() {
+    public void connectVertices() {
         firstVertex.addIncidentEdge(this);
         secondVertex.addIncidentEdge(this);
     }
 
-    @Override
-    public void setDirection(Direction direction) {
+    // weight
+    private void wasChangedWeight() {
+        updateWeight(new Vector2D(circle.getCenterX(), circle.getCenterY()));
+    }
+
+    // direction
+    private void wasChangedDirection(Direction direction) {
         switch (direction) {
             case Both:
                 firstArrow.setVisible(true);
@@ -248,35 +271,29 @@ public class BinaryEdge extends Edge {
                 secondArrow.setVisible(true);
                 break;
         }
-        this.direction = direction;
     }
 
     @Override
-    public Direction getDirection() {
-        return direction;
+    public boolean isDirectionTo(Vertex vertex) {
+        switch (direction.getValue()) {
+            case FirstVertex:
+                return firstVertex == vertex;
+            case SecondVertex:
+                return secondVertex == vertex;
+            case Both:
+                return firstVertex == vertex || secondVertex == vertex;
+            default:
+                return false;
+        }
     }
 
-    @Override
-    public boolean equalsDirection(Direction direction) {
-        return direction == this.direction;
-    }
-
+    // binary edges methods
     public double getPointAngle() {
         return pointAngle;
     }
 
     public double getPointRadiusCoef() {
         return pointRadiusCoef;
-    }
-
-    @Override
-    public Vertex getFirstVertex() {
-        return firstVertex;
-    }
-
-    @Override
-    public Vertex getSecondVertex() {
-        return secondVertex;
     }
 
 }

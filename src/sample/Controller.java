@@ -21,12 +21,19 @@ public class Controller {
     @FXML private VBox leftPanel;
     @FXML private AnchorPane anchorPane;
 
+
     void init() {
         graphGroup = new GraphGroup();
         anchorPane.getChildren().add(graphGroup);
 
+        leftPanel.getChildren().add(new MatrixView(graphGroup.getVertices(),
+                graphGroup.getEdges()));
 //        AnchorPane.setLeftAnchor(graphGroup.getClip(), 0.0);
 //        AnchorPane.setRightAnchor(graphGroup.getClip(), 0.0);
+    }
+
+    @FXML private void onTestAction(ActionEvent event) {
+
     }
 
     @FXML private void onAction(ActionEvent event) {

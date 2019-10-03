@@ -18,11 +18,6 @@ import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphActions.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 
 public class GraphGroup extends Group {
     public enum Action {
@@ -98,7 +93,7 @@ public class GraphGroup extends Group {
     }
 
     public void addEdge(Edge edge) {
-        edge.connectVertexes();
+        edge.connectVertices();
         getChildren().add(1, edge);
         edges.add(edge);
     }
@@ -114,7 +109,7 @@ public class GraphGroup extends Group {
     }
 
     public void removeEdge(Edge edge) {
-        edge.disconnectVertexes();
+        edge.disconnectVertices();
         getChildren().remove(edge);
         edges.remove(edge);
     }
@@ -322,4 +317,11 @@ public class GraphGroup extends Group {
 
     }
 
+    public ObservableList<Vertex> getVertices() {
+        return vertices;
+    }
+
+    public ObservableSet<Edge> getEdges() {
+        return edges;
+    }
 }

@@ -1,4 +1,4 @@
-package sample.MatrixView;
+package sample.MatrixViewDeprecated;
 
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Label;

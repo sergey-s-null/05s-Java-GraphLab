@@ -9,5 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Jama-1.0.3" level="project" />
     <orderEntry type="library" name="commons-math3-3.6.1" level="project" />
+    <orderEntry type="library" name="controlsfx-8.40.11" level="project" />
+    <orderEntry type="library" name="guava-28.1-jre" level="project" />
   </component>
 </module>

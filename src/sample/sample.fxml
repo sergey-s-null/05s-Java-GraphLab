@@ -18,6 +18,7 @@
           <Menu mnemonicParsing="false" text="Файл">
             <items>
               <MenuItem mnemonicParsing="false" text="Выход" />
+                  <MenuItem mnemonicParsing="false" onAction="#onTestAction" text="testAction" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Редактировать">
