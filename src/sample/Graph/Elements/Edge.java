@@ -84,8 +84,7 @@ public abstract class Edge extends Group {
     }
 
     public void changeWeight(double weight) {
-        GraphActionsController.addAction(new ChangeWeightEdge(this,
-                this.weight.get(), weight));
+        ChangeWeightEdge.create(this, this.weight.get(), weight);
         setWeight(weight);
     }
 
@@ -103,8 +102,10 @@ public abstract class Edge extends Group {
     }
 
     public void changeDirection(Direction direction) {
-        GraphActionsController.addAction(new ChangeDirectionEdge(this,
-                this.direction.getValue(), direction));
+        if (direction.equals(this.direction.getValue()))
+            return;
+
+        ChangeDirectionEdge.create(this, this.direction.getValue(), direction);
         setDirection(direction);
     }
 

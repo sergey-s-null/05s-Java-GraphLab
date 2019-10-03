@@ -41,8 +41,6 @@ public class GraphGroup extends Group {
     private EdgeContextMenu edgeContextMenu = new EdgeContextMenu(this);
     private GraphInputDialog inputDialog = new GraphInputDialog();
 
-//    private Map<String, Vertex> nameToVertex = new HashMap<>();
-//    private Set<Edge> edges = new HashSet<>();
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
     private ObservableSet<Edge> edges = FXCollections.observableSet();
 
@@ -120,55 +118,30 @@ public class GraphGroup extends Group {
     //controls actions in GraphActionController in contrast add/remove
     private void createVertex(double x, double y) {
         Vertex vertex = new Vertex(this, x, y);
-        GraphActionsController.addAction(new CreateVertex(vertex, this));
+        CreateVertex.create(vertex, this);
         addVertex(vertex);
     }
 
     private void createEdge(Vertex firstVertex, Vertex secondVertex) {
         BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
-        GraphActionsController.addAction(new CreateEdge(edge, this));
+        CreateEdge.create(edge, this);
         addEdge(edge);
     }
 
     private void createEdge(Vertex vertex) {
         UnaryEdge edge = new UnaryEdge(this,vertex);
-        GraphActionsController.addAction(new CreateEdge(edge, this));
+        CreateEdge.create(edge, this);
         addEdge(edge);
     }
 
     private void deleteVertex(Vertex vertex) {
-        GraphActionsController.addAction(new DeleteVertex(vertex, vertex.getEdges(), this));
+        DeleteVertex.create(vertex, vertex.getEdges(), this);
         removeVertexWithEdges(vertex);
     }
 
     private void deleteEdge(Edge edge) {
-        GraphActionsController.addAction(new DeleteEdge(edge, this));
+        DeleteEdge.create(edge, this);
         removeEdge(edge);
-    }
-
-    //   some methods with control of actions in GraphActionsController   |
-    private void changeEdgeDirection(Edge edge, Edge.Direction direction) {
-        if (!edge.equalsDirection(direction)) {
-            GraphActionsController.addAction(new ChangeDirectionEdge(edge,
-                    edge.getDirection(), direction));
-            edge.setDirection(direction);
-        }
-    }
-
-    private void changeVertexName(Vertex vertex) {
-        String newName = inputDialog.getVertexName(vertex.getName());
-        if (newName != null) {
-            GraphActionsController.addAction(new RenameVertex(vertex, vertex.getName(), newName));
-            vertex.setName(newName);
-        }
-    }
-
-    private void changeEdgeWeight(Edge edge) {
-        Double res = inputDialog.getEdgeWeight(edge.getWeight());
-        if (res != null) {
-            GraphActionsController.addAction(new ChangeWeightEdge(edge, edge.getWeight(), res));
-            edge.setWeight(res);
-        }
     }
 
     //------------|
@@ -264,18 +237,18 @@ public class GraphGroup extends Group {
 
     private void onMouseRelease(MouseEvent event) {
         if (movingVertex != null) {
-            GraphActionsController.addAction(new MoveVertex(movingVertex));
+            MoveVertex.create(movingVertex);
             movingVertex = null;
         }
 
         if (movingEdge != null) {
             if (movingEdge.getClass() == UnaryEdge.class) {
                 UnaryEdge edge = (UnaryEdge) movingEdge;
-                GraphActionsController.addAction(new MoveUnaryEdge(edge));
+                MoveUnaryEdge.create(edge);
             }
             else if (movingEdge.getClass() == BinaryEdge.class) {
                 BinaryEdge edge = (BinaryEdge) movingEdge;
-                GraphActionsController.addAction(new MoveBinaryEdge(edge));
+                MoveBinaryEdge.create(edge);
             }
             movingEdge = null;
         }
@@ -285,7 +258,9 @@ public class GraphGroup extends Group {
     public void onVertexContextMenuAction(Vertex vertex, VertexContextMenu.Action action) {
         switch (action) {
             case Rename:
-                changeVertexName(vertex);
+                String newName = inputDialog.getVertexName(vertex.getName());
+                if (newName != null)
+                    vertex.changeName(newName);
                 break;
             case MakeLoop:
                 createEdge(vertex);
@@ -299,16 +274,18 @@ public class GraphGroup extends Group {
     public void onEdgeContextMenuAction(Edge edge, EdgeContextMenu.Action action) {
         switch (action) {
             case ChangeWeight:
-                changeEdgeWeight(edge);
+                Double res = inputDialog.getEdgeWeight(edge.getWeight());
+                if (res != null)
+                    edge.changeWeight(res);
                 break;
             case SelectBothDirection:
-                changeEdgeDirection(edge, Edge.Direction.Both);
+                edge.changeDirection(Edge.Direction.Both);
                 break;
             case SelectFirstDirection:
-                changeEdgeDirection(edge, Edge.Direction.FirstVertex);
+                edge.changeDirection(Edge.Direction.FirstVertex);
                 break;
             case SelectSecondDirection:
-                changeEdgeDirection(edge, Edge.Direction.SecondVertex);
+                edge.changeDirection(Edge.Direction.SecondVertex);
                 break;
             case Delete:
                 deleteEdge(edge);

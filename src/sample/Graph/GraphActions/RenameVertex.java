@@ -1,12 +1,17 @@
 package sample.Graph.GraphActions;
 
 import sample.Graph.Elements.Vertex;
+import sample.Graph.GraphActionsController;
 
 
 public class RenameVertex extends VertexAction {
+    public static void create(Vertex vertex, String oldName, String newName) {
+        GraphActionsController.addAction(new RenameVertex(vertex, oldName, newName));
+    }
+
     private String oldName, newName;
 
-    public RenameVertex(Vertex vertex, String oldName, String newName) {
+    private RenameVertex(Vertex vertex, String oldName, String newName) {
         super(vertex);
 
         this.oldName = oldName;
@@ -16,11 +21,11 @@ public class RenameVertex extends VertexAction {
 
     @Override
     public void undo() {
-        vertex.rename(oldName);
+        vertex.setName(oldName);
     }
 
     @Override
     public void redo() {
-        vertex.rename(newName);
+        vertex.setName(newName);
     }
 }

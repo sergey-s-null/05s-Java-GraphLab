@@ -2,8 +2,13 @@ package sample.Graph.GraphActions;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.Elements.UnaryEdge;
+import sample.Graph.GraphActionsController;
 
 public class MoveUnaryEdge extends EdgeAction {
+    public static void create(UnaryEdge edge) {
+        GraphActionsController.addAction(new MoveUnaryEdge(edge));
+    }
+
     private static Vector2D savedCirclePosRelativeVertex = null;
 
     public static void saveCirclePos(Vector2D circlePosRelativeVertex) {
@@ -12,14 +17,7 @@ public class MoveUnaryEdge extends EdgeAction {
 
     private Vector2D oldCirclePosRelativeVertex, newCirclePosRelativeVertex;
 
-    public MoveUnaryEdge(UnaryEdge edge, Vector2D oldCirclePosRelativeVertex,
-                         Vector2D newCirclePosRelativeVertex) {
-        super(edge);
-        this.oldCirclePosRelativeVertex = oldCirclePosRelativeVertex;
-        this.newCirclePosRelativeVertex = newCirclePosRelativeVertex;
-    }
-
-    public MoveUnaryEdge(UnaryEdge edge) {
+    private MoveUnaryEdge(UnaryEdge edge) {
         super(edge);
 
         // TODO remove

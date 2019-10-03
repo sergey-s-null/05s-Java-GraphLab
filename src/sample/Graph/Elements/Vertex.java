@@ -9,6 +9,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import sample.Graph.GraphActions.RenameVertex;
 import sample.Graph.GraphGroup;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,7 @@ public class Vertex extends Group {
     private Text name = new Text();
     private Set<Edge> incidentEdges = new HashSet<>();
 
+    // init
     private void initCircle() {
         circle.setStrokeType(StrokeType.INSIDE);
         circle.setStrokeWidth(strokeWidth);
@@ -52,6 +54,7 @@ public class Vertex extends Group {
         setOnMousePressed(graphGroup::onMousePress_vertex);
     }
 
+    // constructors
     public Vertex(GraphGroup graphGroup, double x, double y, String nameStr) {
         super();
 
@@ -68,6 +71,7 @@ public class Vertex extends Group {
         this(graphGroup, x, y, Integer.toString(nextId));
     }
 
+    // updates
     private void update() {
         circle.setCenterX(x);
         circle.setCenterY(y);
@@ -80,6 +84,7 @@ public class Vertex extends Group {
         }
     }
 
+    // move
     public void move(double x, double y) {
         if (x < radius)
             x = radius;
@@ -101,6 +106,7 @@ public class Vertex extends Group {
         move(radiusVector.getX(), radiusVector.getY());
     }
 
+    // incident edges
     public void addIncidentEdge(Edge edge) {
         incidentEdges.add(edge);
     }
@@ -117,11 +123,9 @@ public class Vertex extends Group {
         return new HashSet<>(incidentEdges);
     }
 
-    public void setSelected(boolean selected) {
-        if (selected)
-            circle.setFill(selectedFillColor);
-        else
-            circle.setFill(defaultFillColor);
+    // vertex methods
+    public int getVertexId() {
+        return id;
     }
 
     public double getCenterX() {
@@ -136,22 +140,26 @@ public class Vertex extends Group {
         return new Vector2D(circle.getCenterX(), circle.getCenterY());
     }
 
-    public void rename(String nameStr) {
-        name.setText(nameStr);
-        // TODO update
+    public void setSelected(boolean selected) {
+        if (selected)
+            circle.setFill(selectedFillColor);
+        else
+            circle.setFill(defaultFillColor);
+    }
+
+    // name
+    public void setName(String newName) {
+        name.setText(newName);
+        update();
     }
 
     public String getName() {
         return name.getText();
     }
 
-    public void setName(String newName) {
-        name.setText(newName);
-        update();
-    }
-
-    public int getVertexId() {
-        return id;
+    public void changeName(String newName) {
+        RenameVertex.create(this, name.getText(), newName);
+        setName(newName);
     }
 
     public StringProperty nameProperty() {
