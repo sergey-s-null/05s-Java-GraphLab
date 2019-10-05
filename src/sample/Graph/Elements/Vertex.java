@@ -13,9 +13,17 @@ import sample.Graph.GraphActions.RenameVertex;
 import sample.Graph.GraphGroup;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Vertex extends Group {
+    public static boolean isNameValid(String name) {
+        Pattern pattern = Pattern.compile("[^%\\s()\\[\\]{},]{1,10}");
+        Matcher matcher = pattern.matcher(name);
+        return matcher.matches();
+    }
+
     private static int nextId = 0;
 
     private static final Color nameColor = Color.web("086070");

@@ -17,6 +17,7 @@ import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphActions.*;
+import sample.Parser.GraphData;
 
 
 public class GraphGroup extends Group {
@@ -74,12 +75,16 @@ public class GraphGroup extends Group {
         // TODO проверка текущего действия для защиты от смены Action во время создания ребра или тп
     }
 
-    public ObservableList<Vertex> getObservableVertices() {
+    public ObservableList<Vertex> getVertices() {
         return vertices;
     }
 
-    public ObservableSet<Edge> getObservableEdges() {
+    public ObservableSet<Edge> getEdges() {
         return edges;
+    }
+
+    public void changeGraph(GraphData data) {
+
     }
 
     //----------------|
@@ -294,11 +299,5 @@ public class GraphGroup extends Group {
 
     }
 
-    public ObservableList<Vertex> getVertices() {
-        return vertices;
-    }
 
-    public ObservableSet<Edge> getEdges() {
-        return edges;
-    }
 }

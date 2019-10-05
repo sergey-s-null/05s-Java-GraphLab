@@ -4,6 +4,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,6 +18,9 @@
         <menus>
           <Menu mnemonicParsing="false" text="Файл">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="Открыть" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveFile" text="Сохранить" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem mnemonicParsing="false" text="Выход" />
                   <MenuItem mnemonicParsing="false" onAction="#onTestAction" text="testAction" />
             </items>
@@ -52,13 +56,13 @@
                <children>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                        <RadioButton fx:id="rb_createVertex" mnemonicParsing="false" onAction="#onAction" text="Вершины">
+                        <RadioButton fx:id="rb_createVertex" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Вершины">
                            <toggleGroup>
                               <ToggleGroup fx:id="tg" />
                            </toggleGroup></RadioButton>
-                        <RadioButton fx:id="rb_createEdge" mnemonicParsing="false" onAction="#onAction" text="Ребра" toggleGroup="$tg" />
-                        <RadioButton fx:id="rb_delete" mnemonicParsing="false" onAction="#onAction" text="Удалить" toggleGroup="$tg" />
-                        <RadioButton fx:id="rb_move" mnemonicParsing="false" onAction="#onAction" text="Переместить" toggleGroup="$tg" />
+                        <RadioButton fx:id="rb_createEdge" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Ребра" toggleGroup="$tg" />
+                        <RadioButton fx:id="rb_delete" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Удалить" toggleGroup="$tg" />
+                        <RadioButton fx:id="rb_move" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Переместить" toggleGroup="$tg" />
                      </children>
                   </VBox>
                </children>

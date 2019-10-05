@@ -1,9 +1,8 @@
 package sample.Graph;
 
 import javafx.scene.control.TextInputDialog;
+import sample.Graph.Elements.Vertex;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GraphInputDialog extends TextInputDialog {
 
@@ -18,9 +17,7 @@ public class GraphInputDialog extends TextInputDialog {
         if (res == null)
             return null;
 
-        Pattern pattern = Pattern.compile("\\S{1,10}");
-        Matcher matcher = pattern.matcher(res);
-        return matcher.matches() ? res : null;
+        return Vertex.isNameValid(res) ? res : null;
     }
 
     public Double getEdgeWeight(double defaultWeight) {
