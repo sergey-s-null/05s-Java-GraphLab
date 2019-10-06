@@ -1,7 +1,6 @@
 package sample.Parser;
 
 import Jama.Matrix;
-import javafx.beans.property.DoubleProperty;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -197,21 +196,19 @@ public class InputFileParser {
         return result;
     }
 
-    private List<Double> parseResolution(String content) throws Exception {
+    private Resolution parseResolution(String content) throws Exception {
         String[] values = content.split(",");
         if (values.length != 2)
             throw new Exception("Wrong number of arguments in Resolution definition.");
 
-        List<Double> result = new ArrayList<>();
-        for (String valueString : values) {
-            try {
-                result.add(Double.parseDouble(valueString));
-            }
-            catch (NumberFormatException e) {
-                throw new Exception("Error while parse resolution values.");
-            }
+        try {
+            double width = Double.parseDouble(values[0]),
+                   height = Double.parseDouble(values[1]);
+            return new Resolution(width, height);
         }
-        return result;
+        catch (NumberFormatException e) {
+            throw new Exception("Error while parse resolution values.");
+        }
     }
 
     private TypesAndContents parseFileForTypesAndContents(String filename) throws Exception {
@@ -243,7 +240,7 @@ public class InputFileParser {
 
         Matrix matrix = null;
         VerticesData vertexDataList = null;
-        List<Double> resolution = null;
+        Resolution resolution = null;
         for (int i = 0; i < types.size(); ++i) {
             switch (types.get(i)) {
                 case "matrix":
@@ -281,7 +278,7 @@ public class InputFileParser {
 
         Matrix matrix = null;
         VerticesData vertexDataList = null;
-        List<Double> resolution = null;
+        Resolution resolution = null;
         for (int i = 0; i < types.size(); ++i) {
             switch (types.get(i)) {
                 case "matrix":
@@ -319,7 +316,7 @@ public class InputFileParser {
 
         EdgesData edgesData = null;
         VerticesData verticesData = null;
-        List<Double> resolution = null;
+        Resolution resolution = null;
         for (int i = 0; i < types.size(); ++i) {
             switch (types.get(i)) {
                 case "edges":

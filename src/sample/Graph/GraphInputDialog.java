@@ -47,7 +47,14 @@ public class GraphInputDialog extends TextInputDialog {
                 return null;
 
             try {
-                return Double.parseDouble(res);
+                double weight = Double.parseDouble(res);
+                if (weight == 0) {
+                    alert.setContentText("Вес не может быть равен 0.");
+                    alert.showAndWait();
+                }
+                else {
+                    return weight;
+                }
             }
             catch (NumberFormatException e) {
                 alert.setContentText("Неверный формат числа.");

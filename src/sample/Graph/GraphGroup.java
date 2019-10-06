@@ -143,10 +143,7 @@ public class GraphGroup extends Group {
     }
 
     public GraphData getGraph() {
-
-
-        // TODO
-        return null;
+        return GraphData.makeByGraph(vertices, edges, width1.get(), height1.get());
     }
 
     public void setWidth(double width, boolean createAction) {

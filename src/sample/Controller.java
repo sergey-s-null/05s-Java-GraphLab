@@ -80,7 +80,6 @@ public class Controller {
                 System.out.println(e.getClass());
                 return;
             }
-
             graphGroup.setGraph(result, true);
         }
 
@@ -90,7 +89,10 @@ public class Controller {
     }
 
     @FXML private void onSaveFile(ActionEvent event) {
-
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null) {
+            System.out.println(file.getName());
+        }
     }
 
     // Edit

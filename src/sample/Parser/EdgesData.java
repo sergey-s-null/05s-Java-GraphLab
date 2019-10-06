@@ -17,6 +17,10 @@ public class EdgesData {
         edges.add(data);
     }
 
+    public int count() {
+        return edges.size();
+    }
+
     public boolean isVerticesNamesValid() {
         for (String name : verticesNames)
             if (!Vertex.isNameValid(name)) return false;
@@ -25,6 +29,10 @@ public class EdgesData {
 
     public List<EdgeData> getEdges() {
         return edges;
+    }
+
+    public EdgeData get(int index) {
+        return edges.get(index);
     }
 
     public Set<String> getVerticesNames() {

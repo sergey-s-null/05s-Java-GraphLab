@@ -52,6 +52,10 @@ public class UnaryEdgeData extends EdgeData {
         return 0;
     }
 
+    public Vector2D getCirclePos() {
+        return circlePos;
+    }
+
     @Override
     public Edge create(GraphGroup graphGroup, Map<String, Vertex> nameToVertex) {
         return new UnaryEdge(graphGroup, nameToVertex.get(vertexName), circlePos);

@@ -1,10 +1,13 @@
 package sample.MatrixView;
 
+import Jama.Matrix;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.*;
 import org.controlsfx.control.spreadsheet.*;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
+import sample.Parser.VertexData;
+import sample.Parser.VerticesData;
 
 import java.util.*;
 
@@ -39,6 +42,31 @@ public class MatrixView extends SpreadsheetView {
 
     }
 
+    // for save in file
+    public Matrix getMatrix() {
+        Grid grid = getGrid();
+        if (grid.getRowCount() == 0 || grid.getColumnCount() == 0)
+            return null;
+
+        Matrix result = new Matrix(grid.getRowCount(), grid.getColumnCount());
+        for (int row = 0; row < grid.getRows().size(); ++row) {
+            ObservableList<SpreadsheetCell> rowList = grid.getRows().get(row);
+            for (int col = 0; col < rowList.size(); ++col) {
+                SpreadsheetCell cell = rowList.get(col);
+                result.set(row, col, (Double) cell.getItem());
+            }
+        }
+        return result;
+    }
+
+    public VerticesData getVerticesData() {
+        VerticesData data = new VerticesData();
+        for (Vertex vertex : vertices)
+            data.add(new VertexData(vertex.getName(), vertex.getCenterX(), vertex.getCenterY()));
+        return data;
+    }
+
+    //
     private int findInsertIndex(Vertex vertex) {
         int res = 0;
         while (res < vertices.size() &&
@@ -72,6 +100,7 @@ public class MatrixView extends SpreadsheetView {
 
     }
 
+    // updates
     private void updateHeaders() {
         for (int i = 0; i < vertices.size(); ++i) {
             getGrid().getRowHeaders().set(i, vertices.get(i).getName());
@@ -143,6 +172,7 @@ public class MatrixView extends SpreadsheetView {
         }
     }
 
+    // row/col modifications
     private void addRowAndColumn() {
         ObservableList<ObservableList<SpreadsheetCell> > rows = getGrid().getRows();
         int newSize = rows.size() + 1;

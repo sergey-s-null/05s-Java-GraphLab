@@ -63,6 +63,14 @@ public class BinaryEdgeData extends EdgeData {
         return direction;
     }
 
+    public double getAngle() {
+        return angle;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
     @Override
     public Edge create(GraphGroup graphGroup, Map<String, Vertex> nameToVertex) {
         BinaryEdge edge = new BinaryEdge(graphGroup, nameToVertex.get(vertexName1),

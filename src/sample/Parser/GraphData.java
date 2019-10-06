@@ -2,11 +2,13 @@ package sample.Parser;
 
 
 import Jama.Matrix;
+import sample.Graph.Elements.BinaryEdge;
+import sample.Graph.Elements.Edge;
+import sample.Graph.Elements.UnaryEdge;
+import sample.Graph.Elements.Vertex;
+import sample.Graph.GraphGroup;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GraphData {
     private static VerticesData generateDefaultVerticesData(int count) {
@@ -33,6 +35,15 @@ public class GraphData {
         }
     }
 
+    private static void validResolution(Resolution resolution) throws Exception {
+        if (resolution != null) {
+            if (resolution.getWidth() < GraphGroup.minWidth)
+                throw new Exception("Minimal width is " + GraphGroup.minWidth + ".");
+            if (resolution.getHeight() < GraphGroup.minHeight)
+                throw new Exception("Minimal height is " + GraphGroup.minHeight + ".");
+        }
+    }
+
     // adjacency
     private static void validAdjacencyMatrix(Matrix matrix) throws Exception {
         if (matrix == null)
@@ -42,11 +53,12 @@ public class GraphData {
     }
 
     public static GraphData makeByAdjacency(Matrix adjacencyMatrix, VerticesData verticesData,
-                                            List<Double> resolution)
+                                            Resolution resolution)
             throws Exception
     {
         validAdjacencyMatrix(adjacencyMatrix);
         validVerticesData(verticesData);
+        validResolution(resolution);
         if (adjacencyMatrix.getRowDimension() != verticesData.count())
             throw new Exception("Adjacency matrix dimension does not equals number of vertices.");
 
@@ -85,13 +97,13 @@ public class GraphData {
         result.setVerticesData(verticesData);
 
         if (resolution != null) {
-            result.setResolution(resolution.get(0), resolution.get(1));
+            result.setResolution(resolution);
         }
 
         return result;
     }
 
-    public static GraphData makeByAdjacency(Matrix adjacencyMatrix, List<Double> resolution)
+    public static GraphData makeByAdjacency(Matrix adjacencyMatrix, Resolution resolution)
             throws Exception
     {
         return makeByAdjacency(adjacencyMatrix,
@@ -105,10 +117,11 @@ public class GraphData {
     }
 
     public static GraphData makeByIncident(Matrix incidentMatrix, VerticesData verticesData,
-                                           List<Double> resolution) throws Exception
+                                           Resolution resolution) throws Exception
     {
         validIncidentMatrix(incidentMatrix);
         validVerticesData(verticesData);
+        validResolution(resolution);
         if (incidentMatrix.getRowDimension() != verticesData.count())
             throw new Exception("Row count in incident matrix does not match to vertices count.");
 
@@ -148,13 +161,13 @@ public class GraphData {
         result.setVerticesData(verticesData);
 
         if (resolution != null) {
-            result.setResolution(resolution.get(0), resolution.get(1));
+            result.setResolution(resolution);
         }
 
         return result;
     }
 
-    public static GraphData makeByIncident(Matrix incidentMatrix, List<Double> resolution)
+    public static GraphData makeByIncident(Matrix incidentMatrix, Resolution resolution)
             throws Exception
     {
         validIncidentMatrix(incidentMatrix);
@@ -180,34 +193,53 @@ public class GraphData {
     }
 
     public static GraphData makeByEdges(EdgesData edgesData, VerticesData verticesData,
-                                        List<Double> resolution) throws Exception
+                                        Resolution resolution) throws Exception
     {
         validEdgesAndVerticesData(edgesData, verticesData);
+        validResolution(resolution);
 
         GraphData result = new GraphData(verticesData, edgesData);
         if (resolution != null) {
-            result.setResolution(resolution.get(0), resolution.get(1));
+            result.setResolution(resolution);
         }
         return result;
     }
 
-    public static GraphData makeByEdges(EdgesData edgesData, List<Double> resolution) throws Exception
+    public static GraphData makeByEdges(EdgesData edgesData, Resolution resolution) throws Exception
     {
         return makeByEdges(edgesData, generateVerticesDataBy(edgesData.getVerticesNames()), resolution);
     }
 
+    public static GraphData makeByGraph(Collection<Vertex> vertices, Collection<Edge> edges,
+                                        double width, double height)
+    {
+        GraphData result = new GraphData();
+        for (Vertex vertex : vertices) {
+            result.add(new VertexData(vertex.getName(), vertex.getCenterX(), vertex.getCenterY()));
+        }
+
+        for (Edge edge : edges) {
+            if (edge instanceof UnaryEdge)
+                result.add(EdgeData.makeBy((UnaryEdge) edge));
+            else if (edge instanceof BinaryEdge)
+                result.add(EdgeData.makeBy((BinaryEdge) edge));
+        }
+
+        result.setResolution(new Resolution(width, height));
+
+        return result;
+    }
+
+    //-----------|
+    //   class   |
+    //-----------|
     private VerticesData verticesData = new VerticesData();
     private EdgesData edgesData = new EdgesData();
-    private double width = -1, height = -1;
-
+    private Resolution resolution = new Resolution();
     private GraphData() {}
 
     private GraphData(VerticesData verticesData, EdgesData edgesData) {
         this.verticesData = verticesData;
-        this.edgesData = edgesData;
-    }
-
-    private GraphData(EdgesData edgesData) {
         this.edgesData = edgesData;
     }
 
@@ -226,9 +258,9 @@ public class GraphData {
             builder.append(data);
             builder.append('\n');
         }
-        builder.append(width);
+        builder.append(resolution.getWidth());
         builder.append("x");
-        builder.append(height);
+        builder.append(resolution.getHeight());
         return builder.toString();
     }
 
@@ -245,9 +277,8 @@ public class GraphData {
         edgesData.add(data);
     }
 
-    private void setResolution(double width, double height) {
-        this.width = width;
-        this.height = height;
+    private void setResolution(Resolution resolution) {
+        this.resolution = resolution;
     }
 
     // getters
@@ -259,11 +290,7 @@ public class GraphData {
         return verticesData;
     }
 
-    public double getWidth() {
-        return width;
-    }
-
-    public double getHeight() {
-        return height;
+    public Resolution getResolution() {
+        return resolution;
     }
 }

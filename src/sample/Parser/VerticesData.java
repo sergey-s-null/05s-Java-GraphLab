@@ -2,17 +2,14 @@ package sample.Parser;
 
 import sample.Graph.Elements.Vertex;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class VerticesData {
-    private Set<String> names = new HashSet<>();
+    private Map<String, Integer> nameToIndex = new HashMap<>();
     private List<VertexData> vertices = new ArrayList<>();
 
     public boolean contains(String name) {
-        return names.contains(name);
+        return nameToIndex.get(name) != null;
     }
 
     public int count() {
@@ -24,7 +21,7 @@ public class VerticesData {
     }
 
     public boolean isNamesUnique() {
-        return names.size() == vertices.size();
+        return nameToIndex.size() == vertices.size();
     }
 
     public boolean isNamesValid() {
@@ -34,16 +31,25 @@ public class VerticesData {
     }
 
     public void add(VertexData data) {
-        names.add(data.getName());
         vertices.add(data);
+        if (!nameToIndex.containsKey(data.getName()))
+            nameToIndex.put(data.getName(), vertices.size() - 1);
     }
 
     public Set<String> getNames() {
-        return names;
+        return nameToIndex.keySet();
     }
 
     public List<VertexData> get() {
         return vertices;
+    }
+
+    public VertexData get(int index) {
+        return vertices.get(index);
+    }
+
+    public Integer getIndex(String vertexName) {
+        return nameToIndex.get(vertexName);
     }
 
 }
