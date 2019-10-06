@@ -57,7 +57,7 @@ public class MatrixView extends SpreadsheetView {
                 getGrid().getRows().get(row).get(col).setItem(change.getOldValue());
             }
             for (Edge edge : edges)
-                edge.changeWeight((Double) change.getNewValue());
+                edge.setWeight((Double) change.getNewValue(), true);
         }
         else {
             Vertex vertex1 = vertices.get(row), vertex2 = vertices.get(col);
@@ -67,7 +67,7 @@ public class MatrixView extends SpreadsheetView {
                 getGrid().getRows().get(row).get(col).setItem(change.getOldValue());
             }
             for (Edge edge : edges)
-                edge.changeWeight((Double) change.getNewValue());
+                edge.setWeight((Double) change.getNewValue(), true);
         }
 
     }

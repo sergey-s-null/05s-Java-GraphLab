@@ -58,16 +58,16 @@ public class GraphData {
                        val2 = adjacencyMatrix.get(col, row);
 
                 if (val1 == val2 && val1 != 0) {
-                    result.add(new EdgeData(verticesData.getName(row),
+                    result.add(new BinaryEdgeData(verticesData.getName(row),
                             verticesData.getName(col), val1, 0));
                 }
                 else {
                     if (val1 != 0) {
-                        result.add(new EdgeData(verticesData.getName(row),
+                        result.add(new BinaryEdgeData(verticesData.getName(row),
                                 verticesData.getName(col), val1, 1));
                     }
                     if (val2 != 0) {
-                        result.add(new EdgeData(verticesData.getName(row),
+                        result.add(new BinaryEdgeData(verticesData.getName(row),
                                 verticesData.getName(col), val2, -1));
                     }
                 }
@@ -78,7 +78,7 @@ public class GraphData {
         for (int i = 0; i < adjacencyMatrix.getRowDimension(); ++i) {
             double val = adjacencyMatrix.get(i, i);
             if (val != 0) {
-                result.add(new EdgeData(verticesData.getName(i), val));
+                result.add(new UnaryEdgeData(verticesData.getName(i), val));
             }
         }
 
@@ -126,7 +126,7 @@ public class GraphData {
             if (indexes.size() == 1) {
                 int row = indexes.get(0);
                 double value = values.get(0);
-                result.add(new EdgeData(verticesData.getName(row), value));
+                result.add(new UnaryEdgeData(verticesData.getName(row), value));
             }
             else if (indexes.size() == 2) {
                 int row1 = indexes.get(0), row2 = indexes.get(1);
@@ -134,11 +134,10 @@ public class GraphData {
                 if (Math.abs(val1) != Math.abs(val2))
                     throw new Exception("Values in column " + col + " does not match.");
                 int direction = 0;
-                if (val1 > 0 && val2 < 0)
-                    direction = -1;
-                else if (val1 < 0 && val2 > 0)
-                    direction = 1;
-                result.add(new EdgeData(verticesData.getName(row1),
+                if (val1 > 0 && val2 < 0) direction = -1;
+                else if (val1 < 0 && val2 > 0) direction = 1;
+
+                result.add(new BinaryEdgeData(verticesData.getName(row1),
                         verticesData.getName(row2), Math.abs(val1), direction));
             }
             else {

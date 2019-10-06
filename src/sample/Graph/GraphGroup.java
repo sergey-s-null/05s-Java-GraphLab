@@ -1,5 +1,6 @@
 package sample.Graph;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -17,7 +18,14 @@ import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphActions.*;
+import sample.Parser.EdgeData;
 import sample.Parser.GraphData;
+import sample.Parser.VertexData;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class GraphGroup extends Group {
@@ -29,7 +37,12 @@ public class GraphGroup extends Group {
         Move,
     }
 
-    public static double width = 400, height = 400;
+    // TODO listeners in Vertex
+    public static final double minWidth = 200, minHeight = 200;
+    public static final double width = 400, height = 400; // TODO refactor to default
+    private Rectangle backgroundRect = new Rectangle(),
+                      clipRect = new Rectangle();
+    private DoubleProperty width1, height1;//TODO refactor
 
     private Action currentAction = Action.Empty;
     private Vertex selected = null; //dangerous
@@ -45,17 +58,28 @@ public class GraphGroup extends Group {
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
     private ObservableSet<Edge> edges = FXCollections.observableSet();
 
+    private void initRects() {
+        backgroundRect.setWidth(width);
+        backgroundRect.setHeight(height);
+        backgroundRect.setFill(Color.WHITE);
+        backgroundRect.setStrokeType(StrokeType.INSIDE);
+        backgroundRect.setStroke(Color.BLACK);
+        backgroundRect.setStrokeWidth(1);
+
+        clipRect.setWidth(width);
+        clipRect.setHeight(height);
+        width1 = clipRect.widthProperty();
+        height1 = clipRect.heightProperty();
+    }
 
     public GraphGroup() {
         super();
 
-        Rectangle rectangle = new Rectangle(width, height); // TODO save rectangle to class var
-        rectangle.setFill(Color.WHITE);
-        rectangle.setStrokeWidth(1);
-        rectangle.setStrokeType(StrokeType.INSIDE);
-        getChildren().add(rectangle);
-
-        setClip(new Rectangle(width, height));
+        initRects();
+        getChildren().add(backgroundRect);
+        setClip(clipRect);
+        width1.addListener((observable, oldValue, newValue) -> onWidthChanged((Double) newValue));
+        height1.addListener((observable, oldValue, newValue) -> onHeightChanged((Double) newValue));
 
         setOnMouseClicked(this::onMouseClick);
         setOnMouseDragged(this::onMouseDrag);
@@ -83,25 +107,114 @@ public class GraphGroup extends Group {
         return edges;
     }
 
-    public void changeGraph(GraphData data) {
+    public void setGraph(GraphData data, boolean createAction) {
+        // создание новых
+        Map<String, Vertex> nameToVertex = new HashMap<>();
+        for (VertexData vertexData : data.getVerticesData().get()) {
+            Vertex vertex = vertexData.create(this);
+            nameToVertex.put(vertex.getName(), vertex);
+        }
+        List<Edge> newEdges = new ArrayList<>();
+        for (EdgeData edgeData : data.getEdgesData().getEdges())
+            newEdges.add(edgeData.create(this, nameToVertex));
 
+        // создание действия
+        if (createAction) {
+            ListOfActions actions = new ListOfActions();
+            for (Edge edge : edges)
+                actions.add(new DeleteEdge(edge, this));
+            for (Vertex vertex : vertices)
+                actions.add(new DeleteVertex(vertex, null, this));
+            for (Vertex vertex : nameToVertex.values())
+                actions.add(new CreateVertex(vertex, this));
+            for (Edge edge : newEdges)
+                actions.add(new CreateEdge(edge, this));
+            // TODO resolution
+            GraphActionsController.addAction(actions);
+        }
+
+        // исполнение
+        clear();
+        for (Vertex vertex : nameToVertex.values())
+            addVertex(vertex, false);
+        for (Edge edge : newEdges)
+            addEdge(edge, false);
+        // TODO resolution
+    }
+
+    public GraphData getGraph() {
+
+
+        // TODO
+        return null;
+    }
+
+    public void setWidth(double width, boolean createAction) {
+        if (createAction)
+            ChangeWidth.create(this, width1.get(), width);
+        width1.set(width);
+    }
+
+    public void setHeight(double height, boolean createAction) {
+        if (createAction)
+            ChangeHeight.create(this, height1.get(), height);
+        height1.set(height);
+    }
+
+    public DoubleProperty widthProperty() {
+        return width1;
+    }
+
+    public DoubleProperty heightProperty() {
+        return height1;
     }
 
     //----------------|
     //   add/remove   |
     //----------------|
-    public void addVertex(Vertex vertex) {
+    public void clear() {
+        for (Edge edge : edges) {
+            edge.disconnectVertices();
+        }
+        edges.clear();
+        vertices.clear();
+        getChildren().remove(1, getChildren().size());
+    }
+
+    public void addVertex(double x, double y, boolean createAction) {
+        Vertex vertex = new Vertex(this, x, y);
+        addVertex(vertex, createAction);
+    }
+
+    public void addVertex(Vertex vertex, boolean createAction) {
+        if (createAction)
+            CreateVertex.create(vertex, this);
         getChildren().add(vertex);
         vertices.add(vertex);
     }
 
-    public void addEdge(Edge edge) {
+    public void addEdge(Vertex firstVertex, Vertex secondVertex, boolean createAction) {
+        BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
+        addEdge(edge, createAction);
+    }
+
+    public void addEdge(Vertex vertex, boolean createAction) {
+        UnaryEdge edge = new UnaryEdge(this, vertex);
+        addEdge(edge, createAction);
+    }
+
+    public void addEdge(Edge edge, boolean createAction) {
+        if (createAction)
+            CreateEdge.create(edge, this);
         edge.connectVertices();
         getChildren().add(1, edge);
         edges.add(edge);
     }
 
-    public void removeVertexWithEdges(Vertex vertex) {
+    public void removeVertexWithEdges(Vertex vertex, boolean createAction) {
+        if (createAction)
+            DeleteVertex.create(vertex, vertex.getEdges(), this);
+
         for (Edge edge : vertex.getEdges()) {
             getChildren().remove(edge);
             edges.remove(edge);
@@ -111,51 +224,22 @@ public class GraphGroup extends Group {
         vertices.remove(vertex);
     }
 
-    public void removeEdge(Edge edge) {
+    public void removeEdge(Edge edge, boolean createAction) {
+        if (createAction)
+            DeleteEdge.create(edge, this);
         edge.disconnectVertices();
         getChildren().remove(edge);
         edges.remove(edge);
     }
 
-    //-------------------|
-    //   create/delete   |
-    //-------------------|
-    //controls actions in GraphActionController in contrast add/remove
-    private void createVertex(double x, double y) {
-        Vertex vertex = new Vertex(this, x, y);
-        CreateVertex.create(vertex, this);
-        addVertex(vertex);
-    }
-
-    private void createEdge(Vertex firstVertex, Vertex secondVertex) {
-        BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
-        CreateEdge.create(edge, this);
-        addEdge(edge);
-    }
-
-    private void createEdge(Vertex vertex) {
-        UnaryEdge edge = new UnaryEdge(this,vertex);
-        CreateEdge.create(edge, this);
-        addEdge(edge);
-    }
-
-    private void deleteVertex(Vertex vertex) {
-        DeleteVertex.create(vertex, vertex.getEdges(), this);
-        removeVertexWithEdges(vertex);
-    }
-
-    private void deleteEdge(Edge edge) {
-        DeleteEdge.create(edge, this);
-        removeEdge(edge);
-    }
-
     //------------|
     //   events   |
     //------------|
+    // mouse
     private void onMouseClick(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.CreateVertex) {
-                createVertex(event.getX(), event.getY());
+                addVertex(event.getX(), event.getY(), true);
             }
         }
     }
@@ -173,13 +257,13 @@ public class GraphGroup extends Group {
                     selected = null;
                 }
                 else {
-                    createEdge(selected, (Vertex) event.getSource());
+                    addEdge(selected, (Vertex) event.getSource(), true);
                     selected.setSelected(false);
                     selected = null;
                 }
             }
             else if (currentAction == Action.Delete) {
-                deleteVertex((Vertex) event.getSource());
+                removeVertexWithEdges((Vertex) event.getSource(), true);
             }
         }
         else if (event.getButton() == MouseButton.SECONDARY) {
@@ -193,7 +277,7 @@ public class GraphGroup extends Group {
     public void onMouseClick_edge(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.Delete) {
-                deleteEdge((Edge) event.getSource());
+                removeEdge((Edge) event.getSource(), true);
             }
         }
         else if (event.getButton() == MouseButton.SECONDARY) {
@@ -260,18 +344,19 @@ public class GraphGroup extends Group {
 
     }
 
+    // context menus
     public void onVertexContextMenuAction(Vertex vertex, VertexContextMenu.Action action) {
         switch (action) {
             case Rename:
                 String newName = inputDialog.getVertexName(vertex.getName());
                 if (newName != null)
-                    vertex.changeName(newName);
+                    vertex.setName(newName, true);
                 break;
             case MakeLoop:
-                createEdge(vertex);
+                addEdge(vertex, true);
                 break;
             case Delete:
-                deleteVertex(vertex);
+                removeVertexWithEdges(vertex, true);
                 break;
         }
     }
@@ -281,7 +366,7 @@ public class GraphGroup extends Group {
             case ChangeWeight:
                 Double res = inputDialog.getEdgeWeight(edge.getWeight());
                 if (res != null)
-                    edge.changeWeight(res);
+                    edge.setWeight(res, true);
                 break;
             case SelectBothDirection:
                 edge.changeDirection(Edge.Direction.Both);
@@ -293,10 +378,19 @@ public class GraphGroup extends Group {
                 edge.changeDirection(Edge.Direction.SecondVertex);
                 break;
             case Delete:
-                deleteEdge(edge);
+                removeEdge(edge, true);
                 break;
         }
 
+    }
+
+    // clip width/height
+    private void onWidthChanged(double newWidth) {
+        backgroundRect.setWidth(newWidth);
+    }
+
+    private void onHeightChanged(double newHeight) {
+        backgroundRect.setHeight(newHeight);
     }
 
 

@@ -75,17 +75,14 @@ public abstract class Edge extends Group {
     abstract public void connectVertices();
 
     // weight
-    public void setWeight(double weight) {
+    public void setWeight(double weight, boolean createAction) {
+        if (createAction)
+            ChangeWeightEdge.create(this, this.weight.get(), weight);
         this.weight.set(weight);
     }
 
     public double getWeight() {
         return weight.get();
-    }
-
-    public void changeWeight(double weight) {
-        ChangeWeightEdge.create(this, this.weight.get(), weight);
-        setWeight(weight);
     }
 
     public DoubleProperty weightProperty() {

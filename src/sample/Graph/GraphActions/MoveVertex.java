@@ -20,11 +20,10 @@ public class MoveVertex extends VertexAction {
     private MoveVertex(Vertex vertex) {
         super(vertex);
 
-        // TODO remove
-        if (savedPos == null) {
-            System.out.println("WARNING! Called MoveVertex constructor " +
-                    "without oldPos, but savedPos equals null");
-        }
+//        if (savedPos == null) {
+//            System.out.println("WARNING! Called MoveVertex constructor " +
+//                    "without oldPos, but savedPos equals null");
+//        }
         oldPos = savedPos != null ? savedPos : newPos;
         savedPos = null;
 

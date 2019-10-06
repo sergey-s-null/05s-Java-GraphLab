@@ -37,6 +37,12 @@
                         <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
+                  <Menu mnemonicParsing="false" text="Размер поля">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onChangeWidth" text="Ширина" />
+                        <MenuItem mnemonicParsing="false" onAction="#onChangeHeight" text="Высота" />
+                    </items>
+                  </Menu>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Задачи теории графов" />

@@ -16,7 +16,7 @@ public class CreateVertex extends VertexAction {
     private GraphGroup graphGroup;
     private Set<Edge> savedEdges = new HashSet<>();
 
-    private CreateVertex(Vertex vertex, GraphGroup graphGroup) {
+    public CreateVertex(Vertex vertex, GraphGroup graphGroup) {
         super(vertex);
         this.graphGroup = graphGroup;
     }
@@ -24,13 +24,13 @@ public class CreateVertex extends VertexAction {
     @Override
     public void undo() {
         savedEdges = vertex.getEdges();
-        graphGroup.removeVertexWithEdges(vertex);
+        graphGroup.removeVertexWithEdges(vertex, false);
     }
 
     @Override
     public void redo() {
-        graphGroup.addVertex(vertex);
+        graphGroup.addVertex(vertex, false);
         for (Edge edge : savedEdges)
-            graphGroup.addEdge(edge);
+            graphGroup.addEdge(edge, false);
     }
 }

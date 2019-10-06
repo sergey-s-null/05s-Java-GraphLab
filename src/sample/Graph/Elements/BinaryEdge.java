@@ -114,18 +114,8 @@ public class BinaryEdge extends Edge {
         arcTo.setLargeArcFlag(largeFlag);
     }
 
-    private void updateArrow(Path arrow, Vertex owner, Vertex another) {
-        // TODO think about upgrade this + updateArrow(second)
-        Vector2D ownerToAnotherNormal = Main.normalizeOrZero(new Vector2D(another.getCenterX() - owner.getCenterX(),
-                another.getCenterY() - owner.getCenterY()));
-
-        Vector2D arrowPos = new Vector2D(owner.getCenterX(), owner.getCenterY())
-                .add(ownerToAnotherNormal.scalarMultiply(Vertex.radius));
-
-        Vector2D baseTail = ownerToAnotherNormal.scalarMultiply(arrowLength);
-        Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
-        Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
-
+    private void updateArrowByTails(Path arrow, Vector2D arrowPos, Vector2D tail1Pos, Vector2D tail2Pos)
+    {
         MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
         LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
         LineTo lineTo = (LineTo)arrow.getElements().get(2);
@@ -136,6 +126,20 @@ public class BinaryEdge extends Edge {
         lineToArrowPos.setY(arrowPos.getY());
         lineTo.setX(tail2Pos.getX());
         lineTo.setY(tail2Pos.getY());
+    }
+
+    private void updateArrow(Path arrow, Vertex owner, Vertex another) {
+        Vector2D ownerToAnotherNormal = Main.normalizeOrZero(new Vector2D(another.getCenterX() - owner.getCenterX(),
+                another.getCenterY() - owner.getCenterY()));
+
+        Vector2D arrowPos = new Vector2D(owner.getCenterX(), owner.getCenterY())
+                .add(ownerToAnotherNormal.scalarMultiply(Vertex.radius));
+
+        Vector2D baseTail = ownerToAnotherNormal.scalarMultiply(arrowLength);
+        Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
+        Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
+
+        updateArrowByTails(arrow, arrowPos, tail1Pos, tail2Pos);
     }
 
     private void updateArrow(Vertex vertex, Path arrow, Vector2D arcCenter, double angle) {
@@ -150,16 +154,7 @@ public class BinaryEdge extends Edge {
         Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
         Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
 
-        MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
-        LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
-        LineTo lineTo = (LineTo)arrow.getElements().get(2);
-
-        moveTo.setX(tail1Pos.getX());
-        moveTo.setY(tail1Pos.getY());
-        lineToArrowPos.setX(arrowPos.getX());
-        lineToArrowPos.setY(arrowPos.getY());
-        lineTo.setX(tail2Pos.getX());
-        lineTo.setY(tail2Pos.getY());
+        updateArrowByTails(arrow, arrowPos, tail1Pos, tail2Pos);
     }
 
     private void updateArrows(double arcRadius, Vector2D arcCenter, boolean sweepFlag) {
@@ -221,7 +216,7 @@ public class BinaryEdge extends Edge {
         update();
     }
 
-    public void moveByPointData(double pointAngle, double pointRadiusCoef) {
+    public void setPointData(double pointAngle, double pointRadiusCoef) {
         this.pointAngle = pointAngle;
         this.pointRadiusCoef = pointRadiusCoef;
         update();

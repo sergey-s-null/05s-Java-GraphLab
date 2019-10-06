@@ -156,18 +156,15 @@ public class Vertex extends Group {
     }
 
     // name
-    public void setName(String newName) {
+    public void setName(String newName, boolean createAction) {
+        if (createAction)
+            RenameVertex.create(this, name.getText(), newName);
         name.setText(newName);
         update();
     }
 
     public String getName() {
         return name.getText();
-    }
-
-    public void changeName(String newName) {
-        RenameVertex.create(this, name.getText(), newName);
-        setName(newName);
     }
 
     public StringProperty nameProperty() {

@@ -1,6 +1,7 @@
 package sample.Parser;
 
 import Jama.Matrix;
+import javafx.beans.property.DoubleProperty;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -92,8 +93,43 @@ public class InputFileParser {
         return result;
     }
 
+    private EdgeData parseEdge(String content) throws Exception {
+        String[] items = content.split(",");
+        if (items.length == 4) {
+            double weight, x, y;
+            String vertexName = items[1];
+            try {
+                weight = Double.parseDouble(items[0]);
+                x = Double.parseDouble(items[2]);
+                y = Double.parseDouble(items[3]);
+            }
+            catch (NumberFormatException e) {
+                throw new Exception("Error while parse edges.");
+            }
+            return new UnaryEdgeData(vertexName, weight, x, y);
+        }
+        else if (items.length == 6) {
+            double weight, angle, radius;
+            int direction;
+            String vertexName1 = items[1], vertexName2 = items[2];
+            try {
+                weight = Double.parseDouble(items[0]);
+                direction = Integer.parseInt(items[3]);
+                angle = Double.parseDouble(items[4]);
+                radius = Double.parseDouble(items[5]);
+            }
+            catch (NumberFormatException e) {
+                throw new Exception("Error while parse edges.");
+            }
+            return new BinaryEdgeData(vertexName1, vertexName2, weight, direction, angle, radius);
+        }
+        else {
+            throw new Exception("Wrong number of parameters in Edges definition.");
+        }
+    }
+
     private EdgesData parseEdges(String content) throws Exception {
-        Pattern pattern = Pattern.compile("\\(([^(),]+),([^(),]+),([^(),]+),([^(),]+)\\)(,?)");
+        Pattern pattern = Pattern.compile("\\(([^()]+)\\)(,?)");
         List<List<String> > groups;
         try {
             groups = parseExactBy(pattern, content);
@@ -104,25 +140,7 @@ public class InputFileParser {
 
         EdgesData result = new EdgesData();
         for (List<String> group : groups) {
-            double weight;
-            int direction;
-            try {
-                weight = Double.parseDouble(group.get(0));
-                direction = Integer.parseInt(group.get(3));
-            }
-            catch (NumberFormatException e) {
-                throw new Exception("Error while parse edges.");
-            }
-            String name1 = group.get(1), name2 = group.get(2);
-            if (weight == 0)
-                throw new Exception("Found edge with weight equals 0.");
-            if (direction > 1 || direction < -1)
-                throw new Exception("Wrong direction in Edges definition.");
-
-            if (!name1.equals(name2))
-                result.add(new EdgeData(name1, name2, weight, direction));
-            else
-                result.add(new EdgeData(name1, weight));
+            result.add(parseEdge(group.get(0)));
         }
         return result;
     }

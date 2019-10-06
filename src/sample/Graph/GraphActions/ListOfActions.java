@@ -6,6 +6,10 @@ import java.util.List;
 public class ListOfActions extends Action {
     private List<Action> actions = new ArrayList<>();
 
+    public void add(Action action) {
+        actions.add(action);
+    }
+
     @Override
     public void undo() {
         for (int i = actions.size() - 1; i >= 0; --i)

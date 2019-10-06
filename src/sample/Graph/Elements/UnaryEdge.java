@@ -6,6 +6,7 @@ import sample.Graph.GraphGroup;
 import sample.Main;
 
 public class UnaryEdge extends Edge {
+    public static final Vector2D defaultCirclePos = new Vector2D(20, 20);
     private static final double minCircleDistance = 50;
 
 
@@ -43,6 +44,12 @@ public class UnaryEdge extends Edge {
         direction.addListener((observable, oldValue, newValue) -> {
             wasChangedDirection(newValue);
         });
+    }
+
+    public UnaryEdge(GraphGroup graphGroup, Vertex vertex, Vector2D circlePos) {
+        this(graphGroup, vertex);
+        circlePosRelativeVertex = circlePos;
+        updateCircle();
     }
 
     // updates

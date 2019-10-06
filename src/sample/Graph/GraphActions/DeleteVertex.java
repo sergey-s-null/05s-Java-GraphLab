@@ -15,7 +15,7 @@ public class DeleteVertex extends VertexAction {
     private GraphGroup graphGroup;
     private Set<Edge> savedEdges;
 
-    private DeleteVertex(Vertex vertex, Set<Edge> savedEdges, GraphGroup graphGroup) {
+    public DeleteVertex(Vertex vertex, Set<Edge> savedEdges, GraphGroup graphGroup) {
         super(vertex);
         this.savedEdges = savedEdges;
         this.graphGroup = graphGroup;
@@ -23,15 +23,15 @@ public class DeleteVertex extends VertexAction {
 
     @Override
     public void undo() {
-        this.graphGroup.addVertex(vertex);
+        this.graphGroup.addVertex(vertex, false);
         if (savedEdges != null)
             for (Edge edge : savedEdges)
-                graphGroup.addEdge(edge);
+                graphGroup.addEdge(edge, false);
     }
 
     @Override
     public void redo() {
         savedEdges = vertex.getEdges();
-        graphGroup.removeVertexWithEdges(vertex);
+        graphGroup.removeVertexWithEdges(vertex, false);
     }
 }

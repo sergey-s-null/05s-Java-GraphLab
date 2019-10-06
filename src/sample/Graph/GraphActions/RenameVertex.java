@@ -21,11 +21,11 @@ public class RenameVertex extends VertexAction {
 
     @Override
     public void undo() {
-        vertex.setName(oldName);
+        vertex.setName(oldName, false);
     }
 
     @Override
     public void redo() {
-        vertex.setName(newName);
+        vertex.setName(newName, false);
     }
 }

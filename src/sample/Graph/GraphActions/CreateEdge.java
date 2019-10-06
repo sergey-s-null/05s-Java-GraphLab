@@ -11,18 +11,20 @@ public class CreateEdge extends EdgeAction {
 
     private GraphGroup graphGroup;
 
-    private CreateEdge(Edge edge, GraphGroup graphGroup) {
+    public CreateEdge(Edge edge, GraphGroup graphGroup) {
         super(edge);
         this.graphGroup = graphGroup;
     }
 
     @Override
     public void undo() {
-        graphGroup.removeEdge(edge);
+        edge.disconnectVertices();
+        graphGroup.removeEdge(edge, false);
     }
 
     @Override
     public void redo() {
-        graphGroup.addEdge(edge);
+        edge.connectVertices();
+        graphGroup.addEdge(edge, false);
     }
 }

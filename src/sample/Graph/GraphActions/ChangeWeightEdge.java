@@ -20,11 +20,11 @@ public class ChangeWeightEdge extends EdgeAction {
 
     @Override
     public void undo() {
-        edge.setWeight(oldWeight);
+        edge.setWeight(oldWeight, false);
     }
 
     @Override
     public void redo() {
-        edge.setWeight(newWeight);
+        edge.setWeight(newWeight, false);
     }
 }

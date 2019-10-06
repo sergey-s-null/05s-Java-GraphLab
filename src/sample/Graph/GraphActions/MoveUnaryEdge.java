@@ -20,10 +20,9 @@ public class MoveUnaryEdge extends EdgeAction {
     private MoveUnaryEdge(UnaryEdge edge) {
         super(edge);
 
-        // TODO remove
-        if (savedCirclePosRelativeVertex == null) {
-            System.out.println("WARNING! Called MoveUnaryEdge constructor without saving data.");
-        }
+//        if (savedCirclePosRelativeVertex == null) {
+//            System.out.println("WARNING! Called MoveUnaryEdge constructor without saving data.");
+//        }
         oldCirclePosRelativeVertex = savedCirclePosRelativeVertex != null ?
                 savedCirclePosRelativeVertex : edge.getCirclePosRelativeVertex();
         savedCirclePosRelativeVertex = null;

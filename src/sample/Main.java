@@ -9,9 +9,6 @@ import javafx.stage.Stage;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 
 public class Main extends Application {
 
@@ -47,7 +44,7 @@ public class Main extends Application {
         controller.init();
 
 
-        primaryStage.setTitle("Графойд by Laiser399");
+        primaryStage.setTitle("Графойд by Laiser399   ( ͡° ͜ʖ ͡°)");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
 
@@ -58,28 +55,6 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-//        String testStr1 = "[1,2.4,4],[-2,3,-98.9]";
-//        Pattern pattern1 = Pattern.compile("(\\[([^]]+)],?){1,3}");
-//        Matcher matcher1 = pattern1.matcher(testStr1);
-//        if (matcher1.matches()) {
-//            for (int i = 0; i <= matcher1.groupCount(); ++i) {
-//                System.out.println(matcher1.group(i));
-//            }
-//        }
-
-
-//        String testStr = "[1,2.5,-3],[444,2.23],";
-//        Pattern pattern = Pattern.compile("\\[([^]]+)],?");
-//        Matcher matcher = pattern.matcher(testStr);
-//
-//        int start = 0;
-//        while (matcher.find(start)) {
-//            for (int i = 0; i <= matcher.groupCount(); ++i) {
-//                System.out.println("" + i + ": " + matcher.group(i));
-//            }
-//            start = matcher.end();
-//        }
-
         launch(args);
     }
 }

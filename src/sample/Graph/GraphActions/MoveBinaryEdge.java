@@ -20,10 +20,9 @@ public class MoveBinaryEdge extends EdgeAction {
     private MoveBinaryEdge(BinaryEdge edge) {
         super(edge);
 
-        // TODO remove
-        if (savedPointAngle == null || savedPointRadiusCoef == null) {
-            System.out.println("WARNING! Called MoveBinaryEdge constructor without saving params.");
-        }
+//        if (savedPointAngle == null || savedPointRadiusCoef == null) {
+//            System.out.println("WARNING! Called MoveBinaryEdge constructor without saving params.");
+//        }
         oldPointAngle = savedPointAngle != null ? savedPointAngle : edge.getPointAngle();
         oldPointRadiusCoef = savedPointRadiusCoef != null ?
                 savedPointRadiusCoef : edge.getPointRadiusCoef();
@@ -36,11 +35,11 @@ public class MoveBinaryEdge extends EdgeAction {
 
     @Override
     public void undo() {
-        ((BinaryEdge) edge).moveByPointData(oldPointAngle, oldPointRadiusCoef);
+        ((BinaryEdge) edge).setPointData(oldPointAngle, oldPointRadiusCoef);
     }
 
     @Override
     public void redo() {
-        ((BinaryEdge) edge).moveByPointData(newPointAngle, newPointRadiusCoef);
+        ((BinaryEdge) edge).setPointData(newPointAngle, newPointRadiusCoef);
     }
 }

@@ -11,18 +11,20 @@ public class DeleteEdge extends EdgeAction {
 
     private GraphGroup graphGroup;
 
-    private DeleteEdge(Edge edge, GraphGroup graphGroup) {
+    public DeleteEdge(Edge edge, GraphGroup graphGroup) {
         super(edge);
         this.graphGroup = graphGroup;
     }
 
     @Override
     public void undo() {
-        graphGroup.addEdge(edge);
+        edge.connectVertices();
+        graphGroup.addEdge(edge, false);
     }
 
     @Override
     public void redo() {
-        graphGroup.removeEdge(edge);
+        edge.disconnectVertices();
+        graphGroup.removeEdge(edge, false);
     }
 }

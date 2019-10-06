@@ -1,6 +1,9 @@
 package sample.Parser;
 
 
+import sample.Graph.Elements.Vertex;
+import sample.Graph.GraphGroup;
+
 public class VertexData {
     private String name;
     private double x, y;
@@ -30,5 +33,9 @@ public class VertexData {
 
     public double getY() {
         return y;
+    }
+
+    public Vertex create(GraphGroup graphGroup) {
+        return new Vertex(graphGroup, x, y, name);
     }
 }

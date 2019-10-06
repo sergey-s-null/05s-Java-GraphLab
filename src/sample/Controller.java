@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
+import sample.Graph.GraphInputDialog;
 import sample.MatrixView.MatrixView;
 import sample.Parser.InputFileParser;
 import sample.Parser.GraphData;
@@ -27,6 +28,7 @@ public class Controller {
 
     private FileChooser fileChooser = new FileChooser();
     private InputFileParser inputFileParser = new InputFileParser();
+    private InputDialog inputDialog = new InputDialog();
 
     void init() {
         anchorPane.getChildren().add(graphGroup);
@@ -68,8 +70,7 @@ public class Controller {
                     result = inputFileParser.parseEdgesFile(file.getAbsolutePath());
                 }
                 else {
-                    System.out.println("Unknown extension.");
-                    // TODO
+                    return;
                 }
             }
             catch (Exception e) {
@@ -77,10 +78,14 @@ public class Controller {
                     System.out.println(elem);
                 System.out.println("\n" + e.getMessage());
                 System.out.println(e.getClass());
+                return;
             }
+
+            graphGroup.setGraph(result, true);
         }
 
-        System.out.println(result);
+
+//        System.out.println(result);
 
     }
 
@@ -95,6 +100,18 @@ public class Controller {
 
     @FXML private void onRedoAction(ActionEvent event) {
         GraphActionsController.redo();
+    }
+
+    @FXML private void onChangeWidth(ActionEvent event) {
+        Double width = inputDialog.getGraphWidth(graphGroup.widthProperty().get());
+        if (width != null)
+            graphGroup.setWidth(width, true);
+    }
+
+    @FXML private void onChangeHeight(ActionEvent event) {
+        Double height = inputDialog.getGraphHeight(graphGroup.heightProperty().get());
+        if (height != null)
+            graphGroup.setHeight(height, true);
     }
 
     // other
