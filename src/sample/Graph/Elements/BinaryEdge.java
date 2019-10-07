@@ -80,7 +80,9 @@ public class BinaryEdge extends Edge {
     public void update() {
         Vector2D circleCenter = calculateCircleCenter();
         Vector2D arcCenter = calculateArcCenter(circleCenter);
+        if (arcCenter != null && arcCenter.distance(circleCenter) > defaultArcRadius) arcCenter = null;
         double arcRadius = arcCenter == null ? defaultArcRadius : circleCenter.subtract(arcCenter).getNorm();
+
         boolean sweepFlag = calculateSweepFlag(circleCenter),
                 largeFlag = calculateLargeFlag(circleCenter);
 
@@ -97,6 +99,7 @@ public class BinaryEdge extends Edge {
     }
 
     private Vector2D calculateArcCenter(Vector2D circlePos) {
+        // пересечение двух прямых - центр окружности
         double A1 = circlePos.getX() - firstVertex.getCenterX(), B1 = circlePos.getY() - firstVertex.getCenterY(),
                 C1 = -A1*(firstVertex.getCenterX() + circlePos.getX())*0.5 - B1*(firstVertex.getCenterY() + circlePos.getY())*0.5,
                 A2 = secondVertex.getCenterX() - circlePos.getX(), B2 = secondVertex.getCenterY() - circlePos.getY(),

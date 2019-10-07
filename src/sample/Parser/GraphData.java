@@ -2,27 +2,43 @@ package sample.Parser;
 
 
 import Jama.Matrix;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
+import sample.Main;
 
 import java.util.*;
 
 public class GraphData {
-    private static VerticesData generateDefaultVerticesData(int count) {
+    private static VerticesData generateDefaultVerticesData(int count, Resolution resolution) {
+        double radius = Math.min(resolution.getWidth(), resolution.getHeight()) * 0.4;
+        double angle = 2 * Math.PI / count;
+        Vector2D center = new Vector2D(resolution.getWidth() / 2, resolution.getHeight() / 2);
+
         VerticesData result = new VerticesData();
+        Vector2D baseVector = new Vector2D(radius, 0);
         for (int i = 0; i < count; ++i) {
-            result.add(new VertexData(Integer.toString(i), -1, -1));
+            Vector2D vertexPos = Main.rotate(baseVector, angle * i).add(center);
+            result.add(new VertexData(Integer.toString(i), vertexPos.getX(), vertexPos.getY()));
         }
         return result;
     }
 
-    private static VerticesData generateVerticesDataBy(Set<String> names) {
+    private static VerticesData generateVerticesDataBy(Set<String> names, Resolution resolution) {
+        double radius = Math.min(resolution.getWidth(), resolution.getHeight()) * 0.4;
+        double angle = 2 * Math.PI / names.size();
+        Vector2D center = new Vector2D(resolution.getWidth() / 2, resolution.getHeight() / 2);
+
         VerticesData result = new VerticesData();
-        for (String name : names)
-            result.add(new VertexData(name));
+        Vector2D baseVector = new Vector2D(radius, 0);
+        int index = 0;
+        for (String name : names) {
+            Vector2D vertexPos = Main.rotate(baseVector, angle * index++).add(center);
+            result.add(new VertexData(name, vertexPos.getX(), vertexPos.getY()));
+        }
         return result;
     }
 
@@ -76,11 +92,13 @@ public class GraphData {
                 else {
                     if (val1 != 0) {
                         result.add(new BinaryEdgeData(verticesData.getName(row),
-                                verticesData.getName(col), val1, 1));
+                                verticesData.getName(col), val1, 1,
+                                0.15, 0.5));
                     }
                     if (val2 != 0) {
                         result.add(new BinaryEdgeData(verticesData.getName(row),
-                                verticesData.getName(col), val2, -1));
+                                verticesData.getName(col), val2, -1,
+                                -0.15, 0.5));
                     }
                 }
 
@@ -107,7 +125,8 @@ public class GraphData {
             throws Exception
     {
         return makeByAdjacency(adjacencyMatrix,
-                generateDefaultVerticesData(adjacencyMatrix.getRowDimension()), resolution);
+                generateDefaultVerticesData(adjacencyMatrix.getRowDimension(), resolution),
+                resolution);
     }
 
     // incident
@@ -172,7 +191,8 @@ public class GraphData {
     {
         validIncidentMatrix(incidentMatrix);
         return makeByIncident(incidentMatrix,
-                generateDefaultVerticesData(incidentMatrix.getRowDimension()), resolution);
+                generateDefaultVerticesData(incidentMatrix.getRowDimension(), resolution),
+                resolution);
     }
 
     // edges
@@ -207,7 +227,8 @@ public class GraphData {
 
     public static GraphData makeByEdges(EdgesData edgesData, Resolution resolution) throws Exception
     {
-        return makeByEdges(edgesData, generateVerticesDataBy(edgesData.getVerticesNames()), resolution);
+        return makeByEdges(edgesData,
+                generateVerticesDataBy(edgesData.getVerticesNames(), resolution), resolution);
     }
 
     public static GraphData makeByGraph(Collection<Vertex> vertices, Collection<Edge> edges,
