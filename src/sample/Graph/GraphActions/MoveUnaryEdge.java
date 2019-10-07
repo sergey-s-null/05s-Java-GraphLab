@@ -24,18 +24,18 @@ public class MoveUnaryEdge extends EdgeAction {
 //            System.out.println("WARNING! Called MoveUnaryEdge constructor without saving data.");
 //        }
         oldCirclePosRelativeVertex = savedCirclePosRelativeVertex != null ?
-                savedCirclePosRelativeVertex : edge.getCirclePosRelativeVertex();
+                savedCirclePosRelativeVertex : edge.getCirclePos();
         savedCirclePosRelativeVertex = null;
-        newCirclePosRelativeVertex = edge.getCirclePosRelativeVertex();
+        newCirclePosRelativeVertex = edge.getCirclePos();
     }
 
     @Override
     public void undo() {
-        ((UnaryEdge) edge).move(oldCirclePosRelativeVertex);
+        ((UnaryEdge) edge).setPosition(oldCirclePosRelativeVertex);
     }
 
     @Override
     public void redo() {
-        ((UnaryEdge) edge).move(newCirclePosRelativeVertex);
+        ((UnaryEdge) edge).setPosition(newCirclePosRelativeVertex);
     }
 }

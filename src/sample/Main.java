@@ -39,10 +39,8 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
 
-
         Controller controller = loader.getController();
         controller.init();
-
 
         primaryStage.setTitle("Графойд by Laiser399   ( ͡° ͜ʖ ͡°)");
         primaryStage.setScene(new Scene(root, 300, 275));
@@ -53,8 +51,8 @@ public class Main extends Application {
         
     }
 
-
     public static void main(String[] args) {
+
 
         launch(args);
     }

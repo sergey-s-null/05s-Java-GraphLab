@@ -44,6 +44,7 @@ public class InputFileParser {
             String line = reader.readLine();
             builder.append(removeComment(line));
         }
+        reader.close();
         return builder.toString().replaceAll("\\s", "");
     }
 

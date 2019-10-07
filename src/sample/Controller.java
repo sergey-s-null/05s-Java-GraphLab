@@ -2,16 +2,17 @@ package sample;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
-import sample.Graph.GraphInputDialog;
 import sample.MatrixView.MatrixView;
 import sample.Parser.InputFileParser;
 import sample.Parser.GraphData;
+import sample.Parser.OutputFileSaver;
 
 import java.io.File;
 
@@ -22,39 +23,48 @@ import java.io.File;
 //rb_move
 
 public class Controller {
+    private static final File filesDirectory = new File("C:\\Users\\Sergey\\Desktop\\debug_saves");
+
     @FXML private VBox leftPanel;
+    private MatrixView matrixView;
     @FXML private AnchorPane anchorPane;
     private GraphGroup graphGroup = new GraphGroup();
 
     private FileChooser fileChooser = new FileChooser();
     private InputFileParser inputFileParser = new InputFileParser();
+    private OutputFileSaver outputFileSaver = new OutputFileSaver();
     private InputDialog inputDialog = new InputDialog();
 
     void init() {
         anchorPane.getChildren().add(graphGroup);
 
-        leftPanel.getChildren().add(new MatrixView(graphGroup.getVertices(),
-                graphGroup.getEdges()));
+        matrixView = new MatrixView(graphGroup.getVertices(), graphGroup.getEdges());
+        leftPanel.getChildren().add(matrixView);
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Матрица смежности", "*.adj"),
                 new FileChooser.ExtensionFilter("Матрица инцидентности", "*.inc"),
                 new FileChooser.ExtensionFilter("Ребра", "*.ed")
         );
+
+
+
+//        anchorPane.setVisible(false); // todo delete
 //        AnchorPane.setLeftAnchor(graphGroup.getClip(), 0.0);
 //        AnchorPane.setRightAnchor(graphGroup.getClip(), 0.0);
     }
 
     // TODO del
     @FXML private void onTestAction(ActionEvent event) {
-
+        System.gc();
     }
 
     // File
     @FXML private void onOpenFile(ActionEvent event) {
-        //File file = fileChooser.showOpenDialog(null);
+        fileChooser.setInitialDirectory(filesDirectory);
+        File file = fileChooser.showOpenDialog(null);
         // TODO debug
-        File file = new File("C:\\Users\\Sergey\\Desktop\\1.adj");
+        //File file = new File("C:\\Users\\Sergey\\Desktop\\1.adj");
         //file = new File("C:\\Users\\Sergey\\Desktop\\1.inc");
 
         GraphData result = null;
@@ -74,10 +84,7 @@ public class Controller {
                 }
             }
             catch (Exception e) {
-                for (StackTraceElement elem : e.getStackTrace())
-                    System.out.println(elem);
-                System.out.println("\n" + e.getMessage());
-                System.out.println(e.getClass());
+                GraphAlert.showAndWait("Ошибка открытия файла: " + e.getMessage());
                 return;
             }
             graphGroup.setGraph(result, true);
@@ -89,9 +96,24 @@ public class Controller {
     }
 
     @FXML private void onSaveFile(ActionEvent event) {
+        fileChooser.setInitialDirectory(filesDirectory);
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
-            System.out.println(file.getName());
+            try {
+                if (file.getName().endsWith(".adj")) {
+                    outputFileSaver.saveAsAdjacency(file.getAbsolutePath(), matrixView.getMatrix(),
+                            matrixView.getVerticesData(), graphGroup.getResolution());
+                }
+                else if (file.getName().endsWith(".inc")) {
+                    outputFileSaver.saveAsIncident(file.getAbsolutePath(), graphGroup.getGraph());
+                }
+                else if (file.getName().endsWith(".ed")) {
+                    outputFileSaver.saveAsEdges(file.getAbsolutePath(), graphGroup.getGraph());
+                }
+            }
+            catch (Exception e) {
+                GraphAlert.showAndWait("Ошибка сохранения файла: " + e.getMessage());
+            }
         }
     }
 
@@ -105,13 +127,13 @@ public class Controller {
     }
 
     @FXML private void onChangeWidth(ActionEvent event) {
-        Double width = inputDialog.getGraphWidth(graphGroup.widthProperty().get());
+        Double width = inputDialog.getGraphWidth(graphGroup.getWidth());
         if (width != null)
             graphGroup.setWidth(width, true);
     }
 
     @FXML private void onChangeHeight(ActionEvent event) {
-        Double height = inputDialog.getGraphHeight(graphGroup.heightProperty().get());
+        Double height = inputDialog.getGraphHeight(graphGroup.getHeight());
         if (height != null)
             graphGroup.setHeight(height, true);
     }

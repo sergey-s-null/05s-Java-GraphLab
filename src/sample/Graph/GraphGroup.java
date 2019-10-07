@@ -1,8 +1,10 @@
 package sample.Graph;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
 import javafx.collections.ObservableSet;
 import javafx.scene.Group;
 import javafx.scene.input.MouseButton;
@@ -20,12 +22,10 @@ import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphActions.*;
 import sample.Parser.EdgeData;
 import sample.Parser.GraphData;
+import sample.Parser.Resolution;
 import sample.Parser.VertexData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class GraphGroup extends Group {
@@ -38,7 +38,7 @@ public class GraphGroup extends Group {
     }
 
     // TODO listeners in Vertex
-    public static final double minWidth = 200, minHeight = 200;
+    public static final double minWidth = 200, minHeight = 200, maxWidth = 5000, maxHeight = 5000;
     public static final double width = 400, height = 400; // TODO refactor to default
     private Rectangle backgroundRect = new Rectangle(),
                       clipRect = new Rectangle();
@@ -58,20 +58,7 @@ public class GraphGroup extends Group {
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
     private ObservableSet<Edge> edges = FXCollections.observableSet();
 
-    private void initRects() {
-        backgroundRect.setWidth(width);
-        backgroundRect.setHeight(height);
-        backgroundRect.setFill(Color.WHITE);
-        backgroundRect.setStrokeType(StrokeType.INSIDE);
-        backgroundRect.setStroke(Color.BLACK);
-        backgroundRect.setStrokeWidth(1);
-
-        clipRect.setWidth(width);
-        clipRect.setHeight(height);
-        width1 = clipRect.widthProperty();
-        height1 = clipRect.heightProperty();
-    }
-
+    // constructor
     public GraphGroup() {
         super();
 
@@ -87,6 +74,22 @@ public class GraphGroup extends Group {
 
     }
 
+    // init
+    private void initRects() {
+        backgroundRect.setWidth(width);
+        backgroundRect.setHeight(height);
+        backgroundRect.setFill(Color.WHITE);
+        backgroundRect.setStrokeType(StrokeType.INSIDE);
+        backgroundRect.setStroke(Color.BLACK);
+        backgroundRect.setStrokeWidth(1);
+
+        clipRect.setWidth(width);
+        clipRect.setHeight(height);
+        width1 = clipRect.widthProperty();
+        height1 = clipRect.heightProperty();
+    }
+
+    //
     public void setCurrentAction(Action currentAction) {
         if (selected != null) {
             selected.setSelected(false);
@@ -107,6 +110,31 @@ public class GraphGroup extends Group {
         return edges;
     }
 
+    private ListOfActions getVerticesActionsForNewResolution(Resolution resolution) {
+        ListOfActions listOfActions = new ListOfActions();
+        for (Vertex vertex : vertices) {
+            sample.Graph.GraphActions.Action vertexAction =
+                    vertex.getActionForNewResolution(resolution);
+            if (vertexAction != null)
+                listOfActions.add(vertexAction);
+        }
+        return listOfActions;
+    }
+
+    private ListOfActions getChangeResolutionAction(Resolution newResolution) {
+        ListOfActions verticesActions =
+                getVerticesActionsForNewResolution(newResolution);
+        verticesActions.redo();
+
+        ListOfActions listOfActions = new ListOfActions();
+        listOfActions.add(verticesActions);
+        listOfActions.add(new ChangeResolution(this, getResolution(),
+                newResolution));
+
+        return listOfActions;
+    }
+
+    // graph
     public void setGraph(GraphData data, boolean createAction) {
         // создание новых
         Map<String, Vertex> nameToVertex = new HashMap<>();
@@ -129,7 +157,7 @@ public class GraphGroup extends Group {
                 actions.add(new CreateVertex(vertex, this));
             for (Edge edge : newEdges)
                 actions.add(new CreateEdge(edge, this));
-            // TODO resolution
+            actions.add(getChangeResolutionAction(data.getResolution()));
             GraphActionsController.addAction(actions);
         }
 
@@ -139,40 +167,51 @@ public class GraphGroup extends Group {
             addVertex(vertex, false);
         for (Edge edge : newEdges)
             addEdge(edge, false);
-        // TODO resolution
+        setResolution(data.getResolution(), false);
     }
 
     public GraphData getGraph() {
         return GraphData.makeByGraph(vertices, edges, width1.get(), height1.get());
     }
 
+    // resolution
+    public void setResolution(Resolution resolution, boolean createAction) {
+        if (createAction) {
+            GraphActionsController.addAction(getChangeResolutionAction(resolution));
+        }
+
+        width1.set(resolution.getWidth());
+        height1.set(resolution.getHeight());
+    }
+
+    public Resolution getResolution() {
+        return new Resolution(width1.get(), height1.get());
+    }
+
     public void setWidth(double width, boolean createAction) {
-        if (createAction)
-            ChangeWidth.create(this, width1.get(), width);
-        width1.set(width);
+        setResolution(new Resolution(width, height1.get()), createAction);
     }
 
     public void setHeight(double height, boolean createAction) {
-        if (createAction)
-            ChangeHeight.create(this, height1.get(), height);
-        height1.set(height);
+        setResolution(new Resolution(width1.get(), height), createAction);
     }
 
-    public DoubleProperty widthProperty() {
-        return width1;
+    public double getWidth() {
+        return width1.get();
     }
 
-    public DoubleProperty heightProperty() {
-        return height1;
+    public double getHeight() {
+        return height1.get();
     }
 
     //----------------|
     //   add/remove   |
     //----------------|
     public void clear() {
-        for (Edge edge : edges) {
-            edge.disconnectVertices();
-        }
+        for (Edge edge : edges)
+            edge.disconnect();
+        for (Vertex vertex : vertices)
+            vertex.disconnect();
         edges.clear();
         vertices.clear();
         getChildren().remove(1, getChildren().size());
@@ -186,6 +225,7 @@ public class GraphGroup extends Group {
     public void addVertex(Vertex vertex, boolean createAction) {
         if (createAction)
             CreateVertex.create(vertex, this);
+        vertex.connect();
         getChildren().add(vertex);
         vertices.add(vertex);
     }
@@ -203,28 +243,32 @@ public class GraphGroup extends Group {
     public void addEdge(Edge edge, boolean createAction) {
         if (createAction)
             CreateEdge.create(edge, this);
-        edge.connectVertices();
+        edge.connect();
         getChildren().add(1, edge);
         edges.add(edge);
     }
 
     public void removeVertexWithEdges(Vertex vertex, boolean createAction) {
-        if (createAction)
-            DeleteVertex.create(vertex, vertex.getEdges(), this);
+        Set<Edge> incidentEdges = vertex.getEdgesCopy();
 
-        for (Edge edge : vertex.getEdges()) {
-            getChildren().remove(edge);
+        if (createAction)
+            DeleteVertex.create(vertex, incidentEdges, this);
+
+        for (Edge edge : incidentEdges) {
+            edge.disconnect();
             edges.remove(edge);
+            getChildren().remove(edge);
         }
-        vertex.removeAllIncidentEdges();
-        getChildren().remove(vertex);
+
+        vertex.disconnect();
         vertices.remove(vertex);
+        getChildren().remove(vertex);
     }
 
     public void removeEdge(Edge edge, boolean createAction) {
         if (createAction)
             DeleteEdge.create(edge, this);
-        edge.disconnectVertices();
+        edge.disconnect();
         getChildren().remove(edge);
         edges.remove(edge);
     }
@@ -245,7 +289,7 @@ public class GraphGroup extends Group {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.CreateEdge) {
                 if (selected == null) {
-                    selected = (Vertex)event.getSource();
+                    selected = (Vertex) event.getSource();
                     selected.setSelected(true);
                 }
                 else if (selected == event.getSource()) {
@@ -300,7 +344,7 @@ public class GraphGroup extends Group {
         if (event.getButton() == MouseButton.PRIMARY && currentAction == Action.Move) {
             movingEdge = (Edge)event.getSource();
             if (movingEdge.getClass() == UnaryEdge.class) {
-                MoveUnaryEdge.saveCirclePos(((UnaryEdge) movingEdge).getCirclePosRelativeVertex());
+                MoveUnaryEdge.saveCirclePos(((UnaryEdge) movingEdge).getCirclePos());
             }
             else if (movingEdge.getClass() == BinaryEdge.class) {
                 BinaryEdge edge = (BinaryEdge) movingEdge;
@@ -313,10 +357,10 @@ public class GraphGroup extends Group {
         if (currentAction == Action.Move) {
             if (movingVertex != null) {
                 Vector2D newVertexPos = vertexStartPos.add(new Vector2D(event.getX(), event.getY())).subtract(mousePressedPos);
-                movingVertex.move(newVertexPos);
+                movingVertex.setCenter(newVertexPos);
             }
             else if (movingEdge != null) {
-                movingEdge.move(event.getX(), event.getY());
+                movingEdge.setPosition(event.getX(), event.getY());
             }
         }
     }
@@ -340,7 +384,6 @@ public class GraphGroup extends Group {
         }
 
     }
-
     // context menus
     public void onVertexContextMenuAction(Vertex vertex, VertexContextMenu.Action action) {
         switch (action) {
@@ -380,7 +423,6 @@ public class GraphGroup extends Group {
         }
 
     }
-
     // clip width/height
     private void onWidthChanged(double newWidth) {
         backgroundRect.setWidth(newWidth);

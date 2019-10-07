@@ -23,7 +23,7 @@ public class CreateVertex extends VertexAction {
 
     @Override
     public void undo() {
-        savedEdges = vertex.getEdges();
+        savedEdges = vertex.getEdgesCopy();
         graphGroup.removeVertexWithEdges(vertex, false);
     }
 

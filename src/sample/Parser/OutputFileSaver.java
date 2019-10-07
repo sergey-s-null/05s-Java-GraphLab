@@ -19,7 +19,7 @@ public class OutputFileSaver {
         StringBuilder builder = new StringBuilder();
         for (int row = 0; row < matrix.getRowDimension(); ++row) {
             if (row > 0)
-                builder.append(", ");
+                builder.append(", \n\t");
             builder.append('[');
             for (int col = 0; col < matrix.getColumnDimension(); ++col) {
                 if (col > 0)
@@ -37,7 +37,7 @@ public class OutputFileSaver {
             EdgeData edgeData = data.getEdges().get(i);
 
             if (i > 0)
-                builder.append(", ");
+                builder.append(", \n\t");
             builder.append('(');
             builder.append(edgeData.getWeight());
             builder.append(", ");
@@ -68,12 +68,12 @@ public class OutputFileSaver {
         List<VertexData> verticesDataList = data.get();
         for (int i = 0; i < verticesDataList.size(); ++i) {
             if (i > 0)
-                builder.append(", ");
+                builder.append(", \n\t");
             VertexData vertexData = verticesDataList.get(i);
             builder.append(vertexData.getName());
             builder.append('(');
             builder.append(vertexData.getX());
-            builder.append(',');
+            builder.append(", ");
             builder.append(vertexData.getY());
             builder.append(')');
         }

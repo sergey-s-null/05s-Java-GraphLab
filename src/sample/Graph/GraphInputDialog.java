@@ -3,16 +3,10 @@ package sample.Graph;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputDialog;
 import sample.Graph.Elements.Vertex;
+import sample.GraphAlert;
 
 
 public class GraphInputDialog extends TextInputDialog {
-    private Alert alert = new Alert(Alert.AlertType.ERROR);
-
-    public GraphInputDialog() {
-        alert.setTitle("ᕦ(ò_óˇ)ᕤ");
-        alert.setHeaderText("Ошибка");
-    }
-
     public String getVertexName(String defaulName) {
         setTitle("Что тут обычно пишется?");
         setHeaderText("Введите имя вершины (длина от 1 до 10, запрещенные символы: \"%()[]{},\" и пробельные)");
@@ -26,8 +20,7 @@ public class GraphInputDialog extends TextInputDialog {
                 return null;
 
             if (!Vertex.isNameValid(res)) {
-                alert.setContentText("Неверное имя.");
-                alert.showAndWait();
+                GraphAlert.showAndWait("Неверное имя.");
                 continue;
             }
             return res;
@@ -49,16 +42,14 @@ public class GraphInputDialog extends TextInputDialog {
             try {
                 double weight = Double.parseDouble(res);
                 if (weight == 0) {
-                    alert.setContentText("Вес не может быть равен 0.");
-                    alert.showAndWait();
+                    GraphAlert.showAndWait("Вес не может быть равен 0.");
                 }
                 else {
                     return weight;
                 }
             }
             catch (NumberFormatException e) {
-                alert.setContentText("Неверный формат числа.");
-                alert.showAndWait();
+                GraphAlert.showAndWait("Неверный формат числа.");
             }
         }
     }

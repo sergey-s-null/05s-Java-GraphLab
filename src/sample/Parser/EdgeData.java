@@ -11,7 +11,7 @@ import java.util.Map;
 
 abstract public class EdgeData {
     public static EdgeData makeBy(UnaryEdge edge) {
-        Vector2D circlePos = edge.getCirclePosRelativeVertex();
+        Vector2D circlePos = edge.getCirclePos();
         return new UnaryEdgeData(edge.getVertex().getName(), edge.getWeight(),
                 circlePos.getX(), circlePos.getY());
     }

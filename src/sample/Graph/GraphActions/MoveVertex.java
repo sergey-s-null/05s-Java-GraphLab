@@ -15,6 +15,7 @@ public class MoveVertex extends VertexAction {
         savedPos = pos;
     }
 
+
     private Vector2D oldPos, newPos;
 
     private MoveVertex(Vertex vertex) {
@@ -30,13 +31,19 @@ public class MoveVertex extends VertexAction {
         this.newPos = vertex.getCenterPos();
     }
 
+    public MoveVertex(Vertex vertex, Vector2D oldPos, Vector2D newPos) {
+        super(vertex);
+        this.oldPos = oldPos;
+        this.newPos = newPos;
+    }
+
     @Override
     public void undo() {
-        vertex.move(oldPos);
+        vertex.setCenter(oldPos);
     }
 
     @Override
     public void redo() {
-        vertex.move(newPos);
+        vertex.setCenter(newPos);
     }
 }

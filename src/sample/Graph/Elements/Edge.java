@@ -61,20 +61,10 @@ public abstract class Edge extends Group {
         weightText.setStrokeWidth(0.3);
     }
 
-    abstract public void update();
+    // 1. position
+    abstract public void setPosition(double x, double y);
 
-    abstract public void move(double x, double y);
-
-    // vertices
-    abstract public Vertex getFirstVertex();
-
-    abstract public Vertex getSecondVertex();
-
-    abstract public void disconnectVertices();
-
-    abstract public void connectVertices();
-
-    // weight
+    // 2. weight
     public void setWeight(double weight, boolean createAction) {
         if (createAction)
             ChangeWeightEdge.create(this, this.weight.get(), weight);
@@ -89,7 +79,8 @@ public abstract class Edge extends Group {
         return weight;
     }
 
-    // direction
+    // 3. direction
+    // TODO think about actions controller
     public void setDirection(Direction direction) {
         this.direction.setValue(direction);
     }
@@ -115,5 +106,19 @@ public abstract class Edge extends Group {
     public Property<Direction> directionProperty() {
         return direction;
     }
+
+    // update
+    abstract public void update();
+
+    // vertices
+    abstract public Vertex getFirstVertex();
+
+    abstract public Vertex getSecondVertex();
+
+    abstract public void connect();
+
+    abstract public void disconnect();
+
+
 
 }

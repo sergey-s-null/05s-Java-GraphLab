@@ -31,7 +31,7 @@ public class DeleteVertex extends VertexAction {
 
     @Override
     public void redo() {
-        savedEdges = vertex.getEdges();
+        savedEdges = vertex.getEdgesCopy();
         graphGroup.removeVertexWithEdges(vertex, false);
     }
 }

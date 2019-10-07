@@ -75,7 +75,7 @@ public class BinaryEdgeData extends EdgeData {
     public Edge create(GraphGroup graphGroup, Map<String, Vertex> nameToVertex) {
         BinaryEdge edge = new BinaryEdge(graphGroup, nameToVertex.get(vertexName1),
                 nameToVertex.get(vertexName2));
-        edge.setPointData(angle, radius);
+        edge.setPositionBy(angle, radius);
         switch (direction) {
             case -1:
                 edge.setDirection(Edge.Direction.FirstVertex);
@@ -87,6 +87,7 @@ public class BinaryEdgeData extends EdgeData {
                 edge.setDirection(Edge.Direction.SecondVertex);
                 break;
         }
+        edge.setWeight(weight, false);
         return edge;
     }
 }

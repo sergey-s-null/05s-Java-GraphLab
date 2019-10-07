@@ -35,11 +35,11 @@ public class MoveBinaryEdge extends EdgeAction {
 
     @Override
     public void undo() {
-        ((BinaryEdge) edge).setPointData(oldPointAngle, oldPointRadiusCoef);
+        ((BinaryEdge) edge).setPositionBy(oldPointAngle, oldPointRadiusCoef);
     }
 
     @Override
     public void redo() {
-        ((BinaryEdge) edge).setPointData(newPointAngle, newPointRadiusCoef);
+        ((BinaryEdge) edge).setPositionBy(newPointAngle, newPointRadiusCoef);
     }
 }

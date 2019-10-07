@@ -58,6 +58,8 @@ public class UnaryEdgeData extends EdgeData {
 
     @Override
     public Edge create(GraphGroup graphGroup, Map<String, Vertex> nameToVertex) {
-        return new UnaryEdge(graphGroup, nameToVertex.get(vertexName), circlePos);
+        Edge edge = new UnaryEdge(graphGroup, nameToVertex.get(vertexName), circlePos);
+        edge.setWeight(weight, false);
+        return edge;
     }
 }

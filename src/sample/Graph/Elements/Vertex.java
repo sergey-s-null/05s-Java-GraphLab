@@ -1,6 +1,10 @@
 package sample.Graph.Elements;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
@@ -9,8 +13,12 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import sample.Graph.GraphActions.Action;
+import sample.Graph.GraphActions.MoveVertex;
 import sample.Graph.GraphActions.RenameVertex;
 import sample.Graph.GraphGroup;
+import sample.Parser.Resolution;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -26,6 +34,7 @@ public class Vertex extends Group {
 
     private static int nextId = 0;
 
+    private GraphGroup graphGroup;
     private static final Color nameColor = Color.web("086070");
     private static final Color selectedFillColor = Color.ORANGE,
                                defaultFillColor = Color.web("A1D6E2"),
@@ -35,9 +44,54 @@ public class Vertex extends Group {
 
     private final int id;
     private Circle circle = new Circle();
-    private double x = 0, y = 0;
+    private ObjectProperty<Vector2D> position = new SimpleObjectProperty<>(new Vector2D(0, 0));
     private Text name = new Text();
     private Set<Edge> incidentEdges = new HashSet<>();
+
+
+    // constructors
+    public Vertex(GraphGroup graphGroup, double x, double y) {
+        this(graphGroup, x, y, Integer.toString(nextId));
+    }
+
+    public Vertex(GraphGroup graphGroup, double x, double y, String nameStr) {
+        super();
+        this.graphGroup = graphGroup;
+
+        connect();
+
+        id = nextId++;
+        initCircle();
+        initName(nameStr);
+        getChildren().addAll(circle, name);
+
+        setCenter(x, y);
+    }
+
+    //
+    public int getVertexId() {
+        return id;
+    }
+
+    public void setSelected(boolean selected) {
+        if (selected)
+            circle.setFill(selectedFillColor);
+        else
+            circle.setFill(defaultFillColor);
+    }
+
+    public Action getActionForNewResolution(Resolution resolution) {
+        double x = getCenterX(), y = getCenterY();
+        if (x > resolution.getWidth() - radius)
+            x = resolution.getWidth() - radius;
+        if (y > resolution.getHeight() - radius)
+            y = resolution.getHeight() - radius;
+
+        if (x != getCenterX() || y != getCenterY())
+            return new MoveVertex(this, getCenterPos(), new Vector2D(x, y));
+        else
+            return null;
+    }
 
     // init
     private void initCircle() {
@@ -57,83 +111,27 @@ public class Vertex extends Group {
         this.name.setStrokeWidth(0.5);
     }
 
-    private void initEvents(GraphGroup graphGroup) {
-        setOnMouseClicked(graphGroup::onMouseClick_vertex);
-        setOnMousePressed(graphGroup::onMousePress_vertex);
+    // center methods
+    public void setCenter(Vector2D radiusVector) {
+        setCenter(radiusVector.getX(), radiusVector.getY());
     }
 
-    // constructors
-    public Vertex(GraphGroup graphGroup, double x, double y, String nameStr) {
-        super();
-
-        id = nextId++;
-        initCircle();
-        initName(nameStr);
-        initEvents(graphGroup);
-        getChildren().addAll(circle, name);
-
-        move(x, y);
-    }
-
-    public Vertex(GraphGroup graphGroup, double x, double y) {
-        this(graphGroup, x, y, Integer.toString(nextId));
-    }
-
-    // updates
-    private void update() {
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-
-        name.setX(x - name.getLayoutBounds().getWidth()  / 2);
-        name.setY(y - 2.5);
-
-        for (Edge edge : incidentEdges) {
-            edge.update();
-        }
-    }
-
-    // move
-    public void move(double x, double y) {
+    public void setCenter(double x, double y) {
         if (x < radius)
             x = radius;
-        else if (x > GraphGroup.width - radius)
-            x = GraphGroup.width - radius;
+        else if (x > graphGroup.getWidth() - radius)
+            x = graphGroup.getWidth() - radius;
 
         if (y < radius)
             y = radius;
-        else if (y > GraphGroup.height - radius)
-            y = GraphGroup.height - radius;
+        else if (y > graphGroup.getHeight() - radius)
+            y = graphGroup.getHeight() - radius;
 
-        this.x = x;
-        this.y = y;
+        circle.setCenterX(x);
+        circle.setCenterY(y);
+        position.setValue(new Vector2D(x, y));
 
-        update();
-    }
-
-    public void move(Vector2D radiusVector) {
-        move(radiusVector.getX(), radiusVector.getY());
-    }
-
-    // incident edges
-    public void addIncidentEdge(Edge edge) {
-        incidentEdges.add(edge);
-    }
-
-    public void removeIncidentEdge(Edge edge) {
-        incidentEdges.remove(edge);
-    }
-
-    public void removeAllIncidentEdges() {
-        incidentEdges.clear();
-    }
-
-    public Set<Edge> getEdges() {
-        return new HashSet<>(incidentEdges);
-    }
-
-    // vertex methods
-    public int getVertexId() {
-        return id;
+        updateNameText();
     }
 
     public double getCenterX() {
@@ -148,11 +146,8 @@ public class Vertex extends Group {
         return new Vector2D(circle.getCenterX(), circle.getCenterY());
     }
 
-    public void setSelected(boolean selected) {
-        if (selected)
-            circle.setFill(selectedFillColor);
-        else
-            circle.setFill(defaultFillColor);
+    ObservableValue<Vector2D> positionObservable() {
+        return position;
     }
 
     // name
@@ -160,7 +155,7 @@ public class Vertex extends Group {
         if (createAction)
             RenameVertex.create(this, name.getText(), newName);
         name.setText(newName);
-        update();
+        updateNameText();
     }
 
     public String getName() {
@@ -169,5 +164,51 @@ public class Vertex extends Group {
 
     public StringProperty nameProperty() {
         return name.textProperty();
+    }
+
+    // updates
+    private void updateNameText() {
+        name.setX(circle.getCenterX() - name.getLayoutBounds().getWidth()  / 2);
+        name.setY(circle.getCenterY() - 2.5);
+
+        // TODO remove this (make property or use circle property)
+        // TODO remake Edge (add listener)
+//        for (Edge edge : incidentEdges) {
+//            edge.update();
+//        }
+    }
+
+    // incident edges
+    void addIncidentEdge(Edge edge) {
+        incidentEdges.add(edge);
+    }
+
+    void removeIncidentEdge(Edge edge) {
+        incidentEdges.remove(edge);
+    }
+
+    public Set<Edge> getEdgesCopy() {
+        return new HashSet<>(incidentEdges);
+    }
+
+    // events
+    public void connect() {
+        setOnMouseClicked(graphGroup::onMouseClick_vertex);
+        setOnMousePressed(graphGroup::onMousePress_vertex);
+    }
+
+    public void disconnect() {
+        setOnMouseClicked(null);
+        setOnMousePressed(null);
+    }
+
+
+
+
+
+    // for debug todo remove
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println("fina");
     }
 }

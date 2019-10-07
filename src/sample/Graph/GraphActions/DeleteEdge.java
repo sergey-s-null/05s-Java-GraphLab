@@ -18,13 +18,13 @@ public class DeleteEdge extends EdgeAction {
 
     @Override
     public void undo() {
-        edge.connectVertices();
+        edge.connect();
         graphGroup.addEdge(edge, false);
     }
 
     @Override
     public void redo() {
-        edge.disconnectVertices();
+        edge.disconnect();
         graphGroup.removeEdge(edge, false);
     }
 }

@@ -2,6 +2,7 @@ package sample.Graph.Elements;
 
 
 import Jama.Matrix;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.shape.*;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
@@ -11,10 +12,60 @@ import sample.Main;
 public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
 
+    private GraphGroup graphGroup;
     private final Vertex firstVertex, secondVertex;
     private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo()),
-                secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
+                 secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
     private double pointAngle = 0, pointRadiusCoef = 0.5;
+
+    // constructors
+    public BinaryEdge(GraphGroup graphGroup, Vertex firstVertex, Vertex secondVertex) {
+        super();
+        this.graphGroup = graphGroup;
+
+        this.firstVertex = firstVertex;
+        this.secondVertex = secondVertex;
+
+        initArc();
+        initArrows();
+        initCircle();
+        initWeight();
+        getChildren().addAll(arc, circle, firstArrow, secondArrow, weightText);
+        update();
+
+        connect();
+        weight.addListener((obj, prevValuew, newValue) -> {
+            changedWeight();
+        });
+        direction.addListener((observable, oldValue, newValue) -> {
+            changedDirection(newValue);
+        });
+
+        setDirection(Direction.SecondVertex);
+    }
+
+    //
+    @Override
+    public boolean isDirectionTo(Vertex vertex) {
+        switch (direction.getValue()) {
+            case FirstVertex:
+                return firstVertex == vertex;
+            case SecondVertex:
+                return secondVertex == vertex;
+            case Both:
+                return firstVertex == vertex || secondVertex == vertex;
+            default:
+                return false;
+        }
+    }
+
+    public double getPointAngle() {
+        return pointAngle;
+    }
+
+    public double getPointRadiusCoef() {
+        return pointRadiusCoef;
+    }
 
     // init
     private void initArrows() {
@@ -24,35 +75,21 @@ public class BinaryEdge extends Edge {
         secondArrow.setStroke(lineColor);
     }
 
-    // constructors
-    public BinaryEdge(GraphGroup graphGroup, Vertex firstVertex, Vertex secondVertex) {
-        super();
+    // updates
+    @Override
+    public void update() {
+        Vector2D circleCenter = calculateCircleCenter();
+        Vector2D arcCenter = calculateArcCenter(circleCenter);
+        double arcRadius = arcCenter == null ? defaultArcRadius : circleCenter.subtract(arcCenter).getNorm();
+        boolean sweepFlag = calculateSweepFlag(circleCenter),
+                largeFlag = calculateLargeFlag(circleCenter);
 
-        this.firstVertex = firstVertex;
-        this.secondVertex = secondVertex;
-        this.firstVertex.addIncidentEdge(this);
-        this.secondVertex.addIncidentEdge(this);
-
-        initArc();
-        initArrows();
-        initCircle();
-        initWeight();
-        getChildren().addAll(arc, circle, firstArrow, secondArrow, weightText);
-        update();
-
-        setOnMouseClicked(graphGroup::onMouseClick_edge);
-        setOnMousePressed(graphGroup::onMousePress_edge);
-        weight.addListener((obj, prevValuew, newValue) -> {
-            wasChangedWeight();
-        });
-        direction.addListener((observable, oldValue, newValue) -> {
-            wasChangedDirection(newValue);
-        });
-
-        setDirection(Direction.SecondVertex);
+        updateCircle(circleCenter);
+        updateArrows(arcRadius, arcCenter, sweepFlag);
+        updateArc(arcRadius, sweepFlag, largeFlag);
+        updateWeight(circleCenter);
     }
-
-    // some calculations
+    //    calculates
     private Vector2D calculateCircleCenter() {
         Vector2D afterRotate = Main.rotate(new Vector2D(secondVertex.getCenterX() - firstVertex.getCenterX(),
                 secondVertex.getCenterY() - firstVertex.getCenterY()), pointAngle);
@@ -61,9 +98,9 @@ public class BinaryEdge extends Edge {
 
     private Vector2D calculateArcCenter(Vector2D circlePos) {
         double A1 = circlePos.getX() - firstVertex.getCenterX(), B1 = circlePos.getY() - firstVertex.getCenterY(),
-               C1 = -A1*(firstVertex.getCenterX() + circlePos.getX())*0.5 - B1*(firstVertex.getCenterY() + circlePos.getY())*0.5,
-               A2 = secondVertex.getCenterX() - circlePos.getX(), B2 = secondVertex.getCenterY() - circlePos.getY(),
-               C2 = -A2*(circlePos.getX() + secondVertex.getCenterX())*0.5 - B2*(circlePos.getY() + secondVertex.getCenterY())*0.5;
+                C1 = -A1*(firstVertex.getCenterX() + circlePos.getX())*0.5 - B1*(firstVertex.getCenterY() + circlePos.getY())*0.5,
+                A2 = secondVertex.getCenterX() - circlePos.getX(), B2 = secondVertex.getCenterY() - circlePos.getY(),
+                C2 = -A2*(circlePos.getX() + secondVertex.getCenterX())*0.5 - B2*(circlePos.getY() + secondVertex.getCenterY())*0.5;
 
         Matrix mCoef = new Matrix(new double[][] {
                 {A1, B1},
@@ -94,38 +131,28 @@ public class BinaryEdge extends Edge {
 
     private boolean calculateLargeFlag(Vector2D circlePos) {
         double vx1 = firstVertex.getCenterX() - circlePos.getX(), vy1 = firstVertex.getCenterY() - circlePos.getY(),
-               vx2 = secondVertex.getCenterX() - circlePos.getX(), vy2 = secondVertex.getCenterY() - circlePos.getY();
+                vx2 = secondVertex.getCenterX() - circlePos.getX(), vy2 = secondVertex.getCenterY() - circlePos.getY();
         double cos_A = (vx1*vx2 + vy1*vy2) / Math.sqrt((vx1*vx1+vy1*vy1) * (vx2*vx2+vy2*vy2));
         return cos_A >= 0;
     }
 
-    // updates
-    private void updateArc(double arcRadius, boolean sweepFlag, boolean largeFlag) {
-        MoveTo moveTo = (MoveTo)arc.getElements().get(0);
-        moveTo.setX(firstVertex.getCenterX());
-        moveTo.setY(firstVertex.getCenterY());
-
-        ArcTo arcTo = (ArcTo)arc.getElements().get(1);
-        arcTo.setRadiusX(arcRadius);
-        arcTo.setRadiusY(arcRadius);
-        arcTo.setX(secondVertex.getCenterX());
-        arcTo.setY(secondVertex.getCenterY());
-        arcTo.setSweepFlag(sweepFlag);
-        arcTo.setLargeArcFlag(largeFlag);
+    private void updateCircle(Vector2D circlePos) {
+        circle.setCenterX(circlePos.getX());
+        circle.setCenterY(circlePos.getY());
     }
 
-    private void updateArrowByTails(Path arrow, Vector2D arrowPos, Vector2D tail1Pos, Vector2D tail2Pos)
-    {
-        MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
-        LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
-        LineTo lineTo = (LineTo)arrow.getElements().get(2);
+    private void updateArrows(double arcRadius, Vector2D arcCenter, boolean sweepFlag) {
+        if (arcCenter == null) {
+            updateArrow(firstArrow, firstVertex, secondVertex);
+            updateArrow(secondArrow, secondVertex, firstVertex);
+        }
+        else {
+            double cos_A = 1 - 0.5 * Math.pow(Vertex.radius / arcRadius, 2);
+            double angle = sweepFlag ? -Math.acos(cos_A) : Math.acos(cos_A); //between vertex center and arrow position relatively arc center
 
-        moveTo.setX(tail1Pos.getX());
-        moveTo.setY(tail1Pos.getY());
-        lineToArrowPos.setX(arrowPos.getX());
-        lineToArrowPos.setY(arrowPos.getY());
-        lineTo.setX(tail2Pos.getX());
-        lineTo.setY(tail2Pos.getY());
+            updateArrow(firstVertex, firstArrow, arcCenter, angle);
+            updateArrow(secondVertex, secondArrow, arcCenter, -angle);
+        }
     }
 
     private void updateArrow(Path arrow, Vertex owner, Vertex another) {
@@ -157,23 +184,32 @@ public class BinaryEdge extends Edge {
         updateArrowByTails(arrow, arrowPos, tail1Pos, tail2Pos);
     }
 
-    private void updateArrows(double arcRadius, Vector2D arcCenter, boolean sweepFlag) {
-        if (arcCenter == null) {
-            updateArrow(firstArrow, firstVertex, secondVertex);
-            updateArrow(secondArrow, secondVertex, firstVertex);
-        }
-        else {
-            double cos_A = 1 - 0.5 * Math.pow(Vertex.radius / arcRadius, 2);
-            double angle = sweepFlag ? -Math.acos(cos_A) : Math.acos(cos_A); //between vertex center and arrow position relatively arc center
+    private void updateArrowByTails(Path arrow, Vector2D arrowPos, Vector2D tail1Pos, Vector2D tail2Pos)
+    {
+        MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
+        LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
+        LineTo lineTo = (LineTo)arrow.getElements().get(2);
 
-            updateArrow(firstVertex, firstArrow, arcCenter, angle);
-            updateArrow(secondVertex, secondArrow, arcCenter, -angle);
-        }
+        moveTo.setX(tail1Pos.getX());
+        moveTo.setY(tail1Pos.getY());
+        lineToArrowPos.setX(arrowPos.getX());
+        lineToArrowPos.setY(arrowPos.getY());
+        lineTo.setX(tail2Pos.getX());
+        lineTo.setY(tail2Pos.getY());
     }
 
-    private void updateCircle(Vector2D circlePos) {
-        circle.setCenterX(circlePos.getX());
-        circle.setCenterY(circlePos.getY());
+    private void updateArc(double arcRadius, boolean sweepFlag, boolean largeFlag) {
+        MoveTo moveTo = (MoveTo)arc.getElements().get(0);
+        moveTo.setX(firstVertex.getCenterX());
+        moveTo.setY(firstVertex.getCenterY());
+
+        ArcTo arcTo = (ArcTo)arc.getElements().get(1);
+        arcTo.setRadiusX(arcRadius);
+        arcTo.setRadiusY(arcRadius);
+        arcTo.setX(secondVertex.getCenterX());
+        arcTo.setY(secondVertex.getCenterY());
+        arcTo.setSweepFlag(sweepFlag);
+        arcTo.setLargeArcFlag(largeFlag);
     }
 
     private void updateWeight(Vector2D circleCenter) {
@@ -182,32 +218,18 @@ public class BinaryEdge extends Edge {
         weightText.setY(circleCenter.getY());
     }
 
+    // position
     @Override
-    public void update() {
-        Vector2D circleCenter = calculateCircleCenter();
-        Vector2D arcCenter = calculateArcCenter(circleCenter);
-        double arcRadius = arcCenter == null ? defaultArcRadius : circleCenter.subtract(arcCenter).getNorm();
-        boolean sweepFlag = calculateSweepFlag(circleCenter),
-                largeFlag = calculateLargeFlag(circleCenter);
-
-        updateCircle(circleCenter);
-        updateArrows(arcRadius, arcCenter, sweepFlag);
-        updateArc(arcRadius, sweepFlag, largeFlag);
-        updateWeight(circleCenter);
-    }
-
-    // move
-    @Override
-    public void move(double x, double y) {
+    public void setPosition(double x, double y) {
         //validate x, y
         if (x < radiusCircle)
             x = radiusCircle;
-        else if (x > GraphGroup.width - radiusCircle)
-            x = GraphGroup.width - radiusCircle;
+        else if (x > graphGroup.getWidth() - radiusCircle)
+            x = graphGroup.getWidth() - radiusCircle;
         if (y < radiusCircle)
             y = radiusCircle;
-        else if (y > GraphGroup.height - radiusCircle)
-            y = GraphGroup.height - radiusCircle;
+        else if (y > graphGroup.getHeight() - radiusCircle)
+            y = graphGroup.getHeight() - radiusCircle;
 
         pointRadiusCoef = Math.sqrt(Math.pow(x - firstVertex.getCenterX(), 2) + Math.pow(y - firstVertex.getCenterY(), 2)) /
             Math.sqrt(Math.pow(secondVertex.getCenterX() - firstVertex.getCenterX(), 2) + Math.pow(secondVertex.getCenterY() - firstVertex.getCenterY(), 2));
@@ -216,7 +238,7 @@ public class BinaryEdge extends Edge {
         update();
     }
 
-    public void setPointData(double pointAngle, double pointRadiusCoef) {
+    public void setPositionBy(double pointAngle, double pointRadiusCoef) {
         this.pointAngle = pointAngle;
         this.pointRadiusCoef = pointRadiusCoef;
         update();
@@ -234,24 +256,37 @@ public class BinaryEdge extends Edge {
     }
 
     @Override
-    public void disconnectVertices() {
-        firstVertex.removeIncidentEdge(this);
-        secondVertex.removeIncidentEdge(this);
+    public void connect() {
+        setOnMouseClicked(graphGroup::onMouseClick_edge);
+        setOnMousePressed(graphGroup::onMousePress_edge);
+
+        firstVertex.addIncidentEdge(this);
+        secondVertex.addIncidentEdge(this);
+        firstVertex.positionObservable().addListener(this::changedVertexPosition);
+        secondVertex.positionObservable().addListener(this::changedVertexPosition);
     }
 
     @Override
-    public void connectVertices() {
-        firstVertex.addIncidentEdge(this);
-        secondVertex.addIncidentEdge(this);
+    public void disconnect() {
+        setOnMouseClicked(null);
+        setOnMousePressed(null);
+
+        firstVertex.removeIncidentEdge(this);
+        secondVertex.removeIncidentEdge(this);
+        firstVertex.positionObservable().removeListener(this::changedVertexPosition);
+        secondVertex.positionObservable().removeListener(this::changedVertexPosition);
     }
 
-    // weight
-    private void wasChangedWeight() {
+    // events
+    private void changedVertexPosition(ObservableValue<? extends Vector2D> obs, Vector2D oldValue, Vector2D newValue) {
+        update();
+    }
+
+    private void changedWeight() {
         updateWeight(new Vector2D(circle.getCenterX(), circle.getCenterY()));
     }
 
-    // direction
-    private void wasChangedDirection(Direction direction) {
+    private void changedDirection(Direction direction) {
         switch (direction) {
             case Both:
                 firstArrow.setVisible(true);
@@ -268,27 +303,5 @@ public class BinaryEdge extends Edge {
         }
     }
 
-    @Override
-    public boolean isDirectionTo(Vertex vertex) {
-        switch (direction.getValue()) {
-            case FirstVertex:
-                return firstVertex == vertex;
-            case SecondVertex:
-                return secondVertex == vertex;
-            case Both:
-                return firstVertex == vertex || secondVertex == vertex;
-            default:
-                return false;
-        }
-    }
-
-    // binary edges methods
-    public double getPointAngle() {
-        return pointAngle;
-    }
-
-    public double getPointRadiusCoef() {
-        return pointRadiusCoef;
-    }
 
 }

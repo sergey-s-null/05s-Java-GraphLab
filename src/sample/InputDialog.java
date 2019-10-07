@@ -1,16 +1,9 @@
 package sample;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputDialog;
 import sample.Graph.GraphGroup;
 
 public class InputDialog extends TextInputDialog {
-    private Alert alert = new Alert(Alert.AlertType.ERROR);
-
-    public InputDialog() {
-        alert.setTitle("ლ(ಠ益ಠლ)");
-        alert.setHeaderText("Ошибка");
-    }
 
     public Double getGraphWidth(double initWidth) {
         setTitle("¯\\_(ツ)_/¯");
@@ -27,16 +20,19 @@ public class InputDialog extends TextInputDialog {
             try {
                 double doubleRes = Double.parseDouble(res);
                 if (doubleRes < GraphGroup.minWidth) {
-                    alert.setContentText("Минимальная ширина: " + GraphGroup.minWidth);
-                    alert.showAndWait();
+                    GraphAlert.showAndWait("Минимальная ширина: " +
+                            GraphGroup.minWidth);
+                }
+                else if (doubleRes > GraphGroup.maxWidth) {
+                    GraphAlert.showAndWait("Максимальная ширина: " +
+                            GraphGroup.maxWidth);
                 }
                 else {
                     return doubleRes;
                 }
             }
             catch (NumberFormatException e) {
-                alert.setContentText("Неверный формат числа.");
-                alert.showAndWait();
+                GraphAlert.showAndWait("Неверный формат числа.");
             }
         }
     }
@@ -56,16 +52,19 @@ public class InputDialog extends TextInputDialog {
             try {
                 double doubleRes = Double.parseDouble(res);
                 if (doubleRes < GraphGroup.minHeight) {
-                    alert.setContentText("Минимальная высота: " + GraphGroup.minHeight);
-                    alert.showAndWait();
+                    GraphAlert.showAndWait("Минимальная высота: " +
+                            GraphGroup.minHeight);
+                }
+                else if (doubleRes > GraphGroup.maxHeight) {
+                    GraphAlert.showAndWait("Максимальная высота: " +
+                            GraphGroup.maxHeight);
                 }
                 else {
                     return doubleRes;
                 }
             }
             catch (NumberFormatException e) {
-                alert.setContentText("Неверный формат числа.");
-                alert.showAndWait();
+                GraphAlert.showAndWait("Неверный формат числа.");
             }
         }
     }
