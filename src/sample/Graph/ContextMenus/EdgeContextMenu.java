@@ -22,6 +22,13 @@ public class EdgeContextMenu extends ContextMenu {
     private Edge edge = null;
     private RadioMenuItem radioBothDirection, radioFirstDirection, radioSecondDirection;
 
+
+    public EdgeContextMenu(GraphGroup owner) {
+        super();
+        graphGroup = owner;
+        initMenuItems();
+    }
+
     private void initMenuItems() {
         MenuItem changeWeight = new MenuItem("Изменить вес");
         radioBothDirection = new RadioMenuItem("В обе стороны");
@@ -46,18 +53,6 @@ public class EdgeContextMenu extends ContextMenu {
         radioBothDirection.setToggleGroup(tg);
         radioFirstDirection.setToggleGroup(tg);
         radioSecondDirection.setToggleGroup(tg);
-    }
-
-    public EdgeContextMenu(GraphGroup owner) {
-        super();
-        graphGroup = owner;
-        initMenuItems();
-    }
-
-    private void setDirectionItemsVisible(boolean flag) {
-        radioBothDirection.setVisible(flag);
-        radioFirstDirection.setVisible(flag);
-        radioSecondDirection.setVisible(flag);
     }
 
     public void configureFor(Edge edge) {
@@ -85,6 +80,12 @@ public class EdgeContextMenu extends ContextMenu {
             radioFirstDirection.setText("В сторону \"" + binaryEdge.getFirstVertex().getName() + "\"");
             radioSecondDirection.setText("В сторону \"" + binaryEdge.getSecondVertex().getName() + "\"");
         }
+    }
+
+    private void setDirectionItemsVisible(boolean flag) {
+        radioBothDirection.setVisible(flag);
+        radioFirstDirection.setVisible(flag);
+        radioSecondDirection.setVisible(flag);
     }
 
     //------------|

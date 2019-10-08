@@ -44,6 +44,14 @@ public class BinaryEdge extends Edge {
         setDirection(Direction.SecondVertex);
     }
 
+    // init
+    private void initArrows() {
+        firstArrow.setStrokeWidth(strokeWidth);
+        firstArrow.setStroke(lineColor);
+        secondArrow.setStrokeWidth(strokeWidth);
+        secondArrow.setStroke(lineColor);
+    }
+
     //
     @Override
     public boolean isDirectionTo(Vertex vertex) {
@@ -65,14 +73,6 @@ public class BinaryEdge extends Edge {
 
     public double getPointRadiusCoef() {
         return pointRadiusCoef;
-    }
-
-    // init
-    private void initArrows() {
-        firstArrow.setStrokeWidth(strokeWidth);
-        firstArrow.setStroke(lineColor);
-        secondArrow.setStrokeWidth(strokeWidth);
-        secondArrow.setStroke(lineColor);
     }
 
     // updates

@@ -17,10 +17,16 @@ public class VertexContextMenu extends ContextMenu {
     private GraphGroup graphGroup;
     private Vertex vertex = null;
 
+    public VertexContextMenu(GraphGroup owner) {
+        super();
+        graphGroup = owner;
+        initMenuItems();
+    }
+
     private void initMenuItems() {
         MenuItem rename = new MenuItem("Переименовать"),
-                 loop = new MenuItem("Петля"),
-                 delete = new MenuItem("Удалить");
+                loop = new MenuItem("Петля"),
+                delete = new MenuItem("Удалить");
 
         getItems().add(rename);
         getItems().add(loop);
@@ -32,16 +38,13 @@ public class VertexContextMenu extends ContextMenu {
         delete.setOnAction(this::onActionDelete);
     }
 
-    public VertexContextMenu(GraphGroup owner) {
-        super();
-        graphGroup = owner;
-        initMenuItems();
-    }
-
     public void configureFor(Vertex vertex) {
         this.vertex = vertex;
     }
 
+    //------------|
+    //   events   |
+    //------------|
     private void onActionRename(ActionEvent ignored) {
         if (vertex != null)
             graphGroup.onVertexContextMenuAction(vertex, Action.Rename);

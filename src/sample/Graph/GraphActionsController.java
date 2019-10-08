@@ -5,7 +5,7 @@ import sample.Graph.GraphActions.Action;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-
+// TODO not static
 public class GraphActionsController {
     private static Deque<Action> doneActions = new ArrayDeque<>(),
                                  nextActions = new ArrayDeque<>();

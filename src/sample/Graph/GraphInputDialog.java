@@ -1,6 +1,5 @@
 package sample.Graph;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputDialog;
 import sample.Graph.Elements.Vertex;
 import sample.GraphAlert;

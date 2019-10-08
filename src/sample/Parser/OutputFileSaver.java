@@ -8,6 +8,70 @@ import java.io.IOException;
 import java.util.List;
 
 public class OutputFileSaver {
+    // adjacency
+    public void saveAsAdjacency(String filename, Matrix adjacencyMatrix,
+                                VerticesData verticesData, Resolution resolution)
+            throws IOException
+    {
+        String saveString = "Matrix{" + toString(adjacencyMatrix) + "};\n" +
+                "Vertices{" + toString(verticesData) + "};\n" +
+                "Resolution{" + toString(resolution) + "};\n";
+
+        writeInFile(filename, saveString);
+    }
+
+    // incident
+    public void saveAsIncident(String filename, GraphData data) throws Exception {
+        if (!data.getVerticesData().isNamesUnique())
+            throw new Exception("Found equals names.");
+
+        Matrix incidentMatrix = makeIncidentMatrix(data);
+
+        String saveString = "Matrix{" + toString(incidentMatrix) + "};\n" +
+                "Edges{" + toStringValues(data.getEdgesData()) + "};\n" +
+                "Vertices{" + toString(data.getVerticesData()) + "};\n" +
+                "Resolution{" + toString(data.getResolution()) + "};\n";
+
+        writeInFile(filename, saveString);
+    }
+
+    private Matrix makeIncidentMatrix(GraphData data) {
+        int rowCount = data.getVerticesData().count(),
+                colCount = data.getEdgesData().getEdges().size();
+
+        Matrix matrix = new Matrix(rowCount, colCount);
+        for (int col = 0; col < colCount; ++col) {
+            EdgeData edgeData = data.getEdgesData().get(col);
+            if (edgeData.isBinary()) {
+                int indexFirstVertex = data.getVerticesData().getIndex(edgeData.getVertexName1());
+                int indexSecondVertex = data.getVerticesData().getIndex(edgeData.getVertexName2());
+                double weight1 = edgeData.getWeight(), weight2 = edgeData.getWeight();
+                if (edgeData.getDirection() == -1)
+                    weight2 = -weight2;
+                else if (edgeData.getDirection() == 1)
+                    weight1 = -weight1;
+
+                matrix.set(indexFirstVertex, col, weight1);
+                matrix.set(indexSecondVertex, col, weight2);
+            }
+            else {
+                int indexVertex = data.getVerticesData().getIndex(edgeData.getVertexName1());
+                matrix.set(indexVertex, col, edgeData.getWeight());
+            }
+        }
+        return matrix;
+    }
+
+    // edges
+    public void saveAsEdges(String filename, GraphData data) throws IOException {
+        String saveString = "Edges{" + toString(data.getEdgesData()) + "};\n" +
+                "Vertices{" + toString(data.getVerticesData()) + "};\n" +
+                "Resolution{" + toString(data.getResolution()) + "};\n";
+
+        writeInFile(filename, saveString);
+    }
+
+    //
     private void writeInFile(String filename, String content) throws IOException {
         FileWriter writer = new FileWriter(filename);
         writer.write(content);
@@ -63,6 +127,29 @@ public class OutputFileSaver {
         return builder;
     }
 
+    private StringBuilder toStringValues(EdgesData data) {
+        StringBuilder builder = new StringBuilder();
+        boolean isFirst = true;
+        for (EdgeData edgeData : data.getEdges()) {
+            if (!isFirst)
+                builder.append(", \n\t");
+            isFirst = false;
+
+            builder.append('(');
+            if (edgeData instanceof BinaryEdgeData)
+                builder.append(((BinaryEdgeData) edgeData).getAngle());
+            else
+                builder.append(((UnaryEdgeData) edgeData).getCirclePos().getX());
+            builder.append(", ");
+            if (edgeData instanceof BinaryEdgeData)
+                builder.append(((BinaryEdgeData) edgeData).getRadius());
+            else
+                builder.append(((UnaryEdgeData) edgeData).getCirclePos().getY());
+            builder.append(')');
+        }
+        return builder;
+    }
+
     private StringBuilder toString(VerticesData data) {
         StringBuilder builder = new StringBuilder();
         List<VertexData> verticesDataList = data.get();
@@ -84,66 +171,5 @@ public class OutputFileSaver {
         return resolution.getWidth() + ", " + resolution.getHeight();
     }
 
-    // adjacency
-    public void saveAsAdjacency(String filename, Matrix adjacencyMatrix,
-                                VerticesData verticesData, Resolution resolution)
-            throws IOException
-    {
-        String saveString = "Matrix{" + toString(adjacencyMatrix) + "};\n" +
-                "Vertices{" + toString(verticesData) + "};\n" +
-                "Resolution{" + toString(resolution) + "};\n";
-
-        writeInFile(filename, saveString);
-    }
-
-    // incident
-    private Matrix makeIncidentMatrix(GraphData data) {
-        int rowCount = data.getVerticesData().count(),
-            colCount = data.getEdgesData().getEdges().size();
-
-        Matrix matrix = new Matrix(rowCount, colCount);
-        for (int col = 0; col < colCount; ++col) {
-            EdgeData edgeData = data.getEdgesData().get(col);
-            if (edgeData.isBinary()) {
-                int indexFirstVertex = data.getVerticesData().getIndex(edgeData.getVertexName1());
-                int indexSecondVertex = data.getVerticesData().getIndex(edgeData.getVertexName2());
-                double weight1 = edgeData.getWeight(), weight2 = edgeData.getWeight();
-                if (edgeData.getDirection() == -1)
-                    weight2 = -weight2;
-                else if (edgeData.getDirection() == 1)
-                    weight1 = -weight1;
-
-                matrix.set(indexFirstVertex, col, weight1);
-                matrix.set(indexSecondVertex, col, weight2);
-            }
-            else {
-                int indexVertex = data.getVerticesData().getIndex(edgeData.getVertexName1());
-                matrix.set(indexVertex, col, edgeData.getWeight());
-            }
-        }
-        return matrix;
-    }
-
-    public void saveAsIncident(String filename, GraphData data) throws Exception {
-        if (!data.getVerticesData().isNamesUnique())
-            throw new Exception("Found equals names.");
-
-        Matrix incidentMatrix = makeIncidentMatrix(data);
-
-        String saveString = "Matrix{" + toString(incidentMatrix) + "};\n" +
-                "Vertices{" + toString(data.getVerticesData()) + "};\n" +
-                "Resolution{" + toString(data.getResolution()) + "};\n";
-
-        writeInFile(filename, saveString);
-    }
-
-    // edges
-    public void saveAsEdges(String filename, GraphData data) throws IOException {
-        String saveString = "Edges{" + toString(data.getEdgesData()) + "};\n" +
-                "Vertices{" + toString(data.getVerticesData()) + "};\n" +
-                "Resolution{" + toString(data.getResolution()) + "};\n";
-
-        writeInFile(filename, saveString);
-    }
 
 }
