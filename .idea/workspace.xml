@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/src/sample/GraphController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/graph.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/EdgeContextMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/EdgeContextMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActionsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/GraphActionsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphInputDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Graph/GraphInputDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/GraphData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Parser/GraphData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/InputFileParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Parser/InputFileParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/OutputFileSaver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Parser/OutputFileSaver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/GraphLab/sample/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GraphLab/sample/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sample/Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sample/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/sample.fxml" afterDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -69,15 +66,16 @@
     <favorites_list name="JavaFxApplication" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.47032827">
+    <splitter split-orientation="horizontal" split-proportion="0.44675925">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="51">
-                  <caret line="3" column="38" selection-start-line="3" selection-start-column="38" selection-end-line="3" selection-end-column="38" />
+                <state relative-caret-position="425">
+                  <caret line="46" column="28" selection-start-line="46" selection-start-column="28" selection-end-line="46" selection-end-column="28" />
                   <folding>
+                    <element signature="imports" expanded="true" />
                     <element signature="method#rotate#0;class#Main#0" />
                     <element signature="method#normalizeOrZero#0;class#Main#0" />
                   </folding>
@@ -88,70 +86,53 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="386">
-                  <caret line="76" column="55" selection-start-line="76" selection-start-column="55" selection-end-line="76" selection-end-column="55" />
+                <state relative-caret-position="506">
+                  <caret line="140" column="55" selection-start-line="140" selection-start-column="55" selection-end-line="140" selection-end-column="55" />
                   <folding>
                     <element signature="imports" expanded="true" />
+                    <element signature="method#initGlyphButtons#0;class#Controller#0" />
+                    <element signature="e#5556#5557#0" expanded="true" />
+                    <element signature="method#onOpenFile#0;class#Controller#0" />
                     <element signature="method#onSaveFile#0;class#Controller#0" />
-                    <element signature="method#onChangeWidth#0;class#Controller#0" />
-                    <element signature="method#onChangeHeight#0;class#Controller#0" />
-                    <element signature="method#onCurrentActionChanged#0;class#Controller#0" />
+                    <element signature="e#7826#7827#0" expanded="true" />
+                    <element signature="e#7940#7941#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/sample/Parser/InputFileParser.java">
+            <entry file="file://$PROJECT_DIR$/src/sample/GraphController.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="289">
-                  <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+                <state relative-caret-position="459">
+                  <caret line="27" column="22" selection-start-line="27" selection-start-column="22" selection-end-line="27" selection-end-column="22" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="class#TypesAndContents#0;class#InputFileParser#0" />
-                    <element signature="method#parseIncidentFile#0;class#InputFileParser#0" />
-                    <element signature="method#parseEdgesFile#0;class#InputFileParser#0" />
-                    <element signature="method#parseFileForTypesAndContents#0;class#InputFileParser#0" />
-                    <element signature="method#readFileSkipCommentsAndSpaces#0;class#InputFileParser#0" />
-                    <element signature="method#removeComment#0;class#InputFileParser#0" />
-                    <element signature="method#parseMatrix#0;class#InputFileParser#0" />
-                    <element signature="method#parseMatrixRow#0;class#InputFileParser#0" />
-                    <element signature="method#parseEdgesInIncidentFile#0;class#InputFileParser#0" />
-                    <element signature="method#parseEdges#0;class#InputFileParser#0" />
-                    <element signature="method#parseEdge#0;class#InputFileParser#0" />
-                    <element signature="method#parseVertices#0;class#InputFileParser#0" />
-                    <element signature="method#parseResolution#0;class#InputFileParser#0" />
-                    <element signature="method#validAdjacencyMatrix#0;class#InputFileParser#0" />
-                    <element signature="method#validIncidentMatrix#0;class#InputFileParser#0" />
-                    <element signature="method#validEdgesData#0;class#InputFileParser#0" />
-                    <element signature="method#validEdgesAndVerticesData#0;class#InputFileParser#0" />
-                    <element signature="method#validEdgesDataIncidentFile#0;class#InputFileParser#0" />
-                    <element signature="method#validVerticesData#0;class#InputFileParser#0" />
-                    <element signature="method#validResolution#0;class#InputFileParser#0" />
-                    <element signature="method#generateVerticesData#0;class#InputFileParser#0" />
-                    <element signature="method#generateVerticesDataBy#0;class#InputFileParser#0" />
-                    <element signature="method#parseExactBy#0;class#InputFileParser#0" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/sample/Parser/OutputFileSaver.java">
+            <entry file="file://$PROJECT_DIR$/src/sample/Graph/GraphGroup.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="183">
-                  <caret line="30" column="61" selection-start-line="30" selection-start-column="61" selection-end-line="30" selection-end-column="61" />
+                <state relative-caret-position="-853">
+                  <caret line="44" column="31" lean-forward="true" selection-start-line="44" selection-start-column="31" selection-end-line="44" selection-end-column="31" />
                   <folding>
-                    <element signature="imports" expanded="true" />
-                    <element signature="method#saveAsAdjacency#0;class#OutputFileSaver#0" />
-                    <element signature="method#makeIncidentMatrix#0;class#OutputFileSaver#0" />
-                    <element signature="method#saveAsEdges#0;class#OutputFileSaver#0" />
-                    <element signature="method#writeInFile#0;class#OutputFileSaver#0" />
-                    <element signature="method#toString#0;class#OutputFileSaver#0" />
-                    <element signature="method#toString#1;class#OutputFileSaver#0" />
-                    <element signature="method#toStringValues#0;class#OutputFileSaver#0" />
-                    <element signature="method#toString#2;class#OutputFileSaver#0" />
-                    <element signature="e#6587#6588#0" expanded="true" />
+                    <element signature="e#2229#2729#0" />
+                    <element signature="e#2735#3211#0" />
+                    <element signature="e#3217#3596#0" />
+                    <element signature="e#3757#4197#0" />
+                    <element signature="e#4203#4661#0" />
+                    <element signature="e#4667#6118#0" />
+                    <element signature="e#6249#6557#0" />
+                    <element signature="e#7442#7602#0" />
+                    <element signature="e#7608#7838#0" />
+                    <element signature="e#7844#8046#0" />
+                    <element signature="e#8052#8207#0" />
+                    <element signature="e#8213#8427#0" />
+                    <element signature="e#8433#8914#0" />
+                    <element signature="e#8920#9143#0" />
                   </folding>
                 </state>
               </provider>
@@ -164,24 +145,36 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
               <provider editor-type-id="text-editor">
-                <state relative-caret-position="1275">
-                  <caret line="75" column="24" selection-start-line="75" selection-start-column="24" selection-end-line="75" selection-end-column="24" />
+                <state relative-caret-position="670">
+                  <caret line="40" column="43" selection-start-line="40" selection-start-column="43" selection-end-line="40" selection-end-column="43" />
                 </state>
               </provider>
               <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
             </entry>
           </file>
           <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/sample/graph.fxml">
+              <provider editor-type-id="text-editor">
+                <state relative-caret-position="170">
+                  <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+                </state>
+              </provider>
+              <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="474">
+                <state relative-caret-position="422">
                   <caret line="75" column="25" selection-start-line="75" selection-start-column="25" selection-end-line="75" selection-end-column="25" />
                   <folding>
                     <element signature="imports" expanded="true" />
                     <element signature="method#Vertex#1;class#Vertex#0" />
                     <element signature="method#setSelected#0;class#Vertex#0" />
+                    <element signature="method#getActionForNewResolution#0;class#Vertex#0" />
                     <element signature="method#initCircle#0;class#Vertex#0" />
                     <element signature="method#initName#0;class#Vertex#0" />
+                    <element signature="method#setCenter#1;class#Vertex#0" />
                     <element signature="method#setName#0;class#Vertex#0" />
                     <element signature="method#updateNameText#0;class#Vertex#0" />
                     <element signature="method#connect#0;class#Vertex#0" />
@@ -198,6 +191,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
@@ -232,8 +226,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/sample/MatrixGridBase.java" />
-        <option value="$PROJECT_DIR$/src/sample/MatrixViewDeprecated/MatrixGridBase.java" />
         <option value="$PROJECT_DIR$/src/sample/MatrixView/MatrixGridBase.java" />
         <option value="$PROJECT_DIR$/src/sample/MatrixView/EdgeWeightField.java" />
         <option value="$PROJECT_DIR$/src/sample/MatrixView/EdgesContainer.java" />
@@ -264,12 +256,10 @@
         <option value="$PROJECT_DIR$/src/sample/Alert.java" />
         <option value="$PROJECT_DIR$/src/sample/GraphAlert.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java" />
-        <option value="$PROJECT_DIR$/src/sample/sample.fxml" />
         <option value="$PROJECT_DIR$/src/sample/Main.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/GraphActions/ChangeWidth.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/GraphActions/ChangeHeight.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/GraphActions/MoveVertex.java" />
-        <option value="$PROJECT_DIR$/src/sample/Controller.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/Elements/UnaryEdge.java" />
         <option value="$PROJECT_DIR$/src/sample/Graph/GraphGroup.java" />
@@ -283,6 +273,10 @@
         <option value="$PROJECT_DIR$/src/sample/Parser/InputFileParser.java" />
         <option value="$PROJECT_DIR$/src/sample/Parser/GraphData.java" />
         <option value="$PROJECT_DIR$/src/sample/Parser/OutputFileSaver.java" />
+        <option value="$PROJECT_DIR$/src/sample/sample.fxml" />
+        <option value="$PROJECT_DIR$/src/sample/Controller.java" />
+        <option value="$PROJECT_DIR$/src/sample/graph.fxml" />
+        <option value="$PROJECT_DIR$/src/sample/GraphController.java" />
       </list>
     </option>
   </component>
@@ -332,14 +326,14 @@
               <item name="GraphLab" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="sample" type="462c0819:PsiDirectoryNode" />
-              <item name="Parser" type="462c0819:PsiDirectoryNode" />
+              <item name="Graph" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -479,7 +473,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.15884861" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.10927505" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" />
       <window_info id="Designer" order="3" />
@@ -488,7 +482,7 @@
       <window_info id="Capture Tool" order="6" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.1971831" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.20151679" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -598,14 +592,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_211/src.zip!/java/util/ArrayList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="432" column="8" selection-start-line="432" selection-start-column="8" selection-end-line="432" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/MatrixViewDeprecated/EdgeWeightField.java" />
     <entry file="file://$PROJECT_DIR$/src/sample/MatrixViewDeprecated/VertexNameLabel.java" />
     <entry file="file://$PROJECT_DIR$/src/sample/MatrixViewDeprecated/MatrixView.java" />
     <entry file="file://$PROJECT_DIR$/src/sample/MatrixView/MatrixGridBase.java" />
@@ -821,25 +807,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="38" selection-start-line="3" selection-start-column="38" selection-end-line="3" selection-end-column="38" />
-          <folding>
-            <element signature="method#rotate#0;class#Main#0" />
-            <element signature="method#normalizeOrZero#0;class#Main#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="1275">
-          <caret line="75" column="24" selection-start-line="75" selection-start-column="24" selection-end-line="75" selection-end-column="24" />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Parser/EdgesData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -957,16 +924,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Graph/GraphGroup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="77" column="20" selection-start-line="77" selection-start-column="20" selection-end-line="77" selection-end-column="20" />
-          <folding>
-            <element signature="e#2229#2729#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Graph/GraphInputDialog.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -1065,20 +1022,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="76" column="55" selection-start-line="76" selection-start-column="55" selection-end-line="76" selection-end-column="55" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#onSaveFile#0;class#Controller#0" />
-            <element signature="method#onChangeWidth#0;class#Controller#0" />
-            <element signature="method#onChangeHeight#0;class#Controller#0" />
-            <element signature="method#onCurrentActionChanged#0;class#Controller#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Parser/GraphData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -1095,16 +1038,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Parser/OutputFileSaver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="544">
+          <caret line="129" column="57" selection-start-line="129" selection-start-column="57" selection-end-line="129" selection-end-column="57" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#saveAsAdjacency#0;class#OutputFileSaver#0" />
+            <element signature="method#saveAsIncident#0;class#OutputFileSaver#0" />
+            <element signature="method#makeIncidentMatrix#0;class#OutputFileSaver#0" />
+            <element signature="method#saveAsEdges#0;class#OutputFileSaver#0" />
+            <element signature="method#writeInFile#0;class#OutputFileSaver#0" />
+            <element signature="method#toString#0;class#OutputFileSaver#0" />
+            <element signature="method#toString#1;class#OutputFileSaver#0" />
+            <element signature="method#toStringValues#0;class#OutputFileSaver#0" />
+            <element signature="method#toString#2;class#OutputFileSaver#0" />
+            <element signature="e#6054#6131#1" />
+            <element signature="e#6575#6576#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="474">
+        <state relative-caret-position="422">
           <caret line="75" column="25" selection-start-line="75" selection-start-column="25" selection-end-line="75" selection-end-column="25" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#Vertex#1;class#Vertex#0" />
             <element signature="method#setSelected#0;class#Vertex#0" />
+            <element signature="method#getActionForNewResolution#0;class#Vertex#0" />
             <element signature="method#initCircle#0;class#Vertex#0" />
             <element signature="method#initName#0;class#Vertex#0" />
+            <element signature="method#setCenter#1;class#Vertex#0" />
             <element signature="method#setName#0;class#Vertex#0" />
             <element signature="method#updateNameText#0;class#Vertex#0" />
             <element signature="method#connect#0;class#Vertex#0" />
@@ -1115,11 +1081,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/sample/Parser/InputFileParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        <state relative-caret-position="187">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#TypesAndContents#0;class#InputFileParser#0" />
+            <element signature="method#parseAdjacencyFile#0;class#InputFileParser#0" />
             <element signature="method#parseIncidentFile#0;class#InputFileParser#0" />
             <element signature="method#parseEdgesFile#0;class#InputFileParser#0" />
             <element signature="method#parseFileForTypesAndContents#0;class#InputFileParser#0" />
@@ -1135,7 +1102,6 @@
             <element signature="method#validAdjacencyMatrix#0;class#InputFileParser#0" />
             <element signature="method#validIncidentMatrix#0;class#InputFileParser#0" />
             <element signature="method#validEdgesData#0;class#InputFileParser#0" />
-            <element signature="method#validEdgesAndVerticesData#0;class#InputFileParser#0" />
             <element signature="method#validEdgesDataIncidentFile#0;class#InputFileParser#0" />
             <element signature="method#validVerticesData#0;class#InputFileParser#0" />
             <element signature="method#validResolution#0;class#InputFileParser#0" />
@@ -1146,21 +1112,79 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/sample/Parser/OutputFileSaver.java">
+    <entry file="file://$PROJECT_DIR$/src/sample/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="30" column="61" selection-start-line="30" selection-start-column="61" selection-end-line="30" selection-end-column="61" />
+        <state relative-caret-position="425">
+          <caret line="46" column="28" selection-start-line="46" selection-start-column="28" selection-end-line="46" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="method#saveAsAdjacency#0;class#OutputFileSaver#0" />
-            <element signature="method#makeIncidentMatrix#0;class#OutputFileSaver#0" />
-            <element signature="method#saveAsEdges#0;class#OutputFileSaver#0" />
-            <element signature="method#writeInFile#0;class#OutputFileSaver#0" />
-            <element signature="method#toString#0;class#OutputFileSaver#0" />
-            <element signature="method#toString#1;class#OutputFileSaver#0" />
-            <element signature="method#toStringValues#0;class#OutputFileSaver#0" />
-            <element signature="method#toString#2;class#OutputFileSaver#0" />
-            <element signature="e#6587#6588#0" expanded="true" />
+            <element signature="method#rotate#0;class#Main#0" />
+            <element signature="method#normalizeOrZero#0;class#Main#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/sample.fxml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="670">
+          <caret line="40" column="43" selection-start-line="40" selection-start-column="43" selection-end-line="40" selection-end-column="43" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Controller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="140" column="55" selection-start-line="140" selection-start-column="55" selection-end-line="140" selection-end-column="55" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#initGlyphButtons#0;class#Controller#0" />
+            <element signature="e#5556#5557#0" expanded="true" />
+            <element signature="method#onOpenFile#0;class#Controller#0" />
+            <element signature="method#onSaveFile#0;class#Controller#0" />
+            <element signature="e#7826#7827#0" expanded="true" />
+            <element signature="e#7940#7941#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/graph.fxml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/GraphController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="27" column="22" selection-start-line="27" selection-start-column="22" selection-end-line="27" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/sample/Graph/GraphGroup.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-853">
+          <caret line="44" column="31" lean-forward="true" selection-start-line="44" selection-start-column="31" selection-end-line="44" selection-end-column="31" />
+          <folding>
+            <element signature="e#2229#2729#0" />
+            <element signature="e#2735#3211#0" />
+            <element signature="e#3217#3596#0" />
+            <element signature="e#3757#4197#0" />
+            <element signature="e#4203#4661#0" />
+            <element signature="e#4667#6118#0" />
+            <element signature="e#6249#6557#0" />
+            <element signature="e#7442#7602#0" />
+            <element signature="e#7608#7838#0" />
+            <element signature="e#7844#8046#0" />
+            <element signature="e#8052#8207#0" />
+            <element signature="e#8213#8427#0" />
+            <element signature="e#8433#8914#0" />
+            <element signature="e#8920#9143#0" />
           </folding>
         </state>
       </provider>

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.input.KeyCodeCombination?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane prefHeight="225.0" prefWidth="345.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
@@ -56,25 +57,46 @@
       </MenuBar>
    </top>
    <center>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox id="options" fx:id="leftPanel" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="150.0">
-               <children>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
+            <BorderPane prefHeight="200.0" prefWidth="200.0">
+               <left>
+                  <VBox fillWidth="false" maxWidth="-Infinity" prefHeight="200.0" prefWidth="40.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
                      <children>
-                        <RadioButton fx:id="rb_createVertex" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Вершины">
+                        <ToggleButton fx:id="moveButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
                            <toggleGroup>
-                              <ToggleGroup fx:id="tg" />
-                           </toggleGroup></RadioButton>
-                        <RadioButton fx:id="rb_createEdge" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Ребра" toggleGroup="$tg" />
-                        <RadioButton fx:id="rb_delete" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Удалить" toggleGroup="$tg" />
-                        <RadioButton fx:id="rb_move" mnemonicParsing="false" onAction="#onCurrentActionChanged" text="Переместить" toggleGroup="$tg" />
+                              <ToggleGroup fx:id="toggleGroup" />
+                           </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="vertexButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                        </ToggleButton>
+                        <ToggleButton fx:id="edgeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                        </ToggleButton>
+                        <ToggleButton fx:id="deleteButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                        </ToggleButton>
                      </children>
                   </VBox>
-               </children>
-            </VBox>
-            <AnchorPane fx:id="anchorPane" prefHeight="200.0" prefWidth="200.0" />
+               </left>
+               <center>
+                  <TabPane fx:id="tabWithGraphs" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+               </center>
+            </BorderPane>
          </children>
-      </HBox>
+      </StackPane>
    </center>
 </BorderPane>

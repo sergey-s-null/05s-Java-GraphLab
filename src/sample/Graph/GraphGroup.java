@@ -204,6 +204,14 @@ public class GraphGroup extends Group {
         return height1.get();
     }
 
+    public ObservableValue<Double> widthObservable() {
+        return width1.asObject();
+    }
+
+    public ObservableValue<Double> heightObservable() {
+        return height1.asObject();
+    }
+
     //----------------|
     //   add/remove   |
     //----------------|
