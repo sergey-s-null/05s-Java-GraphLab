@@ -16,6 +16,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphActions.Action;
 import sample.Graph.GraphActions.MoveVertex;
 import sample.Graph.GraphActions.RenameVertex;
+import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
 import sample.Parser.Resolution;
 
@@ -34,7 +35,7 @@ public class Vertex extends Group {
 
     private static int nextId = 0;
 
-    private GraphGroup graphGroup;
+
     private static final Color nameColor = Color.web("086070");
     private static final Color selectedFillColor = Color.ORANGE,
                                defaultFillColor = Color.web("A1D6E2"),
@@ -43,6 +44,8 @@ public class Vertex extends Group {
     public static final double radius = 12;
 
     private final int id;
+    private GraphGroup graphGroup;
+    private GraphActionsController actionsController;
     private Circle circle = new Circle();
     private ObjectProperty<Vector2D> position = new SimpleObjectProperty<>(new Vector2D(0, 0));
     private Text name = new Text();
@@ -57,6 +60,7 @@ public class Vertex extends Group {
     public Vertex(GraphGroup graphGroup, double x, double y, String nameStr) {
         super();
         this.graphGroup = graphGroup;
+        actionsController = graphGroup.getActionsController();
 
         connect();
 
@@ -153,7 +157,7 @@ public class Vertex extends Group {
     // name
     public void setName(String newName, boolean createAction) {
         if (createAction)
-            RenameVertex.create(this, name.getText(), newName);
+            actionsController.addAction(new RenameVertex(this, name.getText(), newName));
         name.setText(newName);
         updateNameText();
     }

@@ -11,7 +11,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 
 public class Main extends Application {
-
+    // static функции, не нашедшии себе места, поэтому я их приютил тут
     public static Vector2D rotate(Vector2D vector, double angle) {
         Matrix rotateMatrix = new Matrix(new double[][] {
                 {Math.cos(angle), Math.sin(angle)},
@@ -34,12 +34,16 @@ public class Main extends Application {
         }
     }
 
+    public static boolean isValidTabText(String tabText) {
+        return tabText.length() > 0 && tabText.length() < 16;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent root = loader.load();
 
-        Controller controller = loader.getController();
+        MainController controller = loader.getController();
         controller.init();
 
         primaryStage.setTitle("Графойд by Laiser399   ( ͡° ͜ʖ ͡°)");

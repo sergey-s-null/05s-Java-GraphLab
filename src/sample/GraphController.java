@@ -35,9 +35,12 @@ public class GraphController {
         });
     }
 
-    void setGraphAction(GraphGroup.Action action) {
-        graphGroup.setCurrentAction(action);
-
-//        System.out.println(anchorPane.getWidth());
+    public GraphGroup getGraphGroup() {
+        return graphGroup;
     }
+
+    public MatrixView getMatrixView() {
+        return matrixView;
+    }
+
 }

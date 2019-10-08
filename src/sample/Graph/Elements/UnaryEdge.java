@@ -3,6 +3,7 @@ package sample.Graph.Elements;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.shape.*;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
 import sample.Main;
 
@@ -10,16 +11,23 @@ public class UnaryEdge extends Edge {
     public static final Vector2D defaultCirclePos = new Vector2D(30, -30);
 //    private static final double minCircleDistance = 50;
 
-    private GraphGroup graphGroup;
+//    private GraphGroup graphGroup;
+//    private GraphActionsController actionsController;
     private final Vertex vertex;
     private Path arrow = new Path(new MoveTo(), new LineTo(), new LineTo());
 
     private Vector2D circlePos = defaultCirclePos;
 
     // constructor
+    public UnaryEdge(GraphGroup graphGroup, Vertex vertex, Vector2D circlePos) {
+        this(graphGroup, vertex);
+        this.circlePos = circlePos;
+        update();
+    }
+
     public UnaryEdge(GraphGroup graphGroup, Vertex vertex) {
-        super();
-        this.graphGroup = graphGroup;
+        super(graphGroup);
+
         direction.setValue(Direction.FirstVertex);
 
         this.vertex = vertex;
@@ -39,12 +47,6 @@ public class UnaryEdge extends Edge {
         direction.addListener((observable, oldValue, newValue) -> {
             changedDirection(newValue);
         });
-    }
-
-    public UnaryEdge(GraphGroup graphGroup, Vertex vertex, Vector2D circlePos) {
-        this(graphGroup, vertex);
-        this.circlePos = circlePos;
-        update();
     }
 
     //
@@ -196,7 +198,7 @@ public class UnaryEdge extends Edge {
 
     private void changedDirection(Direction newDirection) {
         if (!newDirection.equals(Direction.FirstVertex))
-            setDirection(Direction.FirstVertex);
+            setDirection(Direction.FirstVertex, false);
     }
 
 

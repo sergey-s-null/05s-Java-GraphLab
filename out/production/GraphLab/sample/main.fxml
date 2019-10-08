@@ -13,12 +13,13 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="225.0" prefWidth="345.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane prefHeight="225.0" prefWidth="345.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="Файл">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#onNewGraph" text="Новый граф" />
                   <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="Открыть" />
                   <MenuItem mnemonicParsing="false" onAction="#onSaveFile" text="Сохранить" />
                   <SeparatorMenuItem mnemonicParsing="false" />
@@ -93,7 +94,7 @@
                   </VBox>
                </left>
                <center>
-                  <TabPane fx:id="tabWithGraphs" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+                  <TabPane fx:id="tabPaneWithGraphs" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
                </center>
             </BorderPane>
          </children>

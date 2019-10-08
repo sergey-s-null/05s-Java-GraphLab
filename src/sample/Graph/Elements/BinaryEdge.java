@@ -12,7 +12,6 @@ import sample.Main;
 public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
 
-    private GraphGroup graphGroup;
     private final Vertex firstVertex, secondVertex;
     private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo()),
                  secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
@@ -20,8 +19,7 @@ public class BinaryEdge extends Edge {
 
     // constructors
     public BinaryEdge(GraphGroup graphGroup, Vertex firstVertex, Vertex secondVertex) {
-        super();
-        this.graphGroup = graphGroup;
+        super(graphGroup);
 
         this.firstVertex = firstVertex;
         this.secondVertex = secondVertex;
@@ -41,7 +39,7 @@ public class BinaryEdge extends Edge {
             changedDirection(newValue);
         });
 
-        setDirection(Direction.SecondVertex);
+        setDirection(Direction.SecondVertex, false);
     }
 
     // init

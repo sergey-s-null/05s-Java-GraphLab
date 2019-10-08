@@ -1,13 +1,8 @@
 package sample.Graph.GraphActions;
 
 import sample.Graph.Elements.BinaryEdge;
-import sample.Graph.GraphActionsController;
 
 public class MoveBinaryEdge extends EdgeAction {
-    public static void create(BinaryEdge edge) {
-        GraphActionsController.addAction(new MoveBinaryEdge(edge));
-    }
-
     private static Double savedPointAngle = null, savedPointRadiusCoef = null;
 
     public static void saveParams(double pointAngle, double pointRadiusCoef) {
@@ -15,9 +10,10 @@ public class MoveBinaryEdge extends EdgeAction {
         savedPointRadiusCoef = pointRadiusCoef;
     }
 
+
     private double oldPointAngle, oldPointRadiusCoef, newPointAngle, newPointRadiusCoef;
 
-    private MoveBinaryEdge(BinaryEdge edge) {
+    public MoveBinaryEdge(BinaryEdge edge) {
         super(edge);
 
 //        if (savedPointAngle == null || savedPointRadiusCoef == null) {

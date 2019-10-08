@@ -78,13 +78,13 @@ public class BinaryEdgeData extends EdgeData {
         edge.setPositionBy(angle, radius);
         switch (direction) {
             case -1:
-                edge.setDirection(Edge.Direction.FirstVertex);
+                edge.setDirection(Edge.Direction.FirstVertex, false);
                 break;
             case 0:
-                edge.setDirection(Edge.Direction.Both);
+                edge.setDirection(Edge.Direction.Both, false);
                 break;
             case 1:
-                edge.setDirection(Edge.Direction.SecondVertex);
+                edge.setDirection(Edge.Direction.SecondVertex, false);
                 break;
         }
         edge.setWeight(weight, false);

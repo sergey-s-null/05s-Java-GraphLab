@@ -16,6 +16,7 @@ import javafx.scene.text.TextAlignment;
 import sample.Graph.GraphActions.ChangeDirectionEdge;
 import sample.Graph.GraphActions.ChangeWeightEdge;
 import sample.Graph.GraphActionsController;
+import sample.Graph.GraphGroup;
 
 
 public abstract class Edge extends Group {
@@ -32,11 +33,20 @@ public abstract class Edge extends Group {
                                  circleColor = Color.web("F1F1F2"),
                                  weightColor = Color.web("086070");
 
+    protected GraphGroup graphGroup;
+    protected GraphActionsController actionsController;
+
     protected Path arc = new Path(new MoveTo(), new ArcTo());
     protected Circle circle = new Circle(radiusCircle);
     protected Text weightText = new Text();
     protected DoubleProperty weight = new SimpleDoubleProperty(1.0);
     protected Property<Direction> direction = new SimpleObjectProperty<>();
+
+    // constructors
+    protected Edge(GraphGroup graphGroup) {
+        this.graphGroup = graphGroup;
+        actionsController = graphGroup.getActionsController();
+    }
 
     // init
     protected void initArc() {
@@ -67,7 +77,7 @@ public abstract class Edge extends Group {
     // 2. weight
     public void setWeight(double weight, boolean createAction) {
         if (createAction)
-            ChangeWeightEdge.create(this, this.weight.get(), weight);
+            actionsController.addAction(new ChangeWeightEdge(this, this.weight.get(), weight));
         this.weight.set(weight);
     }
 
@@ -80,21 +90,17 @@ public abstract class Edge extends Group {
     }
 
     // 3. direction
-    // TODO think about actions controller
-    public void setDirection(Direction direction) {
+    public void setDirection(Direction direction, boolean createAction) {
+        if (direction.equals(this.direction.getValue()))
+            return;
+        if (createAction)
+            actionsController.addAction(new ChangeDirectionEdge(this, this.direction.getValue(), direction));
+
         this.direction.setValue(direction);
     }
 
     public Direction getDirection() {
         return direction.getValue();
-    }
-
-    public void changeDirection(Direction direction) {
-        if (direction.equals(this.direction.getValue()))
-            return;
-
-        ChangeDirectionEdge.create(this, this.direction.getValue(), direction);
-        setDirection(direction);
     }
 
     abstract public boolean isDirectionTo(Vertex vertex);

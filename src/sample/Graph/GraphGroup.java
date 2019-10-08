@@ -58,6 +58,8 @@ public class GraphGroup extends Group {
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
     private ObservableSet<Edge> edges = FXCollections.observableSet();
 
+    private GraphActionsController actionsController = new GraphActionsController();
+
     // constructor
     public GraphGroup() {
         super();
@@ -134,6 +136,19 @@ public class GraphGroup extends Group {
         return listOfActions;
     }
 
+    // actions history
+    public GraphActionsController getActionsController() {
+        return actionsController;
+    }
+
+    public void undo() {
+        actionsController.undo();
+    }
+
+    public void redo() {
+        actionsController.redo();
+    }
+
     // graph
     public void setGraph(GraphData data, boolean createAction) {
         // создание новых
@@ -158,7 +173,7 @@ public class GraphGroup extends Group {
             for (Edge edge : newEdges)
                 actions.add(new CreateEdge(edge, this));
             actions.add(getChangeResolutionAction(data.getResolution()));
-            GraphActionsController.addAction(actions);
+            actionsController.addAction(actions);
         }
 
         // исполнение
@@ -177,7 +192,7 @@ public class GraphGroup extends Group {
     // resolution
     public void setResolution(Resolution resolution, boolean createAction) {
         if (createAction) {
-            GraphActionsController.addAction(getChangeResolutionAction(resolution));
+            actionsController.addAction(getChangeResolutionAction(resolution));
         }
 
         width1.set(resolution.getWidth());
@@ -232,7 +247,7 @@ public class GraphGroup extends Group {
 
     public void addVertex(Vertex vertex, boolean createAction) {
         if (createAction)
-            CreateVertex.create(vertex, this);
+            actionsController.addAction(new CreateVertex(vertex, this));
         vertex.connect();
         getChildren().add(vertex);
         vertices.add(vertex);
@@ -250,7 +265,7 @@ public class GraphGroup extends Group {
 
     public void addEdge(Edge edge, boolean createAction) {
         if (createAction)
-            CreateEdge.create(edge, this);
+            actionsController.addAction(new CreateEdge(edge, this));
         edge.connect();
         getChildren().add(1, edge);
         edges.add(edge);
@@ -260,7 +275,7 @@ public class GraphGroup extends Group {
         Set<Edge> incidentEdges = vertex.getEdgesCopy();
 
         if (createAction)
-            DeleteVertex.create(vertex, incidentEdges, this);
+            actionsController.addAction(new DeleteVertex(vertex, incidentEdges, this));
 
         for (Edge edge : incidentEdges) {
             edge.disconnect();
@@ -275,7 +290,7 @@ public class GraphGroup extends Group {
 
     public void removeEdge(Edge edge, boolean createAction) {
         if (createAction)
-            DeleteEdge.create(edge, this);
+            actionsController.addAction(new DeleteEdge(edge, this));
         edge.disconnect();
         getChildren().remove(edge);
         edges.remove(edge);
@@ -375,18 +390,18 @@ public class GraphGroup extends Group {
 
     private void onMouseRelease(MouseEvent event) {
         if (movingVertex != null) {
-            MoveVertex.create(movingVertex);
+            actionsController.addAction(new MoveVertex(movingVertex));
             movingVertex = null;
         }
 
         if (movingEdge != null) {
             if (movingEdge.getClass() == UnaryEdge.class) {
                 UnaryEdge edge = (UnaryEdge) movingEdge;
-                MoveUnaryEdge.create(edge);
+                actionsController.addAction(new MoveUnaryEdge(edge));
             }
             else if (movingEdge.getClass() == BinaryEdge.class) {
                 BinaryEdge edge = (BinaryEdge) movingEdge;
-                MoveBinaryEdge.create(edge);
+                actionsController.addAction(new MoveBinaryEdge(edge));
             }
             movingEdge = null;
         }
@@ -417,13 +432,13 @@ public class GraphGroup extends Group {
                     edge.setWeight(res, true);
                 break;
             case SelectBothDirection:
-                edge.changeDirection(Edge.Direction.Both);
+                edge.setDirection(Edge.Direction.Both, true);
                 break;
             case SelectFirstDirection:
-                edge.changeDirection(Edge.Direction.FirstVertex);
+                edge.setDirection(Edge.Direction.FirstVertex, true);
                 break;
             case SelectSecondDirection:
-                edge.changeDirection(Edge.Direction.SecondVertex);
+                edge.setDirection(Edge.Direction.SecondVertex, true);
                 break;
             case Delete:
                 removeEdge(edge, true);

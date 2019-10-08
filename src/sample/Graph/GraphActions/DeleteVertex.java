@@ -8,10 +8,6 @@ import sample.Graph.GraphGroup;
 import java.util.Set;
 
 public class DeleteVertex extends VertexAction {
-    public static void create(Vertex vertex, Set<Edge> savedEdges, GraphGroup graphGroup) {
-        GraphActionsController.addAction(new DeleteVertex(vertex, savedEdges, graphGroup));
-    }
-
     private GraphGroup graphGroup;
     private Set<Edge> savedEdges;
 

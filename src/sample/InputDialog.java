@@ -68,4 +68,25 @@ public class InputDialog extends TextInputDialog {
             }
         }
     }
+
+    public String getTabText(String initText) {
+        setTitle("┌( ಠ_ಠ)┘");
+        setHeaderText("Введите название вкладки");
+        setContentText("Название:");
+        getEditor().setText(initText);
+
+        while (true) {
+            showAndWait();
+            String res = getResult();
+            if (res == null)
+                return null;
+
+            if (Main.isValidTabText(res)) {
+                return res;
+            }
+            else {
+                GraphAlert.showAndWait("Длина названия от 1 до 16 символов.");
+            }
+        }
+    }
 }

@@ -2,13 +2,8 @@ package sample.Graph.GraphActions;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.Elements.Vertex;
-import sample.Graph.GraphActionsController;
 
 public class MoveVertex extends VertexAction {
-    public static void create(Vertex vertex) {
-        GraphActionsController.addAction(new MoveVertex(vertex));
-    }
-
     private static Vector2D savedPos = null;
 
     public static void savePos(Vector2D pos) {
@@ -18,7 +13,7 @@ public class MoveVertex extends VertexAction {
 
     private Vector2D oldPos, newPos;
 
-    private MoveVertex(Vertex vertex) {
+    public MoveVertex(Vertex vertex) {
         super(vertex);
 
 //        if (savedPos == null) {

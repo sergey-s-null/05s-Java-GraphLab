@@ -7,15 +7,15 @@ import java.util.Deque;
 
 // TODO not static
 public class GraphActionsController {
-    private static Deque<Action> doneActions = new ArrayDeque<>(),
-                                 nextActions = new ArrayDeque<>();
+    private Deque<Action> doneActions = new ArrayDeque<>(),
+                          nextActions = new ArrayDeque<>();
 
-    public static void addAction(Action action) {
+    public void addAction(Action action) {
         nextActions.clear();
         doneActions.addLast(action);
     }
 
-    public static void undo() {
+    public void undo() {
         if (!canUndo())
             return;
         Action action = doneActions.removeLast();
@@ -23,7 +23,7 @@ public class GraphActionsController {
         nextActions.addLast(action);
     }
 
-    public static void redo() {
+    public void redo() {
         if (!canRedo())
             return;
         Action action = nextActions.removeLast();
@@ -31,11 +31,14 @@ public class GraphActionsController {
         doneActions.addLast(action);
     }
 
-    public static boolean canUndo() {
+    private boolean canUndo() {
         return doneActions.size() > 0;
     }
 
-    public static boolean canRedo() {
+    private boolean canRedo() {
         return nextActions.size() > 0;
     }
+
+
+
 }
