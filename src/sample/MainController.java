@@ -41,6 +41,7 @@ public class MainController {
 
     private FileChooser fileChooser = new FileChooser(),
                         imageFileChooser = new FileChooser();
+    private File prevSaveDir = null, prevOpenDir = null;
     private InputFileParser inputFileParser = new InputFileParser();
     private OutputFileSaver outputFileSaver = new OutputFileSaver();
     private InputDialog inputDialog = new InputDialog();
@@ -49,8 +50,7 @@ public class MainController {
         initGlyphButtons();
         initFileChoosers();
 
-        createNewGraph();
-        createNewGraph(); // TODO
+        createNewTab();
     }
 
     private void initGlyphButtons() {
@@ -92,7 +92,7 @@ public class MainController {
             }
             if (newValue != null) {
                 Glyph newGlyph = (Glyph) ((ToggleButton) newValue).getGraphic();
-                newGlyph.setColor(Color.ORANGE); // TODO change color
+                newGlyph.setColor(Color.ORANGE);
 
                 //moveButton, vertexButton, edgeButton, deleteButton
                 switch (((ToggleButton) newValue).getId()) {
@@ -116,7 +116,19 @@ public class MainController {
         }
     }
 
-    private void createNewGraph() {
+    private Tab createNewTab(String tabText, GraphData data) {
+        Tab tab = createNewTab();
+        if (tab == null)
+            return null;
+
+        tab.setText(tabText);
+        GraphController controller = tabToController.get(tab);
+        controller.getGraphGroup().setGraph(data, false);
+
+        return tab;
+    }
+
+    private Tab createNewTab() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("graph.fxml"));
         Parent root;
         try {
@@ -124,10 +136,10 @@ public class MainController {
         }
         catch (IOException e) {
             System.out.println("Error: " + e);
-            return;
+            return null;
         }
 
-        Tab tab = new Tab("Новый таб " + tabsCounter++, root); // TODO name with counter
+        Tab tab = new Tab("Новый таб " + tabsCounter++, root);
         tab.setContextMenu(createTabContextMenu(tab));
         tabPaneWithGraphs.getTabs().add(tab);
 
@@ -135,6 +147,8 @@ public class MainController {
         graphController.init();
         graphController.getGraphGroup().setCurrentAction(currentAction);
         tabToController.put(tab, graphController);
+
+        return tab;
     }
 
     private ContextMenu createTabContextMenu(Tab tab) {
@@ -152,11 +166,13 @@ public class MainController {
         return contextMenu;
     }
 
-
     private boolean trySaveGraph(GraphController controller) {
-        fileChooser.setInitialDirectory(filesDirectory); // TODO
+        if (prevSaveDir != null)
+            fileChooser.setInitialDirectory(prevSaveDir);
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
+            prevSaveDir = file.getParentFile();
+
             GraphGroup graphGroup = controller.getGraphGroup();
             MatrixView matrixView = controller.getMatrixView();
             try {
@@ -227,14 +243,17 @@ public class MainController {
     }
 
     private void onCloseTab(Tab tab, ActionEvent event) {
-        ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
-        if (buttonType == ButtonType.YES) {
-            if (trySaveGraph(tabToController.get(tab)))
-                removeTab(tab);
+        GraphController controller = tabToController.get(tab);
+        if (controller.getGraphGroup().isNeedToSave()) {
+            ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
+            if (buttonType == ButtonType.YES) {
+                if (!trySaveGraph(controller))
+                    return;
+            }
+            else if (buttonType == ButtonType.CANCEL)
+                return;
         }
-        else if (buttonType == ButtonType.NO) {
-            removeTab(tab);
-        }
+        removeTab(tab);
     }
 
     //---------------------|
@@ -247,51 +266,51 @@ public class MainController {
 
     // File
     @FXML private void onNewGraph(ActionEvent event) {
-        createNewGraph();
+        createNewTab();
     }
 
     @FXML private void onOpenFile(ActionEvent event) {
-        GraphGroup graphGroup = getSelectedGraphGroup();
-        if (graphGroup == null)
-            return;
-
-        fileChooser.setInitialDirectory(filesDirectory); // todo remake to prevOpenDirectory
+        if (prevOpenDir != null)
+            fileChooser.setInitialDirectory(prevOpenDir);
         File file = fileChooser.showOpenDialog(null);
+        if (file == null)
+            return;
+        prevOpenDir = file.getParentFile();
 
         GraphData result;
-        if (file != null) {
-            try {
-                if (file.getName().endsWith(".adj")) {
-                    result = inputFileParser.parseAdjacencyFile(file.getAbsolutePath());
-                }
-                else if (file.getName().endsWith(".inc")) {
-                    result = inputFileParser.parseIncidentFile(file.getAbsolutePath());
-                }
-                else if (file.getName().endsWith(".ed")) {
-                    result = inputFileParser.parseEdgesFile(file.getAbsolutePath());
-                }
-                else {
-                    return;
-                }
+        try {
+            if (file.getName().endsWith(".adj")) {
+                result = inputFileParser.parseAdjacencyFile(file.getAbsolutePath());
             }
-            catch (Exception e) {
-                GraphAlert.showAndWait("Ошибка открытия файла: " + e.getMessage());
+            else if (file.getName().endsWith(".inc")) {
+                result = inputFileParser.parseIncidentFile(file.getAbsolutePath());
+            }
+            else if (file.getName().endsWith(".ed")) {
+                result = inputFileParser.parseEdgesFile(file.getAbsolutePath());
+            }
+            else {
                 return;
             }
-            graphGroup.setGraph(result, true);
         }
+        catch (Exception e) {
+            GraphAlert.showAndWait("Ошибка открытия файла: " + e.getMessage());
+            return;
+        }
+
+        Tab tab = createNewTab(Main.makeValidTabText(file.getName()), result);
+        tabPaneWithGraphs.getSelectionModel().select(tab);
     }
 
     @FXML private void onSaveFile(ActionEvent event) {
         Tab selectedTab = tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
         if (selectedTab == null)
             return;
+
         GraphController controller = tabToController.get(selectedTab);
-
-        GraphGroup graphGroup = getSelectedGraphGroup();
-        if (graphGroup == null)
+        if (controller.getGraphGroup().isEmpty()) {
+            GraphAlert.showAndWait("Граф пуст.");
             return;
-
+        }
         trySaveGraph(controller);
     }
 
@@ -300,9 +319,12 @@ public class MainController {
         if (graphGroup == null)
             return;
 
+        if (prevSaveDir != null)
+            imageFileChooser.setInitialDirectory(prevSaveDir);
         File file = imageFileChooser.showSaveDialog(null);
         if (file == null)
             return;
+        prevSaveDir = file.getParentFile();
 
         WritableImage image = graphGroup.getGraphImage();
         assert image != null;
@@ -310,13 +332,13 @@ public class MainController {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
         }
         catch (IOException e) {
-            System.out.println(e);
+            GraphAlert.showAndWait("Ошибка сохранения файла: " + e.getMessage());
         }
     }
 
     @FXML private void onExit(ActionEvent event) {
         if (tryCloseAllTabs())
-            System.exit(0);
+            Platform.exit();
     }
 
     // Edit

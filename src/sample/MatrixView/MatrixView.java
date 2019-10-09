@@ -80,22 +80,27 @@ public class MatrixView extends SpreadsheetView {
         if (row == col) {
             Vertex vertex = vertices.get(row);
             Set<Edge> edges = edgesContainer.get(vertex);
-            if (edges.size() != 1) {
+            if (edges.size() != 1 || (Double) change.getNewValue() == 0) {
                 // возврат к предыдущему значению
                 getGrid().getRows().get(row).get(col).setItem(change.getOldValue());
             }
-            for (Edge edge : edges)
-                edge.setWeight((Double) change.getNewValue(), true);
+            else {
+                for (Edge edge : edges)
+                    edge.setWeight((Double) change.getNewValue(), true);
+            }
         }
         else {
             Vertex vertex1 = vertices.get(row), vertex2 = vertices.get(col);
             Set<Edge> edges = edgesContainer.get(vertex1, vertex2);
             edges.removeIf(edge -> !edge.isDirectionTo(vertex2));
-            if (edges.size() != 1) {
+            if (edges.size() != 1 || (Double) change.getNewValue() == 0) {
+                // возврат к предыдущему значению
                 getGrid().getRows().get(row).get(col).setItem(change.getOldValue());
             }
-            for (Edge edge : edges)
-                edge.setWeight((Double) change.getNewValue(), true);
+            else {
+                for (Edge edge : edges)
+                    edge.setWeight((Double) change.getNewValue(), true);
+            }
         }
 
     }
@@ -122,54 +127,74 @@ public class MatrixView extends SpreadsheetView {
         // нижний треугольник без диагонали
         for (int row = 0; row < vertices.size(); ++row) {
             for (int col = 0; col < row; ++col) {
-                Vertex vertex1 = vertices.get(row),
-                       vertex2 = vertices.get(col);
-                Set<Edge> edges = edgesContainer.get(vertex1, vertex2);
-
-                SpreadsheetCell cellTo1st = getGrid().getRows().get(col).get(row),
-                                cellTo2nd = getGrid().getRows().get(row).get(col);
-
-                int countTo1st = 0, countTo2nd = 0;
-                double weightTo1st = 0, weightTo2nd = 0;
-                for (Edge edge : edges) {
-                    if (edge.isDirectionTo(vertex1)) {
-                        countTo1st++;
-                        weightTo1st += edge.getWeight();
-                    }
-
-                    if (edge.isDirectionTo(vertex2)) {
-                        countTo2nd++;
-                        weightTo2nd += edge.getWeight();
-                    }
-                }
-
-                cellTo1st.setEditable(true);
-                cellTo2nd.setEditable(true);
-                cellTo1st.setItem(weightTo1st);
-                cellTo2nd.setItem(weightTo2nd);
-                setCellEditable(cellTo1st, countTo1st == 1);
-                setCellEditable(cellTo2nd, countTo2nd == 1);
+                updateWeight(row, col);
             }
         }
 
         // диагональ
         for (int i = 0; i < vertices.size(); ++i) {
-            Vertex vertex = vertices.get(i);
-            Set<Edge> edges = edgesContainer.get(vertex);
+            updateWeight(i);
+        }
+    }
 
-            SpreadsheetCell cell = getGrid().getRows().get(i).get(i);
+    private void updateWeight(Vertex vertex1, Vertex vertex2) {
+        if (vertex1 == vertex2) {
+            updateWeight(vertices.indexOf(vertex1));
+        }
+        else {
+            updateWeight(vertices.indexOf(vertex1), vertices.indexOf(vertex2));
+        }
+    }
 
-            int countEdges = 0;
-            double sumWeight = 0;
-            for (Edge edge : edges) {
-                countEdges++;
-                sumWeight += edge.getWeight();
+    private void updateWeight(int indexVertex1, int indexVertex2) {
+        if (indexVertex1 == indexVertex2) {
+            updateWeight(indexVertex1);
+            return;
+        }
+
+        Vertex vertex1 = vertices.get(indexVertex1),
+               vertex2 = vertices.get(indexVertex2);
+        Set<Edge> edges = edgesContainer.get(vertex1, vertex2);
+
+        int countTo1st = 0, countTo2nd = 0;
+        double weightTo1st = 0, weightTo2nd = 0;
+        for (Edge edge : edges) {
+            if (edge.isDirectionTo(vertex1)) {
+                countTo1st++;
+                weightTo1st += edge.getWeight();
             }
 
-            cell.setEditable(true);
-            cell.setItem(sumWeight);
-            setCellEditable(cell, countEdges == 1);
+            if (edge.isDirectionTo(vertex2)) {
+                countTo2nd++;
+                weightTo2nd += edge.getWeight();
+            }
         }
+
+        SpreadsheetCell cellTo1st = getGrid().getRows().get(indexVertex2).get(indexVertex1),
+                        cellTo2nd = getGrid().getRows().get(indexVertex1).get(indexVertex2);
+        cellTo1st.setEditable(true);
+        cellTo2nd.setEditable(true);
+        cellTo1st.setItem(weightTo1st);
+        cellTo2nd.setItem(weightTo2nd);
+        setCellEditable(cellTo1st, countTo1st == 1);
+        setCellEditable(cellTo2nd, countTo2nd == 1);
+    }
+
+    private void updateWeight(int indexVertex) {
+        Vertex vertex = vertices.get(indexVertex);
+        Set<Edge> edges = edgesContainer.get(vertex);
+
+        int countEdges = 0;
+        double sumWeight = 0;
+        for (Edge edge : edges) {
+            countEdges++;
+            sumWeight += edge.getWeight();
+        }
+
+        SpreadsheetCell cell = getGrid().getRows().get(indexVertex).get(indexVertex);
+        cell.setEditable(true);
+        cell.setItem(sumWeight);
+        setCellEditable(cell, countEdges == 1);
     }
 
     // row/col modifications
@@ -299,27 +324,23 @@ public class MatrixView extends SpreadsheetView {
         edgeToDirectionListener.put(edge, directionListener);
         edge.directionProperty().addListener(directionListener);
 
-        updateWeights();// TODO think about update only 1-2 fields
+        updateWeight(edge.getFirstVertex(), edge.getSecondVertex());
     }
 
     private void wasRemovedEdge(Edge edge) {
         edgesContainer.remove(edge);
-
         edge.weightProperty().removeListener(edgeToWeightListener.remove(edge));
-
         edge.directionProperty().removeListener(edgeToDirectionListener.remove(edge));
 
-        updateWeights();// TODO think about update only 1-2 fields
+        updateWeight(edge.getFirstVertex(), edge.getSecondVertex());
     }
 
     private void changedEdgeWeight(Edge edge, double newWeight) {
-        // parameters can be use for optimal updating of grid
-        updateWeights();
+        updateWeight(edge.getFirstVertex(), edge.getSecondVertex());
     }
 
     private void changedEdgeDirection(Edge edge, Edge.Direction newDirection) {
-        // parameters can be use for optimal updating of grid
-        updateWeights();
+        updateWeight(edge.getFirstVertex(), edge.getSecondVertex());
     }
 
 

@@ -1,6 +1,8 @@
 package sample.Graph;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -148,6 +150,10 @@ public class GraphGroup extends Group {
         return needToSave && vertices.size() > 0;
     }
 
+    public boolean isEmpty() {
+        return vertices.size() == 0;
+    }
+
     // actions history
     public GraphActionsController getActionsController() {
         return actionsController;
@@ -235,12 +241,12 @@ public class GraphGroup extends Group {
         return height.get();
     }
 
-    public ObservableValue<Double> widthObservable() {
-        return width.asObject();
+    public ReadOnlyDoubleProperty widthObservable() {
+        return width;
     }
 
-    public ObservableValue<Double> heightObservable() {
-        return height.asObject();
+    public ReadOnlyDoubleProperty heightObservable() {
+        return height;
     }
 
     //----------------|

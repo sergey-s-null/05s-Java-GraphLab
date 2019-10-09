@@ -174,12 +174,6 @@ public class Vertex extends Group {
     private void updateNameText() {
         name.setX(circle.getCenterX() - name.getLayoutBounds().getWidth()  / 2);
         name.setY(circle.getCenterY() - 2.5);
-
-        // TODO remove this (make property or use circle property)
-        // TODO remake Edge (add listener)
-//        for (Edge edge : incidentEdges) {
-//            edge.update();
-//        }
     }
 
     // incident edges
@@ -206,13 +200,4 @@ public class Vertex extends Group {
         setOnMousePressed(null);
     }
 
-
-
-
-
-    // for debug todo remove
-    @Override
-    protected void finalize() throws Throwable {
-        System.out.println("fina");
-    }
 }

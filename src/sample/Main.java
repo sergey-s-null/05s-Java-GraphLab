@@ -38,6 +38,9 @@ public class Main extends Application {
         return tabText.length() > 0 && tabText.length() <= 16;
     }
 
+    public static String makeValidTabText(String tabText) {
+        return tabText.substring(0, Math.min(16, tabText.length())) + "...";
+    }
 
 
     public static void main(String[] args) {
