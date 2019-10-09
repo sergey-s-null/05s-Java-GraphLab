@@ -4,9 +4,10 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.collections.ObservableSet;
 import javafx.scene.Group;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -37,12 +38,12 @@ public class GraphGroup extends Group {
         Move,
     }
 
-    // TODO listeners in Vertex
     public static final double minWidth = 200, minHeight = 200, maxWidth = 5000, maxHeight = 5000;
-    public static final double width = 400, height = 400; // TODO refactor to default
+    public static final double defaultWidth = 400, defaultHeight = 400;
     private Rectangle backgroundRect = new Rectangle(),
                       clipRect = new Rectangle();
-    private DoubleProperty width1, height1;//TODO refactor
+    private DoubleProperty width, height;
+    private boolean needToSave = false;
 
     private Action currentAction = Action.Empty;
     private Vertex selected = null; //dangerous
@@ -67,8 +68,8 @@ public class GraphGroup extends Group {
         initRects();
         getChildren().add(backgroundRect);
         setClip(clipRect);
-        width1.addListener((observable, oldValue, newValue) -> onWidthChanged((Double) newValue));
-        height1.addListener((observable, oldValue, newValue) -> onHeightChanged((Double) newValue));
+        width.addListener((observable, oldValue, newValue) -> onWidthChanged((Double) newValue));
+        height.addListener((observable, oldValue, newValue) -> onHeightChanged((Double) newValue));
 
         setOnMouseClicked(this::onMouseClick);
         setOnMouseDragged(this::onMouseDrag);
@@ -78,17 +79,17 @@ public class GraphGroup extends Group {
 
     // init
     private void initRects() {
-        backgroundRect.setWidth(width);
-        backgroundRect.setHeight(height);
+        backgroundRect.setWidth(defaultWidth);
+        backgroundRect.setHeight(defaultHeight);
         backgroundRect.setFill(Color.WHITE);
         backgroundRect.setStrokeType(StrokeType.INSIDE);
         backgroundRect.setStroke(Color.BLACK);
         backgroundRect.setStrokeWidth(1);
 
-        clipRect.setWidth(width);
-        clipRect.setHeight(height);
-        width1 = clipRect.widthProperty();
-        height1 = clipRect.heightProperty();
+        clipRect.setWidth(defaultWidth);
+        clipRect.setHeight(defaultHeight);
+        width = clipRect.widthProperty();
+        height = clipRect.heightProperty();
     }
 
     //
@@ -134,6 +135,17 @@ public class GraphGroup extends Group {
                 newResolution));
 
         return listOfActions;
+    }
+
+    public WritableImage getGraphImage() {
+        SnapshotParameters parameters = new SnapshotParameters();
+        parameters.setDepthBuffer(true);
+
+        return snapshot(parameters, null);
+    }
+
+    public boolean isNeedToSave() {
+        return needToSave && vertices.size() > 0;
     }
 
     // actions history
@@ -183,48 +195,52 @@ public class GraphGroup extends Group {
         for (Edge edge : newEdges)
             addEdge(edge, false);
         setResolution(data.getResolution(), false);
+
+        needToSave = false;
     }
 
     public GraphData getGraph() {
-        return GraphData.makeByGraph(vertices, edges, width1.get(), height1.get());
+        return GraphData.makeByGraph(vertices, edges, width.get(), height.get());
     }
 
     // resolution
     public void setResolution(Resolution resolution, boolean createAction) {
+        needToSave = true;
+
         if (createAction) {
             actionsController.addAction(getChangeResolutionAction(resolution));
         }
 
-        width1.set(resolution.getWidth());
-        height1.set(resolution.getHeight());
+        width.set(resolution.getWidth());
+        height.set(resolution.getHeight());
     }
 
     public Resolution getResolution() {
-        return new Resolution(width1.get(), height1.get());
+        return new Resolution(width.get(), height.get());
     }
 
     public void setWidth(double width, boolean createAction) {
-        setResolution(new Resolution(width, height1.get()), createAction);
+        setResolution(new Resolution(width, height.get()), createAction);
     }
 
     public void setHeight(double height, boolean createAction) {
-        setResolution(new Resolution(width1.get(), height), createAction);
+        setResolution(new Resolution(width.get(), height), createAction);
     }
 
     public double getWidth() {
-        return width1.get();
+        return width.get();
     }
 
     public double getHeight() {
-        return height1.get();
+        return height.get();
     }
 
     public ObservableValue<Double> widthObservable() {
-        return width1.asObject();
+        return width.asObject();
     }
 
     public ObservableValue<Double> heightObservable() {
-        return height1.asObject();
+        return height.asObject();
     }
 
     //----------------|
@@ -241,11 +257,15 @@ public class GraphGroup extends Group {
     }
 
     public void addVertex(double x, double y, boolean createAction) {
+        needToSave = true;
+
         Vertex vertex = new Vertex(this, x, y);
         addVertex(vertex, createAction);
     }
 
     public void addVertex(Vertex vertex, boolean createAction) {
+        needToSave = true;
+
         if (createAction)
             actionsController.addAction(new CreateVertex(vertex, this));
         vertex.connect();
@@ -254,16 +274,22 @@ public class GraphGroup extends Group {
     }
 
     public void addEdge(Vertex firstVertex, Vertex secondVertex, boolean createAction) {
+        needToSave = true;
+
         BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
         addEdge(edge, createAction);
     }
 
     public void addEdge(Vertex vertex, boolean createAction) {
+        needToSave = true;
+
         UnaryEdge edge = new UnaryEdge(this, vertex);
         addEdge(edge, createAction);
     }
 
     public void addEdge(Edge edge, boolean createAction) {
+        needToSave = true;
+
         if (createAction)
             actionsController.addAction(new CreateEdge(edge, this));
         edge.connect();
@@ -272,6 +298,8 @@ public class GraphGroup extends Group {
     }
 
     public void removeVertexWithEdges(Vertex vertex, boolean createAction) {
+        needToSave = true;
+
         Set<Edge> incidentEdges = vertex.getEdgesCopy();
 
         if (createAction)
@@ -289,6 +317,8 @@ public class GraphGroup extends Group {
     }
 
     public void removeEdge(Edge edge, boolean createAction) {
+        needToSave = true;
+
         if (createAction)
             actionsController.addAction(new DeleteEdge(edge, this));
         edge.disconnect();

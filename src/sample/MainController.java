@@ -1,11 +1,14 @@
 package sample;
 
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -16,9 +19,12 @@ import sample.Parser.GraphData;
 import sample.Parser.InputFileParser;
 import sample.Parser.OutputFileSaver;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -33,25 +39,18 @@ public class MainController {
 
     private Map<Tab, GraphController> tabToController = new HashMap<>();
 
-    private FileChooser fileChooser = new FileChooser();
+    private FileChooser fileChooser = new FileChooser(),
+                        imageFileChooser = new FileChooser();
     private InputFileParser inputFileParser = new InputFileParser();
     private OutputFileSaver outputFileSaver = new OutputFileSaver();
     private InputDialog inputDialog = new InputDialog();
 
     void init() {
         initGlyphButtons();
-
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Матрица смежности", "*.adj"),
-                new FileChooser.ExtensionFilter("Матрица инцидентности", "*.inc"),
-                new FileChooser.ExtensionFilter("Ребра", "*.ed")
-        );
+        initFileChoosers();
 
         createNewGraph();
-        createNewGraph();
-
-
-
+        createNewGraph(); // TODO
     }
 
     private void initGlyphButtons() {
@@ -66,6 +65,18 @@ public class MainController {
         deleteButton.setGraphic(trash);
 
         toggleGroup.selectedToggleProperty().addListener(this::onActionButtonSelected);
+    }
+
+    private void initFileChoosers() {
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Матрица смежности", "*.adj"),
+                new FileChooser.ExtensionFilter("Матрица инцидентности", "*.inc"),
+                new FileChooser.ExtensionFilter("Ребра", "*.ed")
+        );
+
+        imageFileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Изображение", "*.png")
+        );
     }
 
     private void onActionButtonSelected(ObservableValue<? extends Toggle> obs, Toggle oldValue,
@@ -141,22 +152,6 @@ public class MainController {
         return contextMenu;
     }
 
-    private void onRenameTab(Tab tab, ActionEvent event) {
-        String text = inputDialog.getTabText(tab.getText());
-        if (text != null)
-            tab.setText(text);
-    }
-
-    private void onCloseTab(Tab tab, ActionEvent event) {
-        ButtonType buttonType = GraphAlert.confirmTabClose();
-        if (buttonType == ButtonType.YES) {
-            if (trySaveGraph(tabToController.get(tab)))
-                removeTab(tab);
-        }
-        else if (buttonType == ButtonType.NO) {
-            removeTab(tab);
-        }
-    }
 
     private boolean trySaveGraph(GraphController controller) {
         fileChooser.setInitialDirectory(filesDirectory); // TODO
@@ -198,6 +193,48 @@ public class MainController {
             return tabToController.get(selectedTab).getGraphGroup();
         else
             return null;
+    }
+
+    public boolean tryCloseAllTabs() {
+        List<Tab> tabsCopy = new ArrayList<>(tabPaneWithGraphs.getTabs());
+        for (Tab tab : tabsCopy) {
+            tabPaneWithGraphs.getSelectionModel().select(tab);
+            GraphController controller = tabToController.get(tab);
+            if (controller.getGraphGroup().isNeedToSave()) {
+                ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
+                if (buttonType == ButtonType.YES) {
+                    if (!trySaveGraph(controller))
+                        return false;
+                }
+                else if (buttonType == ButtonType.CANCEL) {
+                    return false;
+                }
+            }
+            tabPaneWithGraphs.getTabs().remove(tab);
+        }
+
+//        tabPaneWithGraphs.getTabs().removeAll(savedTabs);
+        return true;
+    }
+
+    //------------------------------|
+    //   tab context menu actions   |
+    //------------------------------|
+    private void onRenameTab(Tab tab, ActionEvent event) {
+        String text = inputDialog.getTabText(tab.getText());
+        if (text != null)
+            tab.setText(text);
+    }
+
+    private void onCloseTab(Tab tab, ActionEvent event) {
+        ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
+        if (buttonType == ButtonType.YES) {
+            if (trySaveGraph(tabToController.get(tab)))
+                removeTab(tab);
+        }
+        else if (buttonType == ButtonType.NO) {
+            removeTab(tab);
+        }
     }
 
     //---------------------|
@@ -256,6 +293,30 @@ public class MainController {
             return;
 
         trySaveGraph(controller);
+    }
+
+    @FXML private void onSaveAsImage(ActionEvent event) {
+        GraphGroup graphGroup = getSelectedGraphGroup();
+        if (graphGroup == null)
+            return;
+
+        File file = imageFileChooser.showSaveDialog(null);
+        if (file == null)
+            return;
+
+        WritableImage image = graphGroup.getGraphImage();
+        assert image != null;
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    @FXML private void onExit(ActionEvent event) {
+        if (tryCloseAllTabs())
+            System.exit(0);
     }
 
     // Edit

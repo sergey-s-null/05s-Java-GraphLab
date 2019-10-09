@@ -35,7 +35,15 @@ public class Main extends Application {
     }
 
     public static boolean isValidTabText(String tabText) {
-        return tabText.length() > 0 && tabText.length() < 16;
+        return tabText.length() > 0 && tabText.length() <= 16;
+    }
+
+
+
+    public static void main(String[] args) {
+
+
+        launch(args);
     }
 
     @Override
@@ -52,12 +60,10 @@ public class Main extends Application {
 
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(520);
-        
-    }
 
-    public static void main(String[] args) {
-
-
-        launch(args);
+        primaryStage.setOnCloseRequest(event -> {
+            if (!controller.tryCloseAllTabs())
+                event.consume();
+        });
     }
 }

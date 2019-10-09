@@ -13,11 +13,12 @@ public class GraphAlert {
         alert.showAndWait();
     }
 
-    public static ButtonType confirmTabClose() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Сохранить граф перед закрытием?",
+    public static ButtonType confirmTabClose(String tabName) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Сохранить граф \"" + tabName + "\" перед закрытием?",
                 ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
         alert.setTitle("(⊙ω⊙)");
-        alert.setHeaderText("Сохранить?");
+        alert.setHeaderText(tabName);
 
         Optional<ButtonType> result = alert.showAndWait();
         return result.orElse(ButtonType.CANCEL);

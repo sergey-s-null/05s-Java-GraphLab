@@ -11,8 +11,8 @@ public class Resolution {
     }
 
     public Resolution() {
-        width = GraphGroup.width;
-        height = GraphGroup.height;
+        width = GraphGroup.defaultWidth;
+        height = GraphGroup.defaultHeight;
     }
 
     public double getWidth() {

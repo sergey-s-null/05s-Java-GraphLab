@@ -22,8 +22,9 @@
                   <MenuItem mnemonicParsing="false" onAction="#onNewGraph" text="Новый граф" />
                   <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="Открыть" />
                   <MenuItem mnemonicParsing="false" onAction="#onSaveFile" text="Сохранить" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveAsImage" text="Сохранить изображение" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem mnemonicParsing="false" text="Выход" />
+              <MenuItem mnemonicParsing="false" onAction="#onExit" text="Выход" />
                   <MenuItem mnemonicParsing="false" onAction="#onTestAction" text="testAction" />
             </items>
           </Menu>
