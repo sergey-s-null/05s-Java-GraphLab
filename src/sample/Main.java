@@ -39,13 +39,14 @@ public class Main extends Application {
     }
 
     public static String makeValidTabText(String tabText) {
-        return tabText.substring(0, Math.min(16, tabText.length())) + "...";
+        if (tabText.length() > 16)
+            return tabText.substring(0, Math.min(16, tabText.length())) + "...";
+        else
+            return tabText;
     }
 
 
     public static void main(String[] args) {
-
-
         launch(args);
     }
 
@@ -65,8 +66,8 @@ public class Main extends Application {
         primaryStage.setMinHeight(520);
 
         primaryStage.setOnCloseRequest(event -> {
-            if (!controller.tryCloseAllTabs())
-                event.consume();
+            controller.onExit();
+            event.consume();
         });
     }
 }

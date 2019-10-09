@@ -9,7 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
@@ -20,8 +23,7 @@ import sample.Parser.InputFileParser;
 import sample.Parser.OutputFileSaver;
 
 import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,11 +48,38 @@ public class MainController {
     private OutputFileSaver outputFileSaver = new OutputFileSaver();
     private InputDialog inputDialog = new InputDialog();
 
+    @FXML private BorderPane graphEditorPane;
+    @FXML private VBox authorPane, helpPane;
+    @FXML private Button backFromAuthor, backFromHelp;
+
+    @FXML private WebView webView;
+
+    private String readFile(String filename) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        StringBuilder builder = new StringBuilder();
+        while (reader.ready()) {
+            if (builder.length() != 0)
+                builder.append('\n');
+            builder.append(reader.readLine());
+        }
+        return builder.toString();
+    }
+
     void init() {
         initGlyphButtons();
         initFileChoosers();
+        initAbouts();
 
         createNewTab();
+
+        try {// TODO delete
+            String html = readFile("./src/aboutProgram/main.html");
+            webView.getEngine().loadContent(html);
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
 
     private void initGlyphButtons() {
@@ -77,6 +106,16 @@ public class MainController {
         imageFileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Изображение", "*.png")
         );
+    }
+
+    private void initAbouts() {
+        Glyph glyphAuthor = new Glyph("FontAwesome", FontAwesome.Glyph.ARROW_CIRCLE_LEFT);
+        glyphAuthor.setFontSize(28);
+        backFromAuthor.setGraphic(glyphAuthor);
+
+        Glyph glyphHelp = new Glyph("FontAwesome", FontAwesome.Glyph.ARROW_CIRCLE_LEFT);
+        glyphHelp.setFontSize(28);
+        backFromHelp.setGraphic(glyphHelp);
     }
 
     private void onActionButtonSelected(ObservableValue<? extends Toggle> obs, Toggle oldValue,
@@ -337,6 +376,14 @@ public class MainController {
     }
 
     @FXML private void onExit(ActionEvent event) {
+        onExit();
+    }
+
+    public void onExit() {
+        authorPane.setVisible(false);
+        helpPane.setVisible(false);
+        graphEditorPane.setVisible(true);
+
         if (tryCloseAllTabs())
             Platform.exit();
     }
@@ -374,5 +421,30 @@ public class MainController {
             graphGroup.setHeight(height, true);
     }
 
+    // ?
+    @FXML private void onAboutProgram(ActionEvent event) {
+        graphEditorPane.setVisible(false);
+        authorPane.setVisible(false);
+        helpPane.setVisible(true);
+    }
+
+    @FXML private void onAboutAuthor(ActionEvent event) {
+        graphEditorPane.setVisible(false);
+        helpPane.setVisible(false);
+        authorPane.setVisible(true);
+    }
+
+    //----------------------|
+    //   About... actions   |
+    //----------------------|
+    @FXML private void onBackFromAuthor(ActionEvent event) {
+        authorPane.setVisible(false);
+        graphEditorPane.setVisible(true);
+    }
+
+    @FXML private void onBackFromHelp(ActionEvent event) {
+        helpPane.setVisible(false);
+        graphEditorPane.setVisible(true);
+    }
 
 }
