@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
+import java.io.IOException;
+
 
 public class Main extends Application {
     // static функции, не нашедшии себе места, поэтому я их приютил тут
@@ -51,8 +53,8 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
+    public void start(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
         Parent root = loader.load();
 
         MainController controller = loader.getController();

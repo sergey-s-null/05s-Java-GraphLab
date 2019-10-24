@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane prefHeight="320.0" prefWidth="345.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Файл">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#onNewGraph" text="Новый граф" />
+                  <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="Открыть" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveFile" text="Сохранить" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveAsImage" text="Сохранить изображение" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" onAction="#onExit" text="Выход" />
+                  <MenuItem mnemonicParsing="false" onAction="#onTestAction" text="testAction" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Редактировать">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#onUndoAction" text="Отмена">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#onRedoAction" text="Вернуть">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <Menu mnemonicParsing="false" text="Размер поля">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onChangeWidth" text="Ширина" />
+                        <MenuItem mnemonicParsing="false" onAction="#onChangeHeight" text="Высота" />
+                    </items>
+                  </Menu>
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Задачи теории графов" />
+          <Menu mnemonicParsing="false" text="?">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#onAboutProgram" text="О программе" />
+                  <MenuItem mnemonicParsing="false" onAction="#onAboutAuthor" text="Об авторе" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <BorderPane fx:id="graphEditorPane" prefHeight="200.0" prefWidth="200.0">
+               <left>
+                  <VBox fillWidth="false" maxWidth="-Infinity" prefHeight="200.0" prefWidth="40.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets />
+                     </BorderPane.margin>
+                     <children>
+                        <ToggleButton fx:id="moveButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="toggleGroup" />
+                           </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="vertexButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                        </ToggleButton>
+                        <ToggleButton fx:id="edgeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                        </ToggleButton>
+                        <ToggleButton fx:id="deleteButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                        </ToggleButton>
+                     </children>
+                  </VBox>
+               </left>
+               <center>
+                  <TabPane fx:id="tabPaneWithGraphs" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+               </center>
+            </BorderPane>
+            <VBox fx:id="authorPane" prefHeight="200.0" prefWidth="100.0" visible="false">
+               <children>
+                  <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="backFromAuthor" layoutX="20.0" layoutY="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackFromAuthor" prefHeight="40.0" prefWidth="40.0">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </Button>
+                     </children></Pane>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@images/che.png" />
+                                 </image>
+                              </ImageView>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                                    <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Студент МАИ" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="Arial" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <GridPane>
+                                <columnConstraints>
+                                  <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" maxWidth="71.0" minWidth="10.0" prefWidth="58.0" />
+                                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="103.0" minWidth="10.0" prefWidth="92.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints />
+                                  <RowConstraints maxHeight="-Infinity" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="-Infinity" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" text="Группа" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets right="8.0" />
+                                       </GridPane.margin>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="ФИО" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets right="8.0" />
+                                       </GridPane.margin>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label prefHeight="20.0" prefWidth="99.0" text="М8О-313Б-17" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Семенов С. Д." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets />
+                                       </GridPane.margin>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </VBox>
+                        <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox fx:id="helpPane" prefHeight="200.0" prefWidth="100.0" visible="false">
+               <children>
+                  <HBox prefHeight="0.0" prefWidth="0.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Button fx:id="backFromHelp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackFromHelp" prefHeight="40.0" prefWidth="40.0">
+                           <HBox.margin>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="0.0" HBox.hgrow="SOMETIMES" />
+                        <WebView fx:id="webView" maxWidth="1000.0" prefHeight="248.0" prefWidth="285.0" HBox.hgrow="ALWAYS" />
+                        <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="0.0" HBox.hgrow="SOMETIMES" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
+</BorderPane>

@@ -24,6 +24,10 @@ import sample.Parser.OutputFileSaver;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +35,7 @@ import java.util.Map;
 
 
 public class MainController {
-    private static final File filesDirectory = new File("C:\\Users\\Sergey\\Desktop\\debug_saves");
+//    private static final File filesDirectory = new File("C:\\Users\\Sergey\\Desktop\\debug_saves");
 
     @FXML private ToggleButton moveButton, vertexButton, edgeButton, deleteButton;
     private GraphGroup.Action currentAction = GraphGroup.Action.Empty;
@@ -54,16 +58,6 @@ public class MainController {
 
     @FXML private WebView webView;
 
-    private String readFile(String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-        StringBuilder builder = new StringBuilder();
-        while (reader.ready()) {
-            if (builder.length() != 0)
-                builder.append('\n');
-            builder.append(reader.readLine());
-        }
-        return builder.toString();
-    }
 
     void init() {
         initGlyphButtons();
@@ -72,14 +66,15 @@ public class MainController {
 
         createNewTab();
 
-        try {// TODO delete
-            String html = readFile("./src/aboutProgram/main.html");
+        try {
+            URI path = getClass().getResource("/aboutProgram/main.html").toURI();
+            List<String> htmlLines = Files.readAllLines(Paths.get(path));
+            String html = htmlLines.stream().reduce((s1, s2) -> s1 + s2).orElse("");
             webView.getEngine().loadContent(html);
         }
-        catch (IOException e) {
+        catch (IOException|URISyntaxException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     private void initGlyphButtons() {
@@ -168,13 +163,12 @@ public class MainController {
     }
 
     private Tab createNewTab() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("graph.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/graph.fxml"));
         Parent root;
         try {
             root = loader.load();
         }
         catch (IOException e) {
-            System.out.println("Error: " + e);
             return null;
         }
 
@@ -230,7 +224,6 @@ public class MainController {
                 GraphAlert.showAndWait("Ошибка сохранения файла: " + e.getMessage());
                 return false;
             }
-
             return true;
         }
         else {
@@ -250,7 +243,7 @@ public class MainController {
             return null;
     }
 
-    public boolean tryCloseAllTabs() {
+    private boolean tryCloseAllTabs() {
         List<Tab> tabsCopy = new ArrayList<>(tabPaneWithGraphs.getTabs());
         for (Tab tab : tabsCopy) {
             tabPaneWithGraphs.getSelectionModel().select(tab);

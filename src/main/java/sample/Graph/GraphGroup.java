@@ -441,7 +441,6 @@ public class GraphGroup extends Group {
             }
             movingEdge = null;
         }
-
     }
     // context menus
     public void onVertexContextMenuAction(Vertex vertex, VertexContextMenu.Action action) {
