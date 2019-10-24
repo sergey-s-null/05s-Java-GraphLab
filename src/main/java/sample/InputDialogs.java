@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.scene.control.TextInputDialog;
+import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 
 public class InputDialogs {
@@ -91,4 +92,53 @@ public class InputDialogs {
             }
         }
     }
+
+    public static String getVertexName(String defaultName) {
+        dialog.setTitle("Что тут обычно пишется?");
+        dialog.setHeaderText("Введите имя вершины (длина от 1 до 10, запрещенные символы: \"%()[]{},\" и пробельные)");
+        dialog.setContentText("Имя:");
+        dialog.getEditor().setText(defaultName);
+
+        while (true) {
+            dialog.showAndWait();
+            String res = dialog.getResult();
+            if (res == null)
+                return null;
+
+            if (!Vertex.isNameValid(res)) {
+                GraphAlert.showAndWait("Неверное имя.");
+                continue;
+            }
+            return res;
+        }
+    }
+
+    public static Double getEdgeWeight(double defaultWeight) {
+        dialog.setTitle("Так и не понял, что тут писать.");
+        dialog.setHeaderText("Введите вес ребра");
+        dialog.setContentText("Вес:");
+        dialog.getEditor().setText(Double.toString(defaultWeight));
+
+        while (true) {
+            dialog.showAndWait();
+            String res = dialog.getResult();
+            if (res == null)
+                return null;
+
+            try {
+                double weight = Double.parseDouble(res);
+                if (weight == 0)
+                    GraphAlert.showAndWait("Вес не может быть равен 0.");
+                else
+                    return weight;
+            }
+            catch (NumberFormatException e) {
+                GraphAlert.showAndWait("Неверный формат числа.");
+            }
+        }
+    }
+
+
+
+
 }

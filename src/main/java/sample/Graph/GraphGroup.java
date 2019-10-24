@@ -23,6 +23,7 @@ import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphActions.*;
+import sample.InputDialogs;
 import sample.Parser.SimpleData.EdgeData;
 import sample.Parser.GraphData;
 import sample.Parser.SimpleData.Resolution;
@@ -56,7 +57,6 @@ public class GraphGroup extends Group {
 
     private VertexContextMenu vertexContextMenu = new VertexContextMenu(this::onVertexContextMenuAction);
     private EdgeContextMenu edgeContextMenu = new EdgeContextMenu(this::onEdgeContextMenuAction);
-    private GraphInputDialog inputDialog = new GraphInputDialog();
 
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
     private ObservableSet<Edge> edges = FXCollections.observableSet();
@@ -343,6 +343,8 @@ public class GraphGroup extends Group {
     //   events   |
     //------------|
     // mouse
+    // TODO сделать обработчики событий в своих классах. В этих обработчиках вызывать соответствующие методы отсюда
+    // TODO 2 configureFor (текущее действие), т.е. если, например выбрано действие СОЗДАТЬ_ВЕРШИНУ, работает только onMouseClick
     private void onMouseClick(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             if (currentAction == Action.CreateVertex) {
@@ -454,7 +456,7 @@ public class GraphGroup extends Group {
         Vertex vertex = event.getVertex();
         switch (event.getAction()) {
             case Rename:
-                String newName = inputDialog.getVertexName(vertex.getName());
+                String newName = InputDialogs.getVertexName(vertex.getName());
                 if (newName != null)
                     vertex.setName(newName, true);
                 break;
@@ -471,7 +473,7 @@ public class GraphGroup extends Group {
         Edge edge = event.getEdge();
         switch (event.getAction()) {
             case ChangeWeight:
-                Double res = inputDialog.getEdgeWeight(edge.getWeight());
+                Double res = InputDialogs.getEdgeWeight(edge.getWeight());
                 if (res != null)
                     edge.setWeight(res, true);
                 break;
