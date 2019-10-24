@@ -26,11 +26,11 @@ public class GraphController {
         anchorPane.setMinSize(graphGroup.getWidth(), graphGroup.getHeight());
 
 
-        graphGroup.widthObservable().addListener((observable, oldValue, newValue) -> {
+        graphGroup.widthProperty().addListener((observable, oldValue, newValue) -> {
             anchorPane.setMinWidth((Double) newValue);
             anchorPane.setMaxWidth((Double) newValue);
         });
-        graphGroup.heightObservable().addListener((observable, oldValue, newValue) -> {
+        graphGroup.heightProperty().addListener((observable, oldValue, newValue) -> {
             anchorPane.setMinHeight((Double) newValue);
             anchorPane.setMaxHeight((Double) newValue);
         });

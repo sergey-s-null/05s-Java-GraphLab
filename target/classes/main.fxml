@@ -23,6 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
+<?import org.controlsfx.glyphfont.Glyph?>
 
 <BorderPane prefHeight="320.0" prefWidth="345.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
    <top>
@@ -86,21 +87,33 @@
                            <toggleGroup>
                               <ToggleGroup fx:id="toggleGroup" />
                            </toggleGroup>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" icon="HAND_ALT_UP" />
+                           </graphic>
                         </ToggleButton>
                         <ToggleButton fx:id="vertexButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
                            <VBox.margin>
                               <Insets left="4.0" right="4.0" top="4.0" />
                            </VBox.margin>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" icon="CIRCLE_ALT" />
+                           </graphic>
                         </ToggleButton>
                         <ToggleButton fx:id="edgeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
                            <VBox.margin>
                               <Insets left="4.0" right="4.0" top="4.0" />
                            </VBox.margin>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" icon="ARROWS_H"/>
+                           </graphic>
                         </ToggleButton>
                         <ToggleButton fx:id="deleteButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
                            <VBox.margin>
                               <Insets left="4.0" right="4.0" top="4.0" />
                            </VBox.margin>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" icon="TRASH_ALT"/>
+                           </graphic>
                         </ToggleButton>
                      </children>
                   </VBox>
@@ -113,10 +126,13 @@
                <children>
                   <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Button fx:id="backFromAuthor" layoutX="20.0" layoutY="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackFromAuthor" prefHeight="40.0" prefWidth="40.0">
+                        <Button layoutX="20.0" layoutY="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackFromAuthor" prefHeight="40.0" prefWidth="40.0">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" fontSize="28.0" icon="ARROW_CIRCLE_LEFT" />
+                           </graphic>
                         </Button>
                      </children></Pane>
                   <HBox prefHeight="100.0" prefWidth="200.0">
@@ -197,10 +213,13 @@
                <children>
                   <HBox prefHeight="0.0" prefWidth="0.0" VBox.vgrow="NEVER">
                      <children>
-                        <Button fx:id="backFromHelp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackFromHelp" prefHeight="40.0" prefWidth="40.0">
+                        <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBackFromHelp" prefHeight="40.0" prefWidth="40.0">
                            <HBox.margin>
                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                            </HBox.margin>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" fontSize="28.0" icon="ARROW_CIRCLE_LEFT" />
+                           </graphic>
                         </Button>
                      </children>
                   </HBox>

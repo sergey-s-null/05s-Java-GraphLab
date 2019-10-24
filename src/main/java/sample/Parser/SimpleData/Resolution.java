@@ -1,4 +1,4 @@
-package sample.Parser;
+package sample.Parser.SimpleData;
 
 import sample.Graph.GraphGroup;
 

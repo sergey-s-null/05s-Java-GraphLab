@@ -1,12 +1,11 @@
 package sample.Graph.ContextMenus;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
-import sample.Graph.GraphGroup;
-
 
 
 public class EdgeContextMenu extends ContextMenu {
@@ -18,14 +17,17 @@ public class EdgeContextMenu extends ContextMenu {
         Delete
     }
 
-    private GraphGroup graphGroup;
     private Edge edge = null;
     private RadioMenuItem radioBothDirection, radioFirstDirection, radioSecondDirection;
+    private EventHandler<EdgeEvent> handler = null;
 
+    public EdgeContextMenu(EventHandler<EdgeEvent> handler) {
+        this();
+        this.handler = handler;
+    }
 
-    public EdgeContextMenu(GraphGroup owner) {
+    private EdgeContextMenu() {
         super();
-        graphGroup = owner;
         initMenuItems();
     }
 
@@ -91,29 +93,33 @@ public class EdgeContextMenu extends ContextMenu {
     //------------|
     //   events   |
     //------------|
+    public void setOnItemAction(EventHandler<EdgeEvent> handler) {
+        this.handler = handler;
+    }
+
     private void onActionChangeWeight(ActionEvent ignored) {
-        if (edge != null)
-            graphGroup.onEdgeContextMenuAction(edge, Action.ChangeWeight);
+        handleOrIgnore(Action.ChangeWeight);
     }
 
     private void onActionBothDirection(ActionEvent ignored) {
-        if (edge != null)
-            graphGroup.onEdgeContextMenuAction(edge, Action.SelectBothDirection);
+        handleOrIgnore(Action.SelectBothDirection);
     }
 
     private void onActionFirstDirection(ActionEvent ignored) {
-        if (edge != null)
-            graphGroup.onEdgeContextMenuAction(edge, Action.SelectFirstDirection);
+        handleOrIgnore(Action.SelectFirstDirection);
     }
 
     private void onActionSecondDirection(ActionEvent ignored) {
-        if (edge != null)
-            graphGroup.onEdgeContextMenuAction(edge, Action.SelectSecondDirection);
+        handleOrIgnore(Action.SelectSecondDirection);
     }
 
     private void onActionDelete(ActionEvent ignored) {
-        if (edge != null)
-            graphGroup.onEdgeContextMenuAction(edge, Action.Delete);
+        handleOrIgnore(Action.SelectSecondDirection);
+    }
+
+    private void handleOrIgnore(Action action) {
+        if (edge != null && handler != null)
+            handler.handle(new EdgeEvent(edge, action));
     }
 
 }

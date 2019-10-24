@@ -1,6 +1,7 @@
 package sample.Graph.ContextMenus;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -14,12 +15,16 @@ public class VertexContextMenu extends ContextMenu {
         Delete
     }
 
-    private GraphGroup graphGroup;
     private Vertex vertex = null;
+    private EventHandler<VertexEvent> handler = null;
 
-    public VertexContextMenu(GraphGroup owner) {
+    public VertexContextMenu(EventHandler<VertexEvent> handler) {
+        this();
+        this.handler = handler;
+    }
+
+    private VertexContextMenu() {
         super();
-        graphGroup = owner;
         initMenuItems();
     }
 
@@ -36,6 +41,7 @@ public class VertexContextMenu extends ContextMenu {
         loop.setOnAction(this::onActionMakeLoop);
         rename.setOnAction(this::onActionRename);
         delete.setOnAction(this::onActionDelete);
+
     }
 
     public void configureFor(Vertex vertex) {
@@ -45,18 +51,24 @@ public class VertexContextMenu extends ContextMenu {
     //------------|
     //   events   |
     //------------|
+    public void setOnItemAction(EventHandler<VertexEvent> handler) {
+        this.handler = handler;
+    }
+
     private void onActionRename(ActionEvent ignored) {
-        if (vertex != null)
-            graphGroup.onVertexContextMenuAction(vertex, Action.Rename);
+        handleOrIgnore(Action.Rename);
     }
 
     private void onActionMakeLoop(ActionEvent ignored) {
-        if (vertex != null)
-            graphGroup.onVertexContextMenuAction(vertex, Action.MakeLoop);
+        handleOrIgnore(Action.MakeLoop);
     }
 
     private void onActionDelete(ActionEvent ignored) {
-        if (vertex != null)
-            graphGroup.onVertexContextMenuAction(vertex, Action.Delete);
+        handleOrIgnore(Action.Delete);
+    }
+
+    private void handleOrIgnore(Action action) {
+        if (vertex != null && handler != null)
+            handler.handle(new VertexEvent(vertex, action));
     }
 }

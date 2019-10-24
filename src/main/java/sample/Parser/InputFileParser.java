@@ -4,6 +4,9 @@ import Jama.Matrix;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 import sample.Main;
+import sample.Parser.ComplexData.EdgesData;
+import sample.Parser.ComplexData.VerticesData;
+import sample.Parser.SimpleData.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,26 +21,18 @@ import java.util.regex.Pattern;
 
 public class InputFileParser {
     private class TypesAndContents {
-        List<String> types, contents;
+        private List<String> types, contents;
 
         private TypesAndContents(List<String> types, List<String> contents) {
             this.types = types;
             this.contents = contents;
         }
-
-        private List<String> getTypes() {
-            return types;
-        }
-
-        private List<String> getContents() {
-            return contents;
-        }
     }
 
     public GraphData parseAdjacencyFile(String filename) throws Exception {
         TypesAndContents typesAndContents = parseFileForTypesAndContents(filename);
-        List<String> types = typesAndContents.getTypes(),
-                contents = typesAndContents.getContents();
+        List<String> types = typesAndContents.types,
+                     contents = typesAndContents.contents;
 
         Matrix matrix = null;
         VerticesData verticesData = null;
@@ -83,8 +78,8 @@ public class InputFileParser {
 
     public GraphData parseIncidentFile(String filename) throws Exception {
         TypesAndContents typesAndContents = parseFileForTypesAndContents(filename);
-        List<String> types = typesAndContents.getTypes(),
-                contents = typesAndContents.getContents();
+        List<String> types = typesAndContents.types,
+                     contents = typesAndContents.contents;
 
         Matrix matrix = null;
         List<List<Double> > edgesData = null;
@@ -141,8 +136,8 @@ public class InputFileParser {
 
     public GraphData parseEdgesFile(String filename) throws Exception {
         TypesAndContents typesAndContents = parseFileForTypesAndContents(filename);
-        List<String> types = typesAndContents.getTypes(),
-                contents = typesAndContents.getContents();
+        List<String> types = typesAndContents.types,
+                     contents = typesAndContents.contents;
 
         EdgesData edgesData = null;
         VerticesData verticesData = null;

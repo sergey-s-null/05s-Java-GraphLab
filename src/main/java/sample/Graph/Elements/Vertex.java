@@ -1,6 +1,5 @@
 package sample.Graph.Elements;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -18,7 +17,7 @@ import sample.Graph.GraphActions.MoveVertex;
 import sample.Graph.GraphActions.RenameVertex;
 import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
-import sample.Parser.Resolution;
+import sample.Parser.SimpleData.Resolution;
 
 import java.util.HashSet;
 import java.util.Set;

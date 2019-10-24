@@ -1,6 +1,7 @@
-package sample.Parser;
+package sample.Parser.ComplexData;
 
 import sample.Graph.Elements.Vertex;
+import sample.Parser.SimpleData.EdgeData;
 
 import java.util.ArrayList;
 import java.util.HashSet;

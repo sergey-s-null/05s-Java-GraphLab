@@ -6,8 +6,8 @@ import javafx.collections.*;
 import org.controlsfx.control.spreadsheet.*;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
-import sample.Parser.VertexData;
-import sample.Parser.VerticesData;
+import sample.Parser.SimpleData.VertexData;
+import sample.Parser.ComplexData.VerticesData;
 
 import java.util.*;
 
@@ -15,6 +15,7 @@ public class MatrixView extends SpreadsheetView {
     private List<Vertex> vertices = new ArrayList<>();
     private EdgesContainer edgesContainer = new EdgesContainer();
 
+    // TODO проверка на уже существующие вершины/ребра
     public MatrixView(ObservableList<Vertex> vertices, ObservableSet<Edge> edges) {
         super(new GridBase(0, 0));
 
@@ -82,7 +83,7 @@ public class MatrixView extends SpreadsheetView {
             Set<Edge> edges = edgesContainer.get(vertex);
             if (edges.size() != 1 || (Double) change.getNewValue() == 0) {
                 // возврат к предыдущему значению
-                getGrid().getRows().get(row).get(col).setItem(change.getOldValue());
+                getCell(row, col).setItem(change.getOldValue());
             }
             else {
                 for (Edge edge : edges)
@@ -95,7 +96,7 @@ public class MatrixView extends SpreadsheetView {
             edges.removeIf(edge -> !edge.isDirectionTo(vertex2));
             if (edges.size() != 1 || (Double) change.getNewValue() == 0) {
                 // возврат к предыдущему значению
-                getGrid().getRows().get(row).get(col).setItem(change.getOldValue());
+                getCell(row, col).setItem(change.getOldValue());
             }
             else {
                 for (Edge edge : edges)
@@ -103,6 +104,10 @@ public class MatrixView extends SpreadsheetView {
             }
         }
 
+    }
+
+    private SpreadsheetCell getCell(int row, int column) {
+        return getGrid().getRows().get(row).get(column);
     }
 
     // updates
@@ -170,8 +175,8 @@ public class MatrixView extends SpreadsheetView {
             }
         }
 
-        SpreadsheetCell cellTo1st = getGrid().getRows().get(indexVertex2).get(indexVertex1),
-                        cellTo2nd = getGrid().getRows().get(indexVertex1).get(indexVertex2);
+        SpreadsheetCell cellTo1st = getCell(indexVertex2, indexVertex1),
+                        cellTo2nd = getCell(indexVertex1, indexVertex2);
         cellTo1st.setEditable(true);
         cellTo2nd.setEditable(true);
         cellTo1st.setItem(weightTo1st);
@@ -191,7 +196,8 @@ public class MatrixView extends SpreadsheetView {
             sumWeight += edge.getWeight();
         }
 
-        SpreadsheetCell cell = getGrid().getRows().get(indexVertex).get(indexVertex);
+
+        SpreadsheetCell cell = getCell(indexVertex, indexVertex);
         cell.setEditable(true);
         cell.setItem(sumWeight);
         setCellEditable(cell, countEdges == 1);
@@ -282,9 +288,7 @@ public class MatrixView extends SpreadsheetView {
 
     private void wasRemovedVertex(Vertex vertex) {
         vertices.remove(vertex);
-
         removeRowAndColumn();
-
         vertex.nameProperty().removeListener(vertexIdToNameListener.remove(vertex));
     }
 

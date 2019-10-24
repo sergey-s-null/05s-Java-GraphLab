@@ -5,8 +5,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
@@ -14,7 +12,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
-import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
@@ -29,66 +26,33 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainController {
 //    private static final File filesDirectory = new File("C:\\Users\\Sergey\\Desktop\\debug_saves");
 
-    @FXML private ToggleButton moveButton, vertexButton, edgeButton, deleteButton;
     private GraphGroup.Action currentAction = GraphGroup.Action.Empty;
     @FXML private ToggleGroup toggleGroup;
     @FXML private TabPane tabPaneWithGraphs;
-    private int tabsCounter = 0;
-
-    private Map<Tab, GraphController> tabToController = new HashMap<>();
 
     private FileChooser fileChooser = new FileChooser(),
                         imageFileChooser = new FileChooser();
     private File prevSaveDir = null, prevOpenDir = null;
-    private InputFileParser inputFileParser = new InputFileParser();
-    private OutputFileSaver outputFileSaver = new OutputFileSaver();
     private InputDialog inputDialog = new InputDialog();
 
     @FXML private BorderPane graphEditorPane;
     @FXML private VBox authorPane, helpPane;
-    @FXML private Button backFromAuthor, backFromHelp;
 
     @FXML private WebView webView;
 
 
     void init() {
-        initGlyphButtons();
-        initFileChoosers();
-        initAbouts();
-
-        createNewTab();
-
-        try {
-            URI path = getClass().getResource("/aboutProgram/main.html").toURI();
-            List<String> htmlLines = Files.readAllLines(Paths.get(path));
-            String html = htmlLines.stream().reduce((s1, s2) -> s1 + s2).orElse("");
-            webView.getEngine().loadContent(html);
-        }
-        catch (IOException|URISyntaxException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void initGlyphButtons() {
-        Glyph hand = new Glyph("FontAwesome", FontAwesome.Glyph.HAND_ALT_UP);
-        Glyph circle = new Glyph("FontAwesome", FontAwesome.Glyph.CIRCLE_ALT);
-        Glyph edge = new Glyph("FontAwesome", FontAwesome.Glyph.ARROWS_H);
-        Glyph trash = new Glyph("FontAwesome", FontAwesome.Glyph.TRASH_ALT);
-
-        moveButton.setGraphic(hand);
-        vertexButton.setGraphic(circle);
-        edgeButton.setGraphic(edge);
-        deleteButton.setGraphic(trash);
-
         toggleGroup.selectedToggleProperty().addListener(this::onActionButtonSelected);
+        initFileChoosers();
+        initAboutProgram();
+
+        tabPaneWithGraphs.getTabs().add(new GraphTab());
     }
 
     private void initFileChoosers() {
@@ -103,14 +67,17 @@ public class MainController {
         );
     }
 
-    private void initAbouts() {
-        Glyph glyphAuthor = new Glyph("FontAwesome", FontAwesome.Glyph.ARROW_CIRCLE_LEFT);
-        glyphAuthor.setFontSize(28);
-        backFromAuthor.setGraphic(glyphAuthor);
-
-        Glyph glyphHelp = new Glyph("FontAwesome", FontAwesome.Glyph.ARROW_CIRCLE_LEFT);
-        glyphHelp.setFontSize(28);
-        backFromHelp.setGraphic(glyphHelp);
+    private void initAboutProgram() {
+        try {
+            URI path = getClass().getResource("/aboutProgram/main.html").toURI();
+            List<String> htmlLines = Files.readAllLines(Paths.get(path));
+            String html = htmlLines.stream().reduce((s1, s2) -> s1 + s2).orElse("");
+            webView.getEngine().loadContent(html);
+        }
+        catch (IOException|URISyntaxException e) {
+            GraphAlert.showAndWait("Error while loading about program.");
+            System.exit(-1);
+        }
     }
 
     private void onActionButtonSelected(ObservableValue<? extends Toggle> obs, Toggle oldValue,
@@ -144,70 +111,22 @@ public class MainController {
                         break;
                 }
 
-                for (GraphController controller : tabToController.values())
-                    controller.getGraphGroup().setCurrentAction(currentAction);
+                for (Tab tab : tabPaneWithGraphs.getTabs())
+                    ((GraphTab) tab).getGraphGroup().setCurrentAction(currentAction);
             }
         }
     }
 
-    private Tab createNewTab(String tabText, GraphData data) {
-        Tab tab = createNewTab();
-        if (tab == null)
-            return null;
-
-        tab.setText(tabText);
-        GraphController controller = tabToController.get(tab);
-        controller.getGraphGroup().setGraph(data, false);
-
-        return tab;
-    }
-
-    private Tab createNewTab() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/graph.fxml"));
-        Parent root;
-        try {
-            root = loader.load();
-        }
-        catch (IOException e) {
-            return null;
-        }
-
-        Tab tab = new Tab("Новый таб " + tabsCounter++, root);
-        tab.setContextMenu(createTabContextMenu(tab));
-        tabPaneWithGraphs.getTabs().add(tab);
-
-        GraphController graphController = loader.getController();
-        graphController.init();
-        graphController.getGraphGroup().setCurrentAction(currentAction);
-        tabToController.put(tab, graphController);
-
-        return tab;
-    }
-
-    private ContextMenu createTabContextMenu(Tab tab) {
-        MenuItem rename = new MenuItem("Переименовать");
-        MenuItem close = new MenuItem("Закрыть");
-        rename.setOnAction(event -> onRenameTab(tab, event));
-        close.setOnAction(event -> onCloseTab(tab, event));
-
-        ContextMenu contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(
-                rename,
-                new SeparatorMenuItem(),
-                close
-        );
-        return contextMenu;
-    }
-
-    private boolean trySaveGraph(GraphController controller) {
+    private boolean trySaveGraph(GraphTab tab) {
         if (prevSaveDir != null)
             fileChooser.setInitialDirectory(prevSaveDir);
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
             prevSaveDir = file.getParentFile();
 
-            GraphGroup graphGroup = controller.getGraphGroup();
-            MatrixView matrixView = controller.getMatrixView();
+            GraphGroup graphGroup = tab.getGraphGroup();
+            MatrixView matrixView = tab.getMatrixView();
+            OutputFileSaver outputFileSaver = new OutputFileSaver();
             try {
                 if (file.getName().endsWith(".adj")) {
                     outputFileSaver.saveAsAdjacency(file.getAbsolutePath(), matrixView.getMatrix(),
@@ -238,7 +157,7 @@ public class MainController {
     private GraphGroup getSelectedGraphGroup() {
         Tab selectedTab = tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
         if (selectedTab != null)
-            return tabToController.get(selectedTab).getGraphGroup();
+            return ((GraphTab) selectedTab).getGraphGroup();
         else
             return null;
     }
@@ -247,11 +166,10 @@ public class MainController {
         List<Tab> tabsCopy = new ArrayList<>(tabPaneWithGraphs.getTabs());
         for (Tab tab : tabsCopy) {
             tabPaneWithGraphs.getSelectionModel().select(tab);
-            GraphController controller = tabToController.get(tab);
-            if (controller.getGraphGroup().isNeedToSave()) {
+            if (((GraphTab) tab).getGraphGroup().isNeedToSave()) {
                 ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
                 if (buttonType == ButtonType.YES) {
-                    if (!trySaveGraph(controller))
+                    if (!trySaveGraph((GraphTab) tab))
                         return false;
                 }
                 else if (buttonType == ButtonType.CANCEL) {
@@ -261,44 +179,42 @@ public class MainController {
             tabPaneWithGraphs.getTabs().remove(tab);
         }
 
-//        tabPaneWithGraphs.getTabs().removeAll(savedTabs);
         return true;
     }
 
     //------------------------------|
     //   tab context menu actions   |
     //------------------------------|
-    private void onRenameTab(Tab tab, ActionEvent event) {
-        String text = inputDialog.getTabText(tab.getText());
-        if (text != null)
-            tab.setText(text);
-    }
-
-    private void onCloseTab(Tab tab, ActionEvent event) {
-        GraphController controller = tabToController.get(tab);
-        if (controller.getGraphGroup().isNeedToSave()) {
-            ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
-            if (buttonType == ButtonType.YES) {
-                if (!trySaveGraph(controller))
-                    return;
-            }
-            else if (buttonType == ButtonType.CANCEL)
-                return;
-        }
-        removeTab(tab);
-    }
+//    private void onRenameTab(Tab tab, ActionEvent event) {
+//        String text = inputDialog.getTabText(tab.getText());
+//        if (text != null)
+//            tab.setText(text);
+//    }
+//
+//    private void onCloseTab(Tab tab, ActionEvent event) {
+//        GraphController controller = tabToController.get(tab);
+//        if (controller.getGraphGroup().isNeedToSave()) {
+//            ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
+//            if (buttonType == ButtonType.YES) {
+//                if (!trySaveGraph(controller))
+//                    return;
+//            }
+//            else if (buttonType == ButtonType.CANCEL)
+//                return;
+//        }
+//        removeTab(tab);
+//    }
 
     //---------------------|
     //   MenuBar actions   |
     //---------------------|
-    // TODO del
     @FXML private void onTestAction(ActionEvent event) {
         System.gc();
     }
 
     // File
     @FXML private void onNewGraph(ActionEvent event) {
-        createNewTab();
+        tabPaneWithGraphs.getTabs().add(new GraphTab());
     }
 
     @FXML private void onOpenFile(ActionEvent event) {
@@ -311,6 +227,7 @@ public class MainController {
 
         GraphData result;
         try {
+            InputFileParser inputFileParser = new InputFileParser();
             if (file.getName().endsWith(".adj")) {
                 result = inputFileParser.parseAdjacencyFile(file.getAbsolutePath());
             }
@@ -329,21 +246,20 @@ public class MainController {
             return;
         }
 
-        Tab tab = createNewTab(Main.makeValidTabText(file.getName()), result);
-        tabPaneWithGraphs.getSelectionModel().select(tab);
+        Tab tab = new GraphTab(Main.makeValidTabText(file.getName()), result);
+        tabPaneWithGraphs.getTabs().add(tab);
     }
 
     @FXML private void onSaveFile(ActionEvent event) {
-        Tab selectedTab = tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
+        GraphTab selectedTab = (GraphTab) tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
         if (selectedTab == null)
             return;
 
-        GraphController controller = tabToController.get(selectedTab);
-        if (controller.getGraphGroup().isEmpty()) {
+        if (selectedTab.getGraphGroup().isEmpty()) {
             GraphAlert.showAndWait("Граф пуст.");
             return;
         }
-        trySaveGraph(controller);
+        trySaveGraph(selectedTab);
     }
 
     @FXML private void onSaveAsImage(ActionEvent event) {
@@ -383,9 +299,9 @@ public class MainController {
 
     // Edit
     @FXML private void onUndoAction(ActionEvent event) {
-        Tab selectedTab = tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
+        GraphTab selectedTab = (GraphTab) tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
         if (selectedTab != null)
-            tabToController.get(selectedTab).getGraphGroup().undo();
+            selectedTab.getGraphGroup().undo();
     }
 
     @FXML private void onRedoAction(ActionEvent event) {

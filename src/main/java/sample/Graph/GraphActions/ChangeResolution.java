@@ -1,7 +1,7 @@
 package sample.Graph.GraphActions;
 
 import sample.Graph.GraphGroup;
-import sample.Parser.Resolution;
+import sample.Parser.SimpleData.Resolution;
 
 
 public class ChangeResolution extends Action {

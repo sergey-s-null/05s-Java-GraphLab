@@ -2,59 +2,53 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Jama_1_0_3.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/commons_math3_3_6_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/ContextMenus/EdgeEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/ContextMenus/VertexEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sample/GraphTab.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GraphLab.iml" beforeDir="false" afterPath="$PROJECT_DIR$/GraphLab.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aboutProgram/main.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/aboutProgram/main.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/images/che.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/EdgeContextMenu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/ContextMenus/VertexContextMenu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/BinaryEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/Edge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/UnaryEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/Elements/Vertex.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/Action.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/ChangeDirectionEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/ChangeResolution.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/ChangeWeightEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/CreateEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/CreateVertex.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/DeleteEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/DeleteVertex.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/EdgeAction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/ListOfActions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/MoveBinaryEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/MoveUnaryEdge.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/MoveVertex.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/RenameVertex.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActions/VertexAction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphActionsController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphGroup.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Graph/GraphInputDialog.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/GraphAlert.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/GraphController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/InputDialog.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/MainController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/MatrixView/EdgesContainer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/MatrixView/MatrixView.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/BinaryEdgeData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/EdgeData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/EdgesData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/GraphData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/InputFileParser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/OutputFileSaver.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/Resolution.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/UnaryEdgeData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/VertexData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Parser/VerticesData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/graph.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/main.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/ContextMenus/EdgeContextMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/ContextMenus/EdgeContextMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/ContextMenus/VertexContextMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/ContextMenus/VertexContextMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Vertex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphActions/ChangeResolution.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphActions/ChangeResolution.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphGroup.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/GraphController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/GraphController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/MainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/MatrixView/MatrixView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/MatrixView/MatrixView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/BinaryEdgeData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/SimpleData/BinaryEdgeData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/EdgeData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/SimpleData/EdgeData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/EdgesData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/ComplexData/EdgesData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/GraphData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/GraphData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/InputFileParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/InputFileParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/OutputFileSaver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/OutputFileSaver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/Resolution.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/SimpleData/Resolution.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/UnaryEdgeData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/SimpleData/UnaryEdgeData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/VertexData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/SimpleData/VertexData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Parser/VerticesData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Parser/ComplexData/VerticesData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/EdgeContextMenu$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/EdgeContextMenu$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/EdgeContextMenu$Action.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/EdgeContextMenu$Action.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/EdgeContextMenu.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/EdgeContextMenu.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/VertexContextMenu$Action.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/VertexContextMenu$Action.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/VertexContextMenu.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/ContextMenus/VertexContextMenu.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphActions/ChangeResolution.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphActions/ChangeResolution.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/GraphController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/GraphController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/MainController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/MainController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/MatrixView/MatrixView.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/MatrixView/MatrixView.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/BinaryEdgeData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/EdgeData$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/EdgeData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/EdgesData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/GraphData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Parser/GraphData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/InputFileParser$TypesAndContents.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Parser/InputFileParser$TypesAndContents.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/InputFileParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Parser/InputFileParser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/OutputFileSaver.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Parser/OutputFileSaver.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/Resolution.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/UnaryEdgeData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/VertexData.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Parser/VerticesData.class" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -110,6 +104,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="FxmlFile" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -268,15 +263,6 @@
   </component>
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="1302000" />
-  </component>
-  <component name="TodoView">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">

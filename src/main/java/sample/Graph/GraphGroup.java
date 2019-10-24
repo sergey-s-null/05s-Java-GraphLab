@@ -1,9 +1,7 @@
 package sample.Graph;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -17,16 +15,18 @@ import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.ContextMenus.EdgeContextMenu;
+import sample.Graph.ContextMenus.EdgeEvent;
 import sample.Graph.ContextMenus.VertexContextMenu;
+import sample.Graph.ContextMenus.VertexEvent;
 import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphActions.*;
-import sample.Parser.EdgeData;
+import sample.Parser.SimpleData.EdgeData;
 import sample.Parser.GraphData;
-import sample.Parser.Resolution;
-import sample.Parser.VertexData;
+import sample.Parser.SimpleData.Resolution;
+import sample.Parser.SimpleData.VertexData;
 
 import java.util.*;
 
@@ -54,8 +54,8 @@ public class GraphGroup extends Group {
     private Vector2D mousePressedPos = new Vector2D(0, 0),
                      vertexStartPos = new Vector2D(0, 0);
 
-    private VertexContextMenu vertexContextMenu = new VertexContextMenu(this);
-    private EdgeContextMenu edgeContextMenu = new EdgeContextMenu(this);
+    private VertexContextMenu vertexContextMenu = new VertexContextMenu(this::onVertexContextMenuAction);
+    private EdgeContextMenu edgeContextMenu = new EdgeContextMenu(this::onEdgeContextMenuAction);
     private GraphInputDialog inputDialog = new GraphInputDialog();
 
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
@@ -70,8 +70,6 @@ public class GraphGroup extends Group {
         initRects();
         getChildren().add(backgroundRect);
         setClip(clipRect);
-        width.addListener((observable, oldValue, newValue) -> onWidthChanged((Double) newValue));
-        height.addListener((observable, oldValue, newValue) -> onHeightChanged((Double) newValue));
 
         setOnMouseClicked(this::onMouseClick);
         setOnMouseDragged(this::onMouseDrag);
@@ -126,7 +124,7 @@ public class GraphGroup extends Group {
         return listOfActions;
     }
 
-    private ListOfActions getChangeResolutionAction(Resolution newResolution) {
+    private ListOfActions getChangeResolutionActionWithVerticesRedo(Resolution newResolution) {
         ListOfActions verticesActions =
                 getVerticesActionsForNewResolution(newResolution);
         verticesActions.redo();
@@ -190,7 +188,7 @@ public class GraphGroup extends Group {
                 actions.add(new CreateVertex(vertex, this));
             for (Edge edge : newEdges)
                 actions.add(new CreateEdge(edge, this));
-            actions.add(getChangeResolutionAction(data.getResolution()));
+            actions.add(getChangeResolutionActionWithVerticesRedo(data.getResolution()));
             actionsController.addAction(actions);
         }
 
@@ -212,13 +210,12 @@ public class GraphGroup extends Group {
     // resolution
     public void setResolution(Resolution resolution, boolean createAction) {
         needToSave = true;
-
         if (createAction) {
-            actionsController.addAction(getChangeResolutionAction(resolution));
+            actionsController.addAction(getChangeResolutionActionWithVerticesRedo(resolution));
         }
 
-        width.set(resolution.getWidth());
-        height.set(resolution.getHeight());
+        setWidth(resolution.getWidth(), false);
+        setHeight(resolution.getHeight(), false);
     }
 
     public Resolution getResolution() {
@@ -226,11 +223,21 @@ public class GraphGroup extends Group {
     }
 
     public void setWidth(double width, boolean createAction) {
-        setResolution(new Resolution(width, height.get()), createAction);
+        needToSave = true;
+        if (createAction) {
+            actionsController.addAction(
+                    getChangeResolutionActionWithVerticesRedo(new Resolution(width, getHeight())));
+        }
+        backgroundRect.setWidth(width);
     }
 
     public void setHeight(double height, boolean createAction) {
-        setResolution(new Resolution(width.get(), height), createAction);
+        needToSave = true;
+        if (createAction) {
+            actionsController.addAction(
+                    getChangeResolutionActionWithVerticesRedo(new Resolution(getWidth(), height)));
+        }
+        backgroundRect.setHeight(height);
     }
 
     public double getWidth() {
@@ -241,11 +248,11 @@ public class GraphGroup extends Group {
         return height.get();
     }
 
-    public ReadOnlyDoubleProperty widthObservable() {
+    public ReadOnlyDoubleProperty widthProperty() {
         return width;
     }
 
-    public ReadOnlyDoubleProperty heightObservable() {
+    public ReadOnlyDoubleProperty heightProperty() {
         return height;
     }
 
@@ -443,8 +450,9 @@ public class GraphGroup extends Group {
         }
     }
     // context menus
-    public void onVertexContextMenuAction(Vertex vertex, VertexContextMenu.Action action) {
-        switch (action) {
+    private void onVertexContextMenuAction(VertexEvent event) {
+        Vertex vertex = event.getVertex();
+        switch (event.getAction()) {
             case Rename:
                 String newName = inputDialog.getVertexName(vertex.getName());
                 if (newName != null)
@@ -459,8 +467,9 @@ public class GraphGroup extends Group {
         }
     }
 
-    public void onEdgeContextMenuAction(Edge edge, EdgeContextMenu.Action action) {
-        switch (action) {
+    private void onEdgeContextMenuAction(EdgeEvent event) {
+        Edge edge = event.getEdge();
+        switch (event.getAction()) {
             case ChangeWeight:
                 Double res = inputDialog.getEdgeWeight(edge.getWeight());
                 if (res != null)
@@ -479,15 +488,6 @@ public class GraphGroup extends Group {
                 removeEdge(edge, true);
                 break;
         }
-
-    }
-    // clip width/height
-    private void onWidthChanged(double newWidth) {
-        backgroundRect.setWidth(newWidth);
-    }
-
-    private void onHeightChanged(double newHeight) {
-        backgroundRect.setHeight(newHeight);
     }
 
 

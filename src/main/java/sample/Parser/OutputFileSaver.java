@@ -2,6 +2,9 @@ package sample.Parser;
 
 import Jama.Matrix;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import sample.Parser.ComplexData.EdgesData;
+import sample.Parser.ComplexData.VerticesData;
+import sample.Parser.SimpleData.*;
 
 import java.io.FileWriter;
 import java.io.IOException;

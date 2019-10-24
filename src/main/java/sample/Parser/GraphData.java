@@ -6,6 +6,9 @@ import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.UnaryEdge;
 import sample.Graph.Elements.Vertex;
+import sample.Parser.ComplexData.EdgesData;
+import sample.Parser.ComplexData.VerticesData;
+import sample.Parser.SimpleData.*;
 
 import java.util.*;
 
@@ -116,7 +119,7 @@ public class GraphData {
 
     // edges
     static GraphData makeByEdges(EdgesData edgesData, VerticesData verticesData,
-                                        Resolution resolution) throws Exception
+                                 Resolution resolution) throws Exception
     {
         GraphData result = new GraphData(verticesData, edgesData);
         result.setResolution(resolution);
