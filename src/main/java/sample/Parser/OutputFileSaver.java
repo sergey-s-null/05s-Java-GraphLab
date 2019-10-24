@@ -4,6 +4,7 @@ import Jama.Matrix;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Parser.ComplexData.EdgesData;
 import sample.Parser.ComplexData.VerticesData;
+import sample.Parser.Exceptions.EqualsNamesException;
 import sample.Parser.SimpleData.*;
 
 import java.io.FileWriter;
@@ -24,9 +25,11 @@ public class OutputFileSaver {
     }
 
     // incident
-    public void saveAsIncident(String filename, GraphData data) throws Exception {
+    public void saveAsIncident(String filename, GraphData data)
+            throws IOException, EqualsNamesException
+    {
         if (!data.getVerticesData().isNamesUnique())
-            throw new Exception("Found equals names.");
+            throw new EqualsNamesException("Found equals names.");
 
         Matrix incidentMatrix = makeIncidentMatrix(data);
 

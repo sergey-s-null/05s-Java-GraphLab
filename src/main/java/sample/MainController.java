@@ -15,6 +15,7 @@ import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
+import sample.Parser.Exceptions.EqualsNamesException;
 import sample.Parser.GraphData;
 import sample.Parser.InputFileParser;
 import sample.Parser.OutputFileSaver;
@@ -39,7 +40,6 @@ public class MainController {
     private FileChooser fileChooser = new FileChooser(),
                         imageFileChooser = new FileChooser();
     private File prevSaveDir = null, prevOpenDir = null;
-    private InputDialog inputDialog = new InputDialog();
 
     @FXML private BorderPane graphEditorPane;
     @FXML private VBox authorPane, helpPane;
@@ -52,7 +52,7 @@ public class MainController {
         initFileChoosers();
         initAboutProgram();
 
-        tabPaneWithGraphs.getTabs().add(new GraphTab());
+        createEmptyGraphTab();
     }
 
     private void initFileChoosers() {
@@ -117,93 +117,91 @@ public class MainController {
         }
     }
 
-    private boolean trySaveGraph(GraphTab tab) {
-        if (prevSaveDir != null)
-            fileChooser.setInitialDirectory(prevSaveDir);
-        File file = fileChooser.showSaveDialog(null);
-        if (file != null) {
-            prevSaveDir = file.getParentFile();
-
-            GraphGroup graphGroup = tab.getGraphGroup();
-            MatrixView matrixView = tab.getMatrixView();
-            OutputFileSaver outputFileSaver = new OutputFileSaver();
-            try {
-                if (file.getName().endsWith(".adj")) {
-                    outputFileSaver.saveAsAdjacency(file.getAbsolutePath(), matrixView.getMatrix(),
-                            matrixView.getVerticesData(), graphGroup.getResolution());
-                }
-                else if (file.getName().endsWith(".inc")) {
-                    outputFileSaver.saveAsIncident(file.getAbsolutePath(), graphGroup.getGraph());
-                }
-                else if (file.getName().endsWith(".ed")) {
-                    outputFileSaver.saveAsEdges(file.getAbsolutePath(), graphGroup.getGraph());
-                }
-            }
-            catch (Exception e) {
-                GraphAlert.showAndWait("Ошибка сохранения файла: " + e.getMessage());
-                return false;
-            }
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private void removeTab(Tab tab) {
-        tabPaneWithGraphs.getTabs().remove(tab);
-    }
 
     private GraphGroup getSelectedGraphGroup() {
-        Tab selectedTab = tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
-        if (selectedTab != null)
-            return ((GraphTab) selectedTab).getGraphGroup();
-        else
-            return null;
+        GraphTab selectedTab = getSelectedGraphTab();
+        return selectedTab == null ? null : selectedTab.getGraphGroup();
+    }
+
+    private GraphTab getSelectedGraphTab() {
+        return (GraphTab) tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
+    }
+
+    private void createEmptyGraphTab() {
+        GraphTab tab = new GraphTab();
+        tab.setOnCloseAction(event -> onTabClose(tab));
+        tabPaneWithGraphs.getTabs().add(tab);
+    }
+
+    private void createGraphTabBy(String tabName, GraphData graphData) {
+        GraphTab tab = new GraphTab(tabName, graphData);
+        tab.setOnCloseAction(event -> onTabClose(tab));
+        tabPaneWithGraphs.getTabs().add(tab);
+    }
+
+    private void onTabClose(GraphTab tab) {
+        tryCloseTab(tab);
     }
 
     private boolean tryCloseAllTabs() {
         List<Tab> tabsCopy = new ArrayList<>(tabPaneWithGraphs.getTabs());
         for (Tab tab : tabsCopy) {
             tabPaneWithGraphs.getSelectionModel().select(tab);
-            if (((GraphTab) tab).getGraphGroup().isNeedToSave()) {
-                ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
-                if (buttonType == ButtonType.YES) {
-                    if (!trySaveGraph((GraphTab) tab))
-                        return false;
-                }
-                else if (buttonType == ButtonType.CANCEL) {
-                    return false;
-                }
-            }
-            tabPaneWithGraphs.getTabs().remove(tab);
+            if (!tryCloseTab((GraphTab) tab))
+                return false;
         }
-
         return true;
     }
 
-    //------------------------------|
-    //   tab context menu actions   |
-    //------------------------------|
-//    private void onRenameTab(Tab tab, ActionEvent event) {
-//        String text = inputDialog.getTabText(tab.getText());
-//        if (text != null)
-//            tab.setText(text);
-//    }
-//
-//    private void onCloseTab(Tab tab, ActionEvent event) {
-//        GraphController controller = tabToController.get(tab);
-//        if (controller.getGraphGroup().isNeedToSave()) {
-//            ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
-//            if (buttonType == ButtonType.YES) {
-//                if (!trySaveGraph(controller))
-//                    return;
-//            }
-//            else if (buttonType == ButtonType.CANCEL)
-//                return;
-//        }
-//        removeTab(tab);
-//    }
+    private boolean tryCloseTab(GraphTab tab) {
+        if (tab.getGraphGroup().isNeedToSave()) {
+            ButtonType buttonType = GraphAlert.confirmTabClose(tab.getText());
+            if (buttonType == ButtonType.YES) {
+                if (!trySaveGraph(tab))
+                    return false;
+            }
+            else if (buttonType == ButtonType.CANCEL) {
+                return false;
+            }
+        }
+
+        tabPaneWithGraphs.getTabs().remove(tab);
+        return true;
+    }
+
+    private boolean trySaveGraph(GraphTab tab) {
+        if (prevSaveDir != null)
+            fileChooser.setInitialDirectory(prevSaveDir);
+        File file = fileChooser.showSaveDialog(null);
+        if (file == null)
+            return false;
+        prevSaveDir = file.getParentFile();
+
+        GraphGroup graphGroup = tab.getGraphGroup();
+        MatrixView matrixView = tab.getMatrixView();
+        OutputFileSaver outputFileSaver = new OutputFileSaver();
+        try {
+            if (file.getName().endsWith(".adj")) {
+                outputFileSaver.saveAsAdjacency(file.getAbsolutePath(), matrixView.getMatrix(),
+                        matrixView.getVerticesData(), graphGroup.getResolution());
+            }
+            else if (file.getName().endsWith(".inc")) {
+                outputFileSaver.saveAsIncident(file.getAbsolutePath(), graphGroup.getGraph());
+            }
+            else if (file.getName().endsWith(".ed")) {
+                outputFileSaver.saveAsEdges(file.getAbsolutePath(), graphGroup.getGraph());
+            }
+        }
+        catch (IOException e) {
+            GraphAlert.showAndWait("Ошибка сохранения файла \"" + file.getName() + "\".");
+            return false;
+        }
+        catch (EqualsNamesException e) {
+            GraphAlert.showAndWait("Найдены вершины с одинаковыми именами.");
+            return false;
+        }
+        return true;
+    }
 
     //---------------------|
     //   MenuBar actions   |
@@ -214,7 +212,7 @@ public class MainController {
 
     // File
     @FXML private void onNewGraph(ActionEvent event) {
-        tabPaneWithGraphs.getTabs().add(new GraphTab());
+        createEmptyGraphTab();
     }
 
     @FXML private void onOpenFile(ActionEvent event) {
@@ -225,17 +223,17 @@ public class MainController {
             return;
         prevOpenDir = file.getParentFile();
 
-        GraphData result;
+        GraphData graphData;
         try {
             InputFileParser inputFileParser = new InputFileParser();
             if (file.getName().endsWith(".adj")) {
-                result = inputFileParser.parseAdjacencyFile(file.getAbsolutePath());
+                graphData = inputFileParser.parseAdjacencyFile(file.getAbsolutePath());
             }
             else if (file.getName().endsWith(".inc")) {
-                result = inputFileParser.parseIncidentFile(file.getAbsolutePath());
+                graphData = inputFileParser.parseIncidentFile(file.getAbsolutePath());
             }
             else if (file.getName().endsWith(".ed")) {
-                result = inputFileParser.parseEdgesFile(file.getAbsolutePath());
+                graphData = inputFileParser.parseEdgesFile(file.getAbsolutePath());
             }
             else {
                 return;
@@ -246,12 +244,11 @@ public class MainController {
             return;
         }
 
-        Tab tab = new GraphTab(Main.makeValidTabText(file.getName()), result);
-        tabPaneWithGraphs.getTabs().add(tab);
+        createGraphTabBy(GraphTab.makeValidTabText(file.getName()), graphData);
     }
 
     @FXML private void onSaveFile(ActionEvent event) {
-        GraphTab selectedTab = (GraphTab) tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
+        GraphTab selectedTab = getSelectedGraphTab();
         if (selectedTab == null)
             return;
 
@@ -299,7 +296,7 @@ public class MainController {
 
     // Edit
     @FXML private void onUndoAction(ActionEvent event) {
-        GraphTab selectedTab = (GraphTab) tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
+        GraphTab selectedTab = getSelectedGraphTab();
         if (selectedTab != null)
             selectedTab.getGraphGroup().undo();
     }
@@ -315,7 +312,7 @@ public class MainController {
         if (graphGroup == null)
             return;
 
-        Double width = inputDialog.getGraphWidth(graphGroup.getWidth());
+        Double width = InputDialogs.getGraphWidth(graphGroup.getWidth());
         if (width != null)
             graphGroup.setWidth(width, true);
     }
@@ -325,7 +322,7 @@ public class MainController {
         if (graphGroup == null)
             return;
 
-        Double height = inputDialog.getGraphHeight(graphGroup.getHeight());
+        Double height = InputDialogs.getGraphHeight(graphGroup.getHeight());
         if (height != null)
             graphGroup.setHeight(height, true);
     }

@@ -36,16 +36,6 @@ public class Main extends Application {
         }
     }
 
-    public static boolean isValidTabText(String tabText) {
-        return tabText.length() > 0 && tabText.length() <= 16;
-    }
-
-    public static String makeValidTabText(String tabText) {
-        if (tabText.length() > 16)
-            return tabText.substring(0, Math.min(16, tabText.length())) + "...";
-        else
-            return tabText;
-    }
 
 
     public static void main(String[] args) {

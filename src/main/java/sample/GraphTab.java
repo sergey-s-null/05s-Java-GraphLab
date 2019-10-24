@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
@@ -14,8 +15,7 @@ import sample.Parser.GraphData;
 import java.io.IOException;
 
 public class GraphTab extends Tab {
-    private static int tabsCounter = 1;
-
+    private MenuItem close;
     private GraphGroup graphGroup;
     private MatrixView matrixView;
 
@@ -34,9 +34,8 @@ public class GraphTab extends Tab {
 
     private void initContextMenu() {
         MenuItem rename = new MenuItem("Переименовать");
-        MenuItem close = new MenuItem("Закрыть");
+        close = new MenuItem("Закрыть");
         rename.setOnAction(this::onRenameTab);
-        close.setOnAction(this::onCloseTab);
 
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(
@@ -72,14 +71,29 @@ public class GraphTab extends Tab {
     }
 
     private void onRenameTab(ActionEvent event) {
-        System.out.println("rename");//TODO
-//        String text = inputDialog.getTabText(tab.getText());
-//        if (text != null)
-//            tab.setText(text);
+        String text = InputDialogs.getTabText(getText());
+        if (text != null)
+            setText(text);
     }
 
-    private void onCloseTab(ActionEvent event) {
-        System.out.println("close");//TODO
+    public void setOnCloseAction(EventHandler<ActionEvent> handler) {
+        close.setOnAction(handler);
     }
+
+    //-----------------------|
+    //   static components   |
+    //-----------------------|
+    public static boolean isValidTabText(String tabText) {
+        return tabText.length() > 0 && tabText.length() <= 16;
+    }
+
+    public static String makeValidTabText(String tabText) {
+        if (tabText.length() > 16)
+            return tabText.substring(0, Math.min(16, tabText.length())) + "...";
+        else
+            return tabText;
+    }
+
+    private static int tabsCounter = 1;
 
 }
