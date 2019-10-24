@@ -30,6 +30,7 @@ import sample.Parser.SimpleData.Resolution;
 import sample.Parser.SimpleData.VertexData;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 
 public class GraphGroup extends Group {
@@ -48,7 +49,6 @@ public class GraphGroup extends Group {
     private DoubleProperty width, height;
     private boolean needToSave = false;
 
-    private Action currentAction = Action.Empty;
     private Vertex selected = null; //dangerous
     private Edge movingEdge = null; //dangerous
     private Vertex movingVertex = null; //dangerous
@@ -101,7 +101,7 @@ public class GraphGroup extends Group {
         movingVertex = null;
         movingEdge = null;
 
-        this.currentAction = currentAction;
+        configureEventsFor(currentAction);
         // TODO проверка текущего действия для защиты от смены Action во время создания ребра или тп
     }
 
@@ -343,73 +343,50 @@ public class GraphGroup extends Group {
     //   events   |
     //------------|
     // mouse
-    // TODO сделать обработчики событий в своих классах. В этих обработчиках вызывать соответствующие методы отсюда
-    // TODO 2 configureFor (текущее действие), т.е. если, например выбрано действие СОЗДАТЬ_ВЕРШИНУ, работает только onMouseClick
-    private void onMouseClick(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY) {
-            if (currentAction == Action.CreateVertex) {
-                addVertex(event.getX(), event.getY(), true);
-            }
+    private Consumer<MouseEvent>
+            onGraphGroupClick,
+            onLeftClickVertex, onRightClickVertex,
+            onLeftClickEdge, onRightClickEdge,
+            onPressVertex,
+            onPressEdge,
+            onGraphGroupDrag,
+            onGraphGroupRelease;
+
+    private void configureEventsFor(Action action) {
+        clearEvents();
+        switch (action) {
+            case Empty:
+                break;
+            case Move:
+                configureEventsForMove();
+                configureContextMenusEvents();
+                break;
+            case CreateVertex:
+                configureEventsForCreateVertex();
+                configureContextMenusEvents();
+                break;
+            case CreateEdge:
+                configureEventsForCreateEdge();
+                configureContextMenusEvents();
+                break;
+            case Delete:
+                configureEventsForDelete();
+                configureContextMenusEvents();
+                break;
         }
     }
 
-    public void onMouseClick_vertex(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY) {
-            if (currentAction == Action.CreateEdge) {
-                if (selected == null) {
-                    selected = (Vertex) event.getSource();
-                    selected.setSelected(true);
-                }
-                else if (selected == event.getSource()) {
-                    //addNewEdge(selected);
-                    selected.setSelected(false);
-                    selected = null;
-                }
-                else {
-                    addEdge(selected, (Vertex) event.getSource(), true);
-                    selected.setSelected(false);
-                    selected = null;
-                }
-            }
-            else if (currentAction == Action.Delete) {
-                removeVertexWithEdges((Vertex) event.getSource(), true);
-            }
-        }
-        else if (event.getButton() == MouseButton.SECONDARY) {
-            if (selected != null || movingVertex != null || movingEdge != null)
-                return;
-            vertexContextMenu.configureFor((Vertex) event.getSource());
-            vertexContextMenu.show((Vertex) event.getSource(), event.getScreenX(), event.getScreenY());
-        }
-    }
+    private void configureEventsForMove() {
+        onPressVertex = (event) -> {
+            movingVertex = (Vertex) event.getSource();
+            movingEdge = null;
+            mousePressedPos = new Vector2D(event.getX(), event.getY());
+            vertexStartPos = new Vector2D(movingVertex.getCenterX(), movingVertex.getCenterY());
+            MoveVertex.savePos(vertexStartPos);
+        };
 
-    public void onMouseClick_edge(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY) {
-            if (currentAction == Action.Delete) {
-                removeEdge((Edge) event.getSource(), true);
-            }
-        }
-        else if (event.getButton() == MouseButton.SECONDARY) {
-            if (selected != null || movingVertex != null || movingEdge != null)
-                return;
-            edgeContextMenu.configureFor((Edge) event.getSource());
-            edgeContextMenu.show((Edge) event.getSource(), event.getScreenX(), event.getScreenY());
-        }
-    }
-
-    public void onMousePress_vertex(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY) {
-            if (currentAction == Action.Move) {
-                movingVertex = (Vertex) event.getSource();
-                mousePressedPos = new Vector2D(event.getX(), event.getY());
-                vertexStartPos = new Vector2D(movingVertex.getCenterX(), movingVertex.getCenterY());
-                MoveVertex.savePos(vertexStartPos);
-            }
-        }
-    }
-
-    public void onMousePress_edge(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY && currentAction == Action.Move) {
+        onPressEdge = (event) -> {
+            movingVertex = null;
             movingEdge = (Edge)event.getSource();
             if (movingEdge.getClass() == UnaryEdge.class) {
                 MoveUnaryEdge.saveCirclePos(((UnaryEdge) movingEdge).getCirclePos());
@@ -418,11 +395,9 @@ public class GraphGroup extends Group {
                 BinaryEdge edge = (BinaryEdge) movingEdge;
                 MoveBinaryEdge.saveParams(edge.getPointAngle(), edge.getPointRadiusCoef());
             }
-        }
-    }
+        };
 
-    private void onMouseDrag(MouseEvent event) {
-        if (currentAction == Action.Move) {
+        onGraphGroupDrag = (event) -> {
             if (movingVertex != null) {
                 Vector2D newVertexPos = vertexStartPos.add(new Vector2D(event.getX(), event.getY())).subtract(mousePressedPos);
                 movingVertex.setCenter(newVertexPos);
@@ -430,26 +405,137 @@ public class GraphGroup extends Group {
             else if (movingEdge != null) {
                 movingEdge.setPosition(event.getX(), event.getY());
             }
+        };
+
+        onGraphGroupRelease = (event) -> {
+            if (movingVertex != null) {
+                actionsController.addAction(new MoveVertex(movingVertex));
+                movingVertex = null;
+            }
+
+            if (movingEdge != null) {
+                if (movingEdge.getClass() == UnaryEdge.class) {
+                    UnaryEdge edge = (UnaryEdge) movingEdge;
+                    actionsController.addAction(new MoveUnaryEdge(edge));
+                }
+                else if (movingEdge.getClass() == BinaryEdge.class) {
+                    BinaryEdge edge = (BinaryEdge) movingEdge;
+                    actionsController.addAction(new MoveBinaryEdge(edge));
+                }
+                movingEdge = null;
+            }
+        };
+    }
+
+    private void configureEventsForCreateVertex() {
+        onGraphGroupClick = (event) ->
+            addVertex(event.getX(), event.getY(), true);
+    }
+
+    private void configureEventsForCreateEdge() {
+        onLeftClickVertex = (event) -> {
+            if (selected == null) {
+                selected = (Vertex) event.getSource();
+                selected.setSelected(true);
+            }
+            else if (selected == event.getSource()) {
+                //addNewEdge(selected);
+                selected.setSelected(false);
+                selected = null;
+            }
+            else {
+                addEdge(selected, (Vertex) event.getSource(), true);
+                selected.setSelected(false);
+                selected = null;
+            }
+        };
+    }
+
+    private void configureEventsForDelete() {
+        onLeftClickVertex = (event) ->
+                removeVertexWithEdges((Vertex) event.getSource(), true);
+        onLeftClickEdge = (event) ->
+                removeEdge((Edge) event.getSource(), true);
+    }
+
+    private void configureContextMenusEvents() {
+        onRightClickVertex = (event) -> {
+            if (selected != null || movingVertex != null || movingEdge != null)
+                return;
+            vertexContextMenu.configureFor((Vertex) event.getSource());
+            vertexContextMenu.show((Vertex) event.getSource(), event.getScreenX(), event.getScreenY());
+        };
+        onRightClickEdge = (event) -> {
+            if (selected != null || movingVertex != null || movingEdge != null)
+                return;
+            edgeContextMenu.configureFor((Edge) event.getSource());
+            edgeContextMenu.show((Edge) event.getSource(), event.getScreenX(), event.getScreenY());
+        };
+    }
+
+    private void clearEvents() {
+        onGraphGroupClick = null;
+        onLeftClickVertex = null;
+        onRightClickVertex = null;
+        onLeftClickEdge = null;
+        onRightClickEdge = null;
+        onPressVertex = null;
+        onPressEdge = null;
+        onGraphGroupDrag = null;
+        onGraphGroupRelease = null;
+    }
+
+    private void onMouseClick(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            if (onGraphGroupClick != null)
+                onGraphGroupClick.accept(event);
         }
     }
 
-    private void onMouseRelease(MouseEvent event) {
-        if (movingVertex != null) {
-            actionsController.addAction(new MoveVertex(movingVertex));
-            movingVertex = null;
+    public void onMouseClick_vertex(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            if (onLeftClickVertex != null)
+                onLeftClickVertex.accept(event);
         }
+        else if (event.getButton() == MouseButton.SECONDARY) {
+            if (onRightClickVertex != null)
+                onRightClickVertex.accept(event);
+        }
+    }
 
-        if (movingEdge != null) {
-            if (movingEdge.getClass() == UnaryEdge.class) {
-                UnaryEdge edge = (UnaryEdge) movingEdge;
-                actionsController.addAction(new MoveUnaryEdge(edge));
-            }
-            else if (movingEdge.getClass() == BinaryEdge.class) {
-                BinaryEdge edge = (BinaryEdge) movingEdge;
-                actionsController.addAction(new MoveBinaryEdge(edge));
-            }
-            movingEdge = null;
+    public void onMouseClick_edge(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            if (onLeftClickEdge != null)
+                onLeftClickEdge.accept(event);
         }
+        else if (event.getButton() == MouseButton.SECONDARY) {
+            if (onRightClickEdge != null)
+                onRightClickEdge.accept(event);
+        }
+    }
+
+    public void onMousePress_vertex(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            if (onPressVertex != null)
+                onPressVertex.accept(event);
+        }
+    }
+
+    public void onMousePress_edge(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            if (onPressEdge != null)
+                onPressEdge.accept(event);
+        }
+    }
+
+    private void onMouseDrag(MouseEvent event) {
+        if (onGraphGroupDrag != null)
+            onGraphGroupDrag.accept(event);
+    }
+
+    private void onMouseRelease(MouseEvent event) {
+        if (onGraphGroupRelease != null)
+            onGraphGroupRelease.accept(event);
     }
     // context menus
     private void onVertexContextMenuAction(VertexEvent event) {
