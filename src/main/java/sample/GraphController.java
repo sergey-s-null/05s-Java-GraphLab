@@ -1,20 +1,24 @@
 package sample;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
 
-public class GraphController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class GraphController implements Initializable {
 
     @FXML private SplitPane splitPane;
     @FXML private AnchorPane anchorPane;
     private GraphGroup graphGroup = new GraphGroup();
     private MatrixView matrixView = new MatrixView(graphGroup.getVertices(), graphGroup.getEdges());
 
-
-    void init() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         splitPane.getItems().add(matrixView);
 
         initAnchorPane();

@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
@@ -24,13 +25,15 @@ import javax.imageio.ImageIO;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 
-public class MainController {
+public class MainController implements Initializable {
 //    private static final File filesDirectory = new File("C:\\Users\\Sergey\\Desktop\\debug_saves");
 
     private GraphGroup.Action currentAction = GraphGroup.Action.Empty;
@@ -46,8 +49,8 @@ public class MainController {
 
     @FXML private WebView webView;
 
-
-    void init() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         toggleGroup.selectedToggleProperty().addListener(this::onActionButtonSelected);
         initFileChoosers();
         initAboutProgram();

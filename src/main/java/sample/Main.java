@@ -47,9 +47,6 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
         Parent root = loader.load();
 
-        MainController controller = loader.getController();
-        controller.init();
-
         primaryStage.setTitle("Графойд by Laiser399   ( ͡° ͜ʖ ͡°)");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
@@ -57,6 +54,7 @@ public class Main extends Application {
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(520);
 
+        MainController controller = loader.getController();
         primaryStage.setOnCloseRequest(event -> {
             controller.onExit();
             event.consume();

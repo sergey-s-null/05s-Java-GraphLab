@@ -52,7 +52,6 @@ public class GraphTab extends Tab {
             Parent root = loader.load();
             setContent(root);
             GraphController controller = loader.getController();
-            controller.init();
             graphGroup = controller.getGraphGroup();
             matrixView = controller.getMatrixView();
         }
