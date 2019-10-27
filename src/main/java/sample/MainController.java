@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
+import sample.Graph.Elements.Style;
+import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
@@ -37,6 +39,7 @@ public class MainController implements Initializable {
 //    private static final File filesDirectory = new File("C:\\Users\\Sergey\\Desktop\\debug_saves");
 
     private GraphGroup.Action currentAction = GraphGroup.Action.Empty;
+    @FXML private ToggleButton moveButton, vertexButton, edgeButton, deleteButton;
     @FXML private ToggleGroup toggleGroup;
     @FXML private TabPane tabPaneWithGraphs;
 
@@ -96,7 +99,7 @@ public class MainController implements Initializable {
             }
             if (newValue != null) {
                 Glyph newGlyph = (Glyph) ((ToggleButton) newValue).getGraphic();
-                newGlyph.setColor(Color.ORANGE);
+                newGlyph.setColor(Style.glyphSelectColor);
 
                 //moveButton, vertexButton, edgeButton, deleteButton
                 switch (((ToggleButton) newValue).getId()) {
@@ -120,7 +123,6 @@ public class MainController implements Initializable {
         }
     }
 
-
     private GraphGroup getSelectedGraphGroup() {
         GraphTab selectedTab = getSelectedGraphTab();
         return selectedTab == null ? null : selectedTab.getGraphGroup();
@@ -129,15 +131,17 @@ public class MainController implements Initializable {
     private GraphTab getSelectedGraphTab() {
         return (GraphTab) tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
     }
-
+    //TODO одинаковый код
     private void createEmptyGraphTab() {
         GraphTab tab = new GraphTab();
+        tab.getGraphGroup().setCurrentAction(currentAction);
         tab.setOnCloseAction(event -> onTabClose(tab));
         tabPaneWithGraphs.getTabs().add(tab);
     }
-
+    //TODO одинаковый код
     private void createGraphTabBy(String tabName, GraphData graphData) {
         GraphTab tab = new GraphTab(tabName, graphData);
+        tab.getGraphGroup().setCurrentAction(currentAction);
         tab.setOnCloseAction(event -> onTabClose(tab));
         tabPaneWithGraphs.getTabs().add(tab);
     }
@@ -206,11 +210,62 @@ public class MainController implements Initializable {
         return true;
     }
 
+    private void setDisableActionButtons(boolean flag) {
+        moveButton.setDisable(flag);
+        vertexButton.setDisable(flag);
+        edgeButton.setDisable(flag);
+        deleteButton.setDisable(flag);
+    }
+
+    private void disableOtherTab(Tab tab) {
+        for (Tab iTab : tabPaneWithGraphs.getTabs())
+            if (iTab != tab) iTab.setDisable(true);
+    }
+
+    private void enableAllTabs() {
+        for (Tab tab : tabPaneWithGraphs.getTabs())
+            tab.setDisable(false);
+    }
+
     //---------------------|
     //   MenuBar actions   |
     //---------------------|
     @FXML private void onTestAction(ActionEvent event) {
-        System.gc();
+        GraphTab selectedTab = getSelectedGraphTab();
+        GraphGroup selectedGraph = getSelectedGraphGroup();
+        if (selectedTab == null || selectedGraph == null)
+            return;
+        if (selectedGraph.getVerticesCount() < 2) {
+            GraphAlert.showAndWait("Кол-во вершин должно быть >= 2.");
+            return;
+        }
+        if (!selectedGraph.isAllEdgesWeightsUnit()) {
+            GraphAlert.showAndWait("Все ребра должны иметь вес 1.");
+            return;
+        }
+
+        selectedGraph.setCurrentAction(GraphGroup.Action.SelectTwoVertices);
+        disableOtherTab(selectedTab);
+        setDisableActionButtons(true);
+        selectedGraph.setOnTwoVerticesSelected(this::testOnTwoVerticesSelected);
+    }
+
+    private void testOnTwoVerticesSelected(Vertex v1, Vertex v2) {
+        GraphTab selectedTab = getSelectedGraphTab();
+        GraphGroup selectedGraph = getSelectedGraphGroup();
+        if (selectedTab == null || selectedGraph == null) {
+            System.out.println("Error selected tab or selected graph is null, but it is not expected.");
+            return;
+        }
+
+        //TODO algorithm
+        GraphAlgorithms.GraphPath resultPath = GraphAlgorithms.breadthSearch(v1, v2);
+        System.out.println(resultPath);
+
+        selectedGraph.setCurrentAction(currentAction);
+        setDisableActionButtons(false);
+        enableAllTabs();
+        selectedGraph.setOnTwoVerticesSelected(null);
     }
 
     // File

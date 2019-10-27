@@ -3,18 +3,15 @@ package sample.Graph.Elements;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.shape.*;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
 import sample.Main;
+import static java.lang.Math.pow;
 
 public class UnaryEdge extends Edge {
     public static final Vector2D defaultCirclePos = new Vector2D(30, -30);
-//    private static final double minCircleDistance = 50;
 
-//    private GraphGroup graphGroup;
-//    private GraphActionsController actionsController;
     private final Vertex vertex;
-    private Path arrow = new Path(new MoveTo(), new LineTo(), new LineTo());
+    private Arrow arrow = new Arrow();
 
     private Vector2D circlePos = defaultCirclePos;
 
@@ -34,7 +31,6 @@ public class UnaryEdge extends Edge {
         this.vertex.addIncidentEdge(this);
 
         initArc();
-        initArrows();
         initCircle();
         initWeight();
         getChildren().addAll(arc, circle, arrow, weightText);
@@ -51,7 +47,7 @@ public class UnaryEdge extends Edge {
 
     //
     @Override
-    public boolean isDirectionTo(Vertex vertex) {
+    public boolean hasDirectionTo(Vertex vertex) {
         return this.vertex == vertex;
     }
 
@@ -59,23 +55,17 @@ public class UnaryEdge extends Edge {
         return circlePos;
     }
 
-    // init
-    private void initArrows() {
-        arrow.setStrokeWidth(strokeWidth);
-        arrow.setStroke(lineColor);
-    }
-
     // updates
     @Override
     public void update() {
-        double arcRadius = 0.5 * circlePos.getNorm() - 0.25 * Vertex.radius;
-        double cos_A = 1 - 3 * Math.pow(Vertex.radius, 2) /
-                (8 * Math.pow(arcRadius, 2) + 4 * Vertex.radius * arcRadius);
+        double arcRadius = 0.5 * circlePos.getNorm() - 0.25 * Style.vertexCircleRadius;
+        double cos_A = 1 - 3 * pow(Style.vertexCircleRadius, 2) /
+                (8 * pow(arcRadius, 2) + 4 * Style.vertexCircleRadius * arcRadius);
         double angle_A = Math.acos(cos_A);
 
         Vector2D vertexCenter = new Vector2D(vertex.getCenterX(), vertex.getCenterY());
         Vector2D arcCenter = Main.normalizeOrZero(circlePos)
-                .scalarMultiply(arcRadius + 0.5 * Vertex.radius).add(vertexCenter);
+                .scalarMultiply(arcRadius + 0.5 * Style.vertexCircleRadius).add(vertexCenter);
 
         Vector2D baseArcRadius = Main.normalizeOrZero(circlePos).scalarMultiply(-arcRadius);
         Vector2D firstArcConnectPos = Main.rotate(baseArcRadius, angle_A).add(arcCenter);
@@ -105,23 +95,8 @@ public class UnaryEdge extends Edge {
     }
 
     private void updateArrow(Vector2D arrowPos, double angle) {
-        Vector2D normalArrow = Main.normalizeOrZero(new Vector2D(circlePos.getY(), -circlePos.getX()))
-                .scalarMultiply(arrowLength);
-
-        normalArrow = Main.rotate(normalArrow, -angle);
-        Vector2D tailPos1 = Main.rotate(normalArrow, arrowRotateAngle).add(arrowPos);
-        Vector2D tailPos2 = Main.rotate(normalArrow, -arrowRotateAngle).add(arrowPos);
-
-        MoveTo moveToArrow = (MoveTo) arrow.getElements().get(0);
-        LineTo lineTo1 = (LineTo) arrow.getElements().get(1);
-        LineTo lineTo2 = (LineTo) arrow.getElements().get(2);
-
-        moveToArrow.setX(tailPos1.getX());
-        moveToArrow.setY(tailPos1.getY());
-        lineTo1.setX(arrowPos.getX());
-        lineTo1.setY(arrowPos.getY());
-        lineTo2.setX(tailPos2.getX());
-        lineTo2.setY(tailPos2.getY());
+        Vector2D arrowDirection = Main.rotate(new Vector2D(-circlePos.getY(), circlePos.getX()), -angle);
+        arrow.setPosition(arrowPos, arrowDirection);
     }
 
     private void updateWeight() {
@@ -136,14 +111,14 @@ public class UnaryEdge extends Edge {
     @Override
     public void setPosition(double x, double y) {
         // validate x, y
-        if (x < radiusCircle)
-            x = radiusCircle;
-        else if (x > graphGroup.getWidth() - radiusCircle)
-            x = graphGroup.getWidth() - radiusCircle;
-        if (y < radiusCircle)
-            y = radiusCircle;
-        else if (y > graphGroup.getHeight() - radiusCircle)
-            y = graphGroup.getHeight() - radiusCircle;
+        if (x < Style.edgeCircleRadius)
+            x = Style.edgeCircleRadius;
+        else if (x > graphGroup.getWidth() - Style.edgeCircleRadius)
+            x = graphGroup.getWidth() - Style.edgeCircleRadius;
+        if (y < Style.edgeCircleRadius)
+            y = Style.edgeCircleRadius;
+        else if (y > graphGroup.getHeight() - Style.edgeCircleRadius)
+            y = graphGroup.getHeight() - Style.edgeCircleRadius;
 
         circlePos = new Vector2D(x - vertex.getCenterX(), y - vertex.getCenterY());
         update();
@@ -163,6 +138,13 @@ public class UnaryEdge extends Edge {
     @Override
     public Vertex getSecondVertex() {
         return getVertex();
+    }
+
+    @Override
+    public Vertex hasDirectionFrom(Vertex vertexFrom) {
+        if (vertexFrom != vertex)
+            throw new RuntimeException(this + ": edge's vertex is not equal received vertex.");
+        return null;
     }
 
     public Vertex getVertex() {

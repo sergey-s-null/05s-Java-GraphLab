@@ -8,7 +8,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 import sample.Main;
 
-
+//TODO add Arrow
 public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
 
@@ -44,15 +44,16 @@ public class BinaryEdge extends Edge {
 
     // init
     private void initArrows() {
-        firstArrow.setStrokeWidth(strokeWidth);
-        firstArrow.setStroke(lineColor);
-        secondArrow.setStrokeWidth(strokeWidth);
-        secondArrow.setStroke(lineColor);
+        // TODO remove this
+        firstArrow.setStrokeWidth(Style.lineWidth);
+        firstArrow.setStroke(Style.lineColor);
+        secondArrow.setStrokeWidth(Style.lineWidth);
+        secondArrow.setStroke(Style.lineColor);
     }
 
     //
     @Override
-    public boolean isDirectionTo(Vertex vertex) {
+    public boolean hasDirectionTo(Vertex vertex) {
         switch (direction.getValue()) {
             case FirstVertex:
                 return firstVertex == vertex;
@@ -148,7 +149,7 @@ public class BinaryEdge extends Edge {
             updateArrow(secondArrow, secondVertex, firstVertex);
         }
         else {
-            double cos_A = 1 - 0.5 * Math.pow(Vertex.radius / arcRadius, 2);
+            double cos_A = 1 - 0.5 * Math.pow(Style.vertexCircleRadius / arcRadius, 2);
             double angle = sweepFlag ? -Math.acos(cos_A) : Math.acos(cos_A); //between vertex center and arrow position relatively arc center
 
             updateArrow(firstVertex, firstArrow, arcCenter, angle);
@@ -161,11 +162,11 @@ public class BinaryEdge extends Edge {
                 another.getCenterY() - owner.getCenterY()));
 
         Vector2D arrowPos = new Vector2D(owner.getCenterX(), owner.getCenterY())
-                .add(ownerToAnotherNormal.scalarMultiply(Vertex.radius));
+                .add(ownerToAnotherNormal.scalarMultiply(Style.vertexCircleRadius));
 
-        Vector2D baseTail = ownerToAnotherNormal.scalarMultiply(arrowLength);
-        Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
-        Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
+        Vector2D baseTail = ownerToAnotherNormal.scalarMultiply(Style.arrowTailsLength);
+        Vector2D tail1Pos = Main.rotate(baseTail, Style.arrowTailsRotateAngle).add(arrowPos);
+        Vector2D tail2Pos = Main.rotate(baseTail, -Style.arrowTailsRotateAngle).add(arrowPos);
 
         updateArrowByTails(arrow, arrowPos, tail1Pos, tail2Pos);
     }
@@ -178,9 +179,9 @@ public class BinaryEdge extends Edge {
         Vector2D arrowPos = Main.rotate(vertexPos.subtract(arcCenter), angle).
                 add(arcCenter);
 
-        Vector2D baseTail = Main.normalizeOrZero(arrowPos.subtract(vertexPos)).scalarMultiply(arrowLength);
-        Vector2D tail1Pos = Main.rotate(baseTail, arrowRotateAngle).add(arrowPos);
-        Vector2D tail2Pos = Main.rotate(baseTail, -arrowRotateAngle).add(arrowPos);
+        Vector2D baseTail = Main.normalizeOrZero(arrowPos.subtract(vertexPos)).scalarMultiply(Style.arrowTailsLength);
+        Vector2D tail1Pos = Main.rotate(baseTail, Style.arrowTailsRotateAngle).add(arrowPos);
+        Vector2D tail2Pos = Main.rotate(baseTail, -Style.arrowTailsRotateAngle).add(arrowPos);
 
         updateArrowByTails(arrow, arrowPos, tail1Pos, tail2Pos);
     }
@@ -223,14 +224,14 @@ public class BinaryEdge extends Edge {
     @Override
     public void setPosition(double x, double y) {
         //validate x, y
-        if (x < radiusCircle)
-            x = radiusCircle;
-        else if (x > graphGroup.getWidth() - radiusCircle)
-            x = graphGroup.getWidth() - radiusCircle;
-        if (y < radiusCircle)
-            y = radiusCircle;
-        else if (y > graphGroup.getHeight() - radiusCircle)
-            y = graphGroup.getHeight() - radiusCircle;
+        if (x < Style.edgeCircleRadius)
+            x = Style.edgeCircleRadius;
+        else if (x > graphGroup.getWidth() - Style.edgeCircleRadius)
+            x = graphGroup.getWidth() - Style.edgeCircleRadius;
+        if (y < Style.edgeCircleRadius)
+            y = Style.edgeCircleRadius;
+        else if (y > graphGroup.getHeight() - Style.edgeCircleRadius)
+            y = graphGroup.getHeight() - Style.edgeCircleRadius;
 
         pointRadiusCoef = Math.sqrt(Math.pow(x - firstVertex.getCenterX(), 2) + Math.pow(y - firstVertex.getCenterY(), 2)) /
             Math.sqrt(Math.pow(secondVertex.getCenterX() - firstVertex.getCenterX(), 2) + Math.pow(secondVertex.getCenterY() - firstVertex.getCenterY(), 2));
@@ -254,6 +255,19 @@ public class BinaryEdge extends Edge {
     @Override
     public Vertex getSecondVertex() {
         return secondVertex;
+    }
+
+    @Override
+    public Vertex hasDirectionFrom(Vertex vertexFrom) {
+        if (firstVertex == vertexFrom) {
+            return hasDirectionTo(secondVertex) ? secondVertex : null;
+        }
+        else if (secondVertex == vertexFrom) {
+            return hasDirectionTo(firstVertex) ? firstVertex : null;
+        }
+        else {
+            throw new RuntimeException(this + ": received vertex is not equals any edge's vertices.");
+        }
     }
 
     @Override

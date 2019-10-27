@@ -93,7 +93,7 @@ public class MatrixView extends SpreadsheetView {
         else {
             Vertex vertex1 = vertices.get(row), vertex2 = vertices.get(col);
             Set<Edge> edges = edgesContainer.get(vertex1, vertex2);
-            edges.removeIf(edge -> !edge.isDirectionTo(vertex2));
+            edges.removeIf(edge -> !edge.hasDirectionTo(vertex2));
             if (edges.size() != 1 || (Double) change.getNewValue() == 0) {
                 // возврат к предыдущему значению
                 getCell(row, col).setItem(change.getOldValue());
@@ -164,12 +164,12 @@ public class MatrixView extends SpreadsheetView {
         int countTo1st = 0, countTo2nd = 0;
         double weightTo1st = 0, weightTo2nd = 0;
         for (Edge edge : edges) {
-            if (edge.isDirectionTo(vertex1)) {
+            if (edge.hasDirectionTo(vertex1)) {
                 countTo1st++;
                 weightTo1st += edge.getWeight();
             }
 
-            if (edge.isDirectionTo(vertex2)) {
+            if (edge.hasDirectionTo(vertex2)) {
                 countTo2nd++;
                 weightTo2nd += edge.getWeight();
             }

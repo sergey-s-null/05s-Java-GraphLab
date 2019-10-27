@@ -13,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.ContextMenus.EdgeContextMenu;
 import sample.Graph.ContextMenus.EdgeEvent;
 import sample.Graph.ContextMenus.VertexContextMenu;
@@ -31,6 +30,7 @@ import sample.Parser.SimpleData.Resolution;
 import sample.Parser.SimpleData.VertexData;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
@@ -41,10 +41,12 @@ public class GraphGroup extends Group {
         CreateEdge,
         Delete,
         Move,
+        SelectTwoVertices
     }
 
     public static final double minWidth = 200, minHeight = 200, maxWidth = 5000, maxHeight = 5000;
     public static final double defaultWidth = 400, defaultHeight = 400;
+    private Action currentAction = Action.Empty;
     private Rectangle backgroundRect = new Rectangle(),
                       clipRect = new Rectangle();
     private DoubleProperty width, height;
@@ -88,16 +90,31 @@ public class GraphGroup extends Group {
     }
 
     //
-    public void setCurrentAction(Action currentAction) {// TODO maybe remove this function
+    public void setCurrentAction(Action currentAction) {
+        this.currentAction = currentAction;
         configureEventsFor(currentAction);
+    }
+
+    public Action getCurrentAction() {
+        return currentAction;
     }
 
     public ObservableList<Vertex> getVertices() {
         return vertices;
     }
 
+    public int getVerticesCount() {
+         return vertices.size();
+    }
+
     public ObservableSet<Edge> getEdges() {
         return edges;
+    }
+
+    public boolean isAllEdgesWeightsUnit() {
+        for (Edge edge : edges)
+            if (edge.getWeight() != 1) return false;
+        return true;
     }
 
     private ListOfActions getVerticesActionsForNewResolution(Resolution resolution) {
@@ -342,28 +359,30 @@ public class GraphGroup extends Group {
                         moveEvents = new MoveEvents(this),
                         createVertexEvents = new CreateVertexEvents(this),
                         createEdgeEvents = new CreateEdgeEvents(this),
-                        deleteEvents = new DeleteEvents(this);
+                        deleteEvents = new DeleteEvents(this),
+                        selectTwoVerticesEvents = new SelectTwoVerticesEvents();
     private MouseEvents currentEvents = emptyEvents;
 
     private void configureEventsFor(Action action) {
         currentEvents.deactivate();
         switch (action) {
             case Empty:
-                currentEvents = emptyEvents;
-                break;
+                currentEvents = emptyEvents; break;
             case Move:
-                currentEvents = moveEvents;
-                break;
+                currentEvents = moveEvents; break;
             case CreateVertex:
-                currentEvents = createVertexEvents;
-                break;
+                currentEvents = createVertexEvents; break;
             case CreateEdge:
-                currentEvents = createEdgeEvents;
-                break;
+                currentEvents = createEdgeEvents; break;
             case Delete:
-                currentEvents = deleteEvents;
-                break;
+                currentEvents = deleteEvents; break;
+            case SelectTwoVertices:
+                currentEvents = selectTwoVerticesEvents; break;
         }
+    }
+
+    public void setOnTwoVerticesSelected(BiConsumer<Vertex, Vertex> consumer) {
+        ((SelectTwoVerticesEvents) selectTwoVerticesEvents).setOnSelected(consumer);
     }
 
     private void onMouseClick(MouseEvent event) {

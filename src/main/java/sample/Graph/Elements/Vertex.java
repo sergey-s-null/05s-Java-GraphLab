@@ -19,7 +19,9 @@ import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
 import sample.Parser.SimpleData.Resolution;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,13 +36,16 @@ public class Vertex extends Group {
 
     private static int nextId = 0;
 
+    public class EdgeWithVertex {
+        public Edge edge;
+        public Vertex vertex;
 
-    private static final Color nameColor = Color.web("086070");
-    private static final Color selectedFillColor = Color.ORANGE,
-                               defaultFillColor = Color.web("A1D6E2"),
-                               strokeColor = Color.web("BCBABE");
-    private static final double strokeWidth = 2;
-    public static final double radius = 12;
+        public EdgeWithVertex(Edge edge, Vertex vertex) {
+            this.edge = edge;
+            this.vertex = vertex;
+        }
+    }
+
 
     private final int id;
     private GraphGroup graphGroup;
@@ -78,17 +83,17 @@ public class Vertex extends Group {
 
     public void setSelected(boolean selected) {
         if (selected)
-            circle.setFill(selectedFillColor);
+            circle.setFill(Style.vertexSelectColor);
         else
-            circle.setFill(defaultFillColor);
+            circle.setFill(Style.vertexFillColor);
     }
 
     public Action getActionForNewResolution(Resolution resolution) {
         double x = getCenterX(), y = getCenterY();
-        if (x > resolution.getWidth() - radius)
-            x = resolution.getWidth() - radius;
-        if (y > resolution.getHeight() - radius)
-            y = resolution.getHeight() - radius;
+        if (x > resolution.getWidth() - Style.vertexCircleRadius)
+            x = resolution.getWidth() - Style.vertexCircleRadius;
+        if (y > resolution.getHeight() - Style.vertexCircleRadius)
+            y = resolution.getHeight() - Style.vertexCircleRadius;
 
         if (x != getCenterX() || y != getCenterY())
             return new MoveVertex(this, getCenterPos(), new Vector2D(x, y));
@@ -96,22 +101,32 @@ public class Vertex extends Group {
             return null;
     }
 
+    public List<EdgeWithVertex> getNextVertices() {
+        List<EdgeWithVertex> result = new ArrayList<>();
+        for (Edge edge : incidentEdges) {
+            Vertex vertexTo = edge.hasDirectionFrom(this);
+            if (vertexTo != null)
+                result.add(new EdgeWithVertex(edge, vertexTo));
+        }
+        return result;
+    }
+
     // init
     private void initCircle() {
         circle.setStrokeType(StrokeType.INSIDE);
-        circle.setStrokeWidth(strokeWidth);
-        circle.setStroke(strokeColor);
-        circle.setFill(defaultFillColor);
-        circle.setRadius(radius);
+        circle.setStrokeWidth(Style.lineWidth);
+        circle.setStroke(Style.lineColor);
+        circle.setFill(Style.vertexFillColor);
+        circle.setRadius(Style.vertexCircleRadius);
     }
 
     private void initName(String name) {
         this.name.setTextAlignment(TextAlignment.CENTER);
         this.name.setTextOrigin(VPos.CENTER);
         this.name.setText(name);
-        this.name.setFill(nameColor);
-        this.name.setStroke(nameColor);
-        this.name.setStrokeWidth(0.5);
+        this.name.setFill(Style.textColor);
+        this.name.setStroke(Style.textColor);
+        this.name.setStrokeWidth(Style.vertexNameStrokeWidth);
     }
 
     // center methods
@@ -120,15 +135,15 @@ public class Vertex extends Group {
     }
 
     public void setCenter(double x, double y) {
-        if (x < radius)
-            x = radius;
-        else if (x > graphGroup.getWidth() - radius)
-            x = graphGroup.getWidth() - radius;
+        if (x < Style.vertexCircleRadius)
+            x = Style.vertexCircleRadius;
+        else if (x > graphGroup.getWidth() - Style.vertexCircleRadius)
+            x = graphGroup.getWidth() - Style.vertexCircleRadius;
 
-        if (y < radius)
-            y = radius;
-        else if (y > graphGroup.getHeight() - radius)
-            y = graphGroup.getHeight() - radius;
+        if (y < Style.vertexCircleRadius)
+            y = Style.vertexCircleRadius;
+        else if (y > graphGroup.getHeight() - Style.vertexCircleRadius)
+            y = graphGroup.getHeight() - Style.vertexCircleRadius;
 
         circle.setCenterX(x);
         circle.setCenterY(y);

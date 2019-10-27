@@ -26,18 +26,11 @@ public abstract class Edge extends Group {
         SecondVertex
     }
 
-    protected static final double radiusCircle = 8, strokeWidthCircle = 2,
-            strokeWidth = 2,
-            arrowLength = 9, arrowRotateAngle = 0.4;
-    protected static final Color lineColor = Color.web("BCBABE"),
-                                 circleColor = Color.web("F1F1F2"),
-                                 weightColor = Color.web("086070");
-
     protected GraphGroup graphGroup;
     protected GraphActionsController actionsController;
 
     protected Path arc = new Path(new MoveTo(), new ArcTo());
-    protected Circle circle = new Circle(radiusCircle);
+    protected Circle circle = new Circle(Style.edgeCircleRadius);
     protected Text weightText = new Text();
     protected DoubleProperty weight = new SimpleDoubleProperty(1.0);
     protected Property<Direction> direction = new SimpleObjectProperty<>();
@@ -50,25 +43,25 @@ public abstract class Edge extends Group {
 
     // init
     protected void initArc() {
-        arc.setStrokeWidth(strokeWidth);
-        arc.setStroke(lineColor);
+        arc.setStrokeWidth(Style.lineWidth);
+        arc.setStroke(Style.lineColor);
         ArcTo arcTo = (ArcTo)arc.getElements().get(1);
         arcTo.setLargeArcFlag(true);
     }
 
     protected void initCircle() {
-        circle.setFill(circleColor);
-        circle.setStrokeWidth(strokeWidthCircle);
-        circle.setStroke(lineColor);
+        circle.setFill(Style.edgeFillColor);
+        circle.setStrokeWidth(Style.lineWidth);
+        circle.setStroke(Style.lineColor);
     }
 
     protected void initWeight() {
         weightText.setTextAlignment(TextAlignment.CENTER);
         weightText.setTextOrigin(VPos.CENTER);
         weightText.setText(Double.toString(weight.get()));
-        weightText.setFill(weightColor);
-        weightText.setStroke(weightColor);
-        weightText.setStrokeWidth(0.3);
+        weightText.setFill(Style.textColor);
+        weightText.setStroke(Style.textColor);
+        weightText.setStrokeWidth(Style.weightStrokeWidth);
     }
 
     // 1. position
@@ -103,7 +96,7 @@ public abstract class Edge extends Group {
         return direction.getValue();
     }
 
-    abstract public boolean isDirectionTo(Vertex vertex);
+    abstract public boolean hasDirectionTo(Vertex vertex);
 
     public boolean equalsDirection(Direction direction) {
         return direction.equals(this.direction.getValue());
@@ -120,6 +113,8 @@ public abstract class Edge extends Group {
     abstract public Vertex getFirstVertex();
 
     abstract public Vertex getSecondVertex();
+
+    abstract public Vertex hasDirectionFrom(Vertex vertexFrom);
 
     abstract public void connect();
 
