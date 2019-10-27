@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Vertex extends Group {
+public class Vertex extends Element {
     public static boolean isNameValid(String name) {
         Pattern pattern = Pattern.compile("[^%\\s()\\[\\]{},]{1,10}");
         Matcher matcher = pattern.matcher(name);
@@ -36,7 +36,7 @@ public class Vertex extends Group {
 
     private static int nextId = 0;
 
-    public class EdgeWithVertex {
+    public static class EdgeWithVertex {
         public Edge edge;
         public Vertex vertex;
 
@@ -81,11 +81,20 @@ public class Vertex extends Group {
         return id;
     }
 
+    @Override
     public void setSelected(boolean selected) {
         if (selected)
             circle.setFill(Style.vertexSelectColor);
         else
             circle.setFill(Style.vertexFillColor);
+    }
+
+    @Override
+    public void setSelectedAsPath(boolean flag) {
+        if (flag)
+            circle.setStroke(Style.pathColor);
+        else
+            circle.setStroke(Style.lineColor);
     }
 
     public Action getActionForNewResolution(Resolution resolution) {

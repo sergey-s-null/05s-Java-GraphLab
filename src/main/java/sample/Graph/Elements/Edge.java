@@ -19,7 +19,7 @@ import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
 
 
-public abstract class Edge extends Group {
+public abstract class Edge extends Element {
     public enum Direction {
         Both,
         FirstVertex,

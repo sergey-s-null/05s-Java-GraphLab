@@ -1,14 +1,14 @@
 package sample;
 
-import javafx.scene.Group;
 import sample.Graph.Elements.Edge;
+import sample.Graph.Elements.Element;
 import sample.Graph.Elements.Vertex;
 
 import java.util.*;
 
 public class GraphAlgorithms {
     public static class GraphPath {
-        private List<Group> path = new ArrayList<>();
+        private List<Element> path = new ArrayList<>();
 
         public GraphPath(Vertex firstVertex) {
             path.add(firstVertex);
@@ -27,7 +27,7 @@ public class GraphAlgorithms {
             return (Vertex) path.get(path.size() - 1);
         }
 
-        public List<Group> getPathCopy() {
+        public List<Element> getPathCopy() {
             return new ArrayList<>(path);
         }
 

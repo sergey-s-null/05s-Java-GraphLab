@@ -55,6 +55,25 @@ public class UnaryEdge extends Edge {
         return circlePos;
     }
 
+    @Override
+    public void setSelected(boolean flag) {
+        //ignore
+    }
+
+    @Override
+    public void setSelectedAsPath(boolean flag) {
+        if (flag) {
+            arc.setStroke(Style.pathColor);
+            circle.setStroke(Style.pathColor);
+            arrow.setStroke(Style.pathColor);
+        }
+        else {
+            arc.setStroke(Style.lineColor);
+            circle.setStroke(Style.lineColor);
+            arrow.setStroke(Style.lineColor);
+        }
+    }
+
     // updates
     @Override
     public void update() {

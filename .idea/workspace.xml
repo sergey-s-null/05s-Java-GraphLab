@@ -2,31 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Arrow.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Style.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/EventsContainers/SelectTwoVerticesEvents.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/sample/GraphAlgorithms.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Element.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/BinaryEdge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/BinaryEdge.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Edge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Edge.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/UnaryEdge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/UnaryEdge.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Vertex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphGroup.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/MatrixView/MatrixView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/MatrixView/MatrixView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/graph.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/graph.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/graph.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/graph.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/GraphAlgorithms.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/GraphAlgorithms.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/BinaryEdge.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/BinaryEdge.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Edge.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Edge.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/UnaryEdge.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/UnaryEdge.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex$EdgeWithVertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex$EdgeWithVertex.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$Action.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$Action.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/GraphTab.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/GraphTab.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/GraphAlgorithms$GraphPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/GraphAlgorithms$GraphPath.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/GraphAlgorithms.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/GraphAlgorithms.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/sample/MainController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/MainController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/MatrixView/MatrixView.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/MatrixView/MatrixView.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

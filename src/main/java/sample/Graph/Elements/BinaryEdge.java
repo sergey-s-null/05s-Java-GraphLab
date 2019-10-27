@@ -13,8 +13,7 @@ public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
 
     private final Vertex firstVertex, secondVertex;
-    private Path firstArrow = new Path(new MoveTo(), new LineTo(), new LineTo()),
-                 secondArrow = new Path(new MoveTo(), new LineTo(), new LineTo());
+    private Arrow firstArrow = new Arrow(), secondArrow = new Arrow();
     private double pointAngle = 0, pointRadiusCoef = 0.5;
 
     // constructors
@@ -25,7 +24,6 @@ public class BinaryEdge extends Edge {
         this.secondVertex = secondVertex;
 
         initArc();
-        initArrows();
         initCircle();
         initWeight();
         getChildren().addAll(arc, circle, firstArrow, secondArrow, weightText);
@@ -40,15 +38,6 @@ public class BinaryEdge extends Edge {
         });
 
         setDirection(Direction.SecondVertex, false);
-    }
-
-    // init
-    private void initArrows() {
-        // TODO remove this
-        firstArrow.setStrokeWidth(Style.lineWidth);
-        firstArrow.setStroke(Style.lineColor);
-        secondArrow.setStrokeWidth(Style.lineWidth);
-        secondArrow.setStroke(Style.lineColor);
     }
 
     //
@@ -72,6 +61,27 @@ public class BinaryEdge extends Edge {
 
     public double getPointRadiusCoef() {
         return pointRadiusCoef;
+    }
+
+    @Override
+    public void setSelected(boolean flag) {
+        //ignore
+    }
+
+    @Override
+    public void setSelectedAsPath(boolean flag) {
+        if (flag) {
+            arc.setStroke(Style.pathColor);
+            circle.setStroke(Style.pathColor);
+            firstArrow.setStroke(Style.pathColor);
+            secondArrow.setStroke(Style.pathColor);
+        }
+        else {
+            arc.setStroke(Style.lineColor);
+            circle.setStroke(Style.lineColor);
+            firstArrow.setStroke(Style.lineColor);
+            secondArrow.setStroke(Style.lineColor);
+        }
     }
 
     // updates
@@ -157,47 +167,21 @@ public class BinaryEdge extends Edge {
         }
     }
 
-    private void updateArrow(Path arrow, Vertex owner, Vertex another) {
-        Vector2D ownerToAnotherNormal = Main.normalizeOrZero(new Vector2D(another.getCenterX() - owner.getCenterX(),
-                another.getCenterY() - owner.getCenterY()));
-
-        Vector2D arrowPos = new Vector2D(owner.getCenterX(), owner.getCenterY())
-                .add(ownerToAnotherNormal.scalarMultiply(Style.vertexCircleRadius));
-
-        Vector2D baseTail = ownerToAnotherNormal.scalarMultiply(Style.arrowTailsLength);
-        Vector2D tail1Pos = Main.rotate(baseTail, Style.arrowTailsRotateAngle).add(arrowPos);
-        Vector2D tail2Pos = Main.rotate(baseTail, -Style.arrowTailsRotateAngle).add(arrowPos);
-
-        updateArrowByTails(arrow, arrowPos, tail1Pos, tail2Pos);
+    private void updateArrow(Arrow arrow, Vertex owner, Vertex another) {
+        Vector2D anotherToOwner = owner.getCenterPos().subtract(another.getCenterPos());
+        Vector2D arrowPos = Main.normalizeOrZero(anotherToOwner).scalarMultiply(-Style.vertexCircleRadius).
+                add(owner.getCenterPos());
+        arrow.setPosition(arrowPos, anotherToOwner);
     }
 
-    private void updateArrow(Vertex vertex, Path arrow, Vector2D arcCenter, double angle) {
+    private void updateArrow(Vertex vertex, Arrow arrow, Vector2D arcCenter, double angle) {
         if (arcCenter == null)
             return;
 
-        Vector2D vertexPos = new Vector2D(vertex.getCenterX(), vertex.getCenterY());
-        Vector2D arrowPos = Main.rotate(vertexPos.subtract(arcCenter), angle).
-                add(arcCenter);
-
-        Vector2D baseTail = Main.normalizeOrZero(arrowPos.subtract(vertexPos)).scalarMultiply(Style.arrowTailsLength);
-        Vector2D tail1Pos = Main.rotate(baseTail, Style.arrowTailsRotateAngle).add(arrowPos);
-        Vector2D tail2Pos = Main.rotate(baseTail, -Style.arrowTailsRotateAngle).add(arrowPos);
-
-        updateArrowByTails(arrow, arrowPos, tail1Pos, tail2Pos);
-    }
-
-    private void updateArrowByTails(Path arrow, Vector2D arrowPos, Vector2D tail1Pos, Vector2D tail2Pos)
-    {
-        MoveTo moveTo = (MoveTo)arrow.getElements().get(0);
-        LineTo lineToArrowPos = (LineTo)arrow.getElements().get(1);
-        LineTo lineTo = (LineTo)arrow.getElements().get(2);
-
-        moveTo.setX(tail1Pos.getX());
-        moveTo.setY(tail1Pos.getY());
-        lineToArrowPos.setX(arrowPos.getX());
-        lineToArrowPos.setY(arrowPos.getY());
-        lineTo.setX(tail2Pos.getX());
-        lineTo.setY(tail2Pos.getY());
+        Vector2D vertexPos = vertex.getCenterPos();
+        Vector2D arrowPos = Main.rotate(vertexPos.subtract(arcCenter), angle).add(arcCenter);
+        Vector2D directionVector = arrowPos.subtract(vertexPos).scalarMultiply(-1);
+        arrow.setPosition(arrowPos, directionVector);
     }
 
     private void updateArc(double arcRadius, boolean sweepFlag, boolean largeFlag) {
@@ -304,8 +288,8 @@ public class BinaryEdge extends Edge {
     private void changedDirection(Direction direction) {
         switch (direction) {
             case Both:
-                firstArrow.setVisible(true);
-                secondArrow.setVisible(true);
+                firstArrow.setVisible(false);
+                secondArrow.setVisible(false);
                 break;
             case FirstVertex:
                 firstArrow.setVisible(true);
