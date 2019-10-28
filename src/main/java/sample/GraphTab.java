@@ -56,7 +56,7 @@ public class GraphTab extends Tab {
             matrixView = controller.getMatrixView();
         }
         catch (IOException e) {
-            GraphAlert.showAndWait("Error loading graph resource.");
+            GraphAlert.showErrorAndWait("Error loading graph resource.");
             System.exit(-1);
         }
     }

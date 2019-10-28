@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
@@ -17,11 +18,13 @@ import org.controlsfx.glyphfont.Glyph;
 import sample.Graph.Elements.Style;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
+import sample.Graph.GraphPath;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
 import sample.Parser.GraphData;
 import sample.Parser.InputFileParser;
 import sample.Parser.OutputFileSaver;
+import sample.tasksControllers.TaskController;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -30,9 +33,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 public class MainController implements Initializable {
@@ -52,15 +53,23 @@ public class MainController implements Initializable {
 
     @FXML private WebView webView;
 
+    @FXML private VBox taskVBox;
+    private TaskController currentTaskController;
+    private Map<String, TaskController> taskControllers = new HashMap<>();
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         toggleGroup.selectedToggleProperty().addListener(this::onActionButtonSelected);
         initFileChoosers();
         initAboutProgram();
+        initTasks();
 
         createEmptyGraphTab();
+
     }
 
+    // init
     private void initFileChoosers() {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Матрица смежности", "*.adj"),
@@ -81,48 +90,39 @@ public class MainController implements Initializable {
             webView.getEngine().loadContent(html);
         }
         catch (IOException|URISyntaxException e) {
-            GraphAlert.showAndWait("Error while loading about program.");
+            GraphAlert.showErrorAndWait("Error while loading about program.");
             System.exit(-1);
         }
     }
 
-    private void onActionButtonSelected(ObservableValue<? extends Toggle> obs, Toggle oldValue,
-                                        Toggle newValue)
-    {
-        if (oldValue != null && newValue == null) {
-            oldValue.setSelected(true);
+    private void initTasks() {
+        String[] taskResourcePaths = {
+                "/tasks_fxml/breadth_search.fxml",
+
+        };
+        String[] taskIds = {
+                "2",
+
+        };
+
+        try {
+            for (int i = 0; i < taskResourcePaths.length; ++i) {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource(taskResourcePaths[i]));
+                loader.load();
+                TaskController controller = loader.getController();
+                controller.addStartListener(this::onTaskStart);
+                controller.addEndListener(this::onTaskEnd);
+                taskControllers.put(taskIds[i], controller);
+            }
         }
-        else {
-            if (oldValue != null) {
-                Glyph oldGlyph = (Glyph) ((ToggleButton) oldValue).getGraphic();
-                oldGlyph.setColor(Color.BLACK);
-            }
-            if (newValue != null) {
-                Glyph newGlyph = (Glyph) ((ToggleButton) newValue).getGraphic();
-                newGlyph.setColor(Style.glyphSelectColor);
-
-                //moveButton, vertexButton, edgeButton, deleteButton
-                switch (((ToggleButton) newValue).getId()) {
-                    case "moveButton":
-                        currentAction = GraphGroup.Action.Move;
-                        break;
-                    case "vertexButton":
-                        currentAction = GraphGroup.Action.CreateVertex;
-                        break;
-                    case "edgeButton":
-                        currentAction = GraphGroup.Action.CreateEdge;
-                        break;
-                    case "deleteButton":
-                        currentAction = GraphGroup.Action.Delete;
-                        break;
-                }
-
-                for (Tab tab : tabPaneWithGraphs.getTabs())
-                    ((GraphTab) tab).getGraphGroup().setCurrentAction(currentAction);
-            }
+        catch (IOException e) {
+            System.out.println("Error while loading task resource.");
+            System.exit(-1);
         }
     }
 
+    //
     private GraphGroup getSelectedGraphGroup() {
         GraphTab selectedTab = getSelectedGraphTab();
         return selectedTab == null ? null : selectedTab.getGraphGroup();
@@ -144,10 +144,6 @@ public class MainController implements Initializable {
         tab.getGraphGroup().setCurrentAction(currentAction);
         tab.setOnCloseAction(event -> onTabClose(tab));
         tabPaneWithGraphs.getTabs().add(tab);
-    }
-
-    private void onTabClose(GraphTab tab) {
-        tryCloseTab(tab);
     }
 
     private boolean tryCloseAllTabs() {
@@ -200,14 +196,27 @@ public class MainController implements Initializable {
             }
         }
         catch (IOException e) {
-            GraphAlert.showAndWait("Ошибка сохранения файла \"" + file.getName() + "\".");
+            GraphAlert.showErrorAndWait("Ошибка сохранения файла \"" + file.getName() + "\".");
             return false;
         }
         catch (EqualsNamesException e) {
-            GraphAlert.showAndWait("Найдены вершины с одинаковыми именами.");
+            GraphAlert.showErrorAndWait("Найдены вершины с одинаковыми именами.");
             return false;
         }
         return true;
+    }
+
+    private void setDisableControlsForTask(boolean disable) {
+        setDisableActionButtons(disable);
+
+        GraphTab tab = getSelectedGraphTab();
+        if (disable) {
+            if (tab != null)
+                disableOtherTab(tab);
+        }
+        else {
+            enableAllTabs();
+        }
     }
 
     private void setDisableActionButtons(boolean flag) {
@@ -227,53 +236,110 @@ public class MainController implements Initializable {
             tab.setDisable(false);
     }
 
+    //------------------|
+    //   Other events   |
+    //------------------|
+    private void onTaskStart(TaskController controller) {
+        if (currentTaskController != controller) {
+            System.out.println("WARNING! Called onTaskStart, but currentTaskController != receivedController!");
+            return;
+        }
+        GraphGroup selectedGroup = getSelectedGraphGroup();
+        if (selectedGroup == null)
+            return;
+
+        if (!controller.validateGraph(selectedGroup))
+            return;
+
+        setDisableControlsForTask(true);
+        controller.start(selectedGroup);
+    }
+
+    private void onTaskEnd(TaskController controller) {
+        setDisableControlsForTask(false);
+
+        GraphGroup selectedGraph = getSelectedGraphGroup();
+        if (selectedGraph != null) {
+            selectedGraph.setCurrentAction(currentAction);
+        }
+    }
+
+    // Tab event
+    private void onTabClose(GraphTab tab) {
+        tryCloseTab(tab);
+    }
+
+    //--------------------|
+    //   Buttons events   |
+    //--------------------|
+    private void onActionButtonSelected(ObservableValue<? extends Toggle> obs, Toggle oldValue,
+                                        Toggle newValue)
+    {
+        if (oldValue != null && newValue == null) {
+            oldValue.setSelected(true);
+        }
+        else {
+            if (oldValue != null) {
+                Glyph oldGlyph = (Glyph) ((ToggleButton) oldValue).getGraphic();
+                oldGlyph.setColor(Color.BLACK);
+            }
+            if (newValue != null) {
+                Glyph newGlyph = (Glyph) ((ToggleButton) newValue).getGraphic();
+                newGlyph.setColor(Style.glyphSelectColor);
+
+                //moveButton, vertexButton, edgeButton, deleteButton
+                switch (((ToggleButton) newValue).getId()) {
+                    case "moveButton":
+                        currentAction = GraphGroup.Action.Move;
+                        break;
+                    case "vertexButton":
+                        currentAction = GraphGroup.Action.CreateVertex;
+                        break;
+                    case "edgeButton":
+                        currentAction = GraphGroup.Action.CreateEdge;
+                        break;
+                    case "deleteButton":
+                        currentAction = GraphGroup.Action.Delete;
+                        break;
+                }
+
+                for (Tab tab : tabPaneWithGraphs.getTabs())
+                    ((GraphTab) tab).getGraphGroup().setCurrentAction(currentAction);
+            }
+        }
+    }
+
+    @FXML private void onClearCurrentPath() {
+        GraphGroup selectedGroup = getSelectedGraphGroup();
+        if (selectedGroup != null) {
+            selectedGroup.clearCurrentPath();
+        }
+    }
+
+    @FXML private void onHideShowTaskPane() {
+        if (currentTaskController != null) {
+            if (taskVBox.getChildren().size() == 1) {
+                taskVBox.getChildren().add(currentTaskController.getRoot());
+            }
+            else if (taskVBox.getChildren().size() == 2) {
+                taskVBox.getChildren().remove(1);
+            }
+        }
+    }
+
     //---------------------|
     //   MenuBar actions   |
     //---------------------|
-    @FXML private void onTestAction(ActionEvent event) {
-        GraphTab selectedTab = getSelectedGraphTab();
-        GraphGroup selectedGraph = getSelectedGraphGroup();
-        if (selectedTab == null || selectedGraph == null)
-            return;
-        if (selectedGraph.getVerticesCount() < 2) {
-            GraphAlert.showAndWait("Кол-во вершин должно быть >= 2.");
-            return;
-        }
-        if (!selectedGraph.isAllEdgesWeightsUnit()) {
-            GraphAlert.showAndWait("Все ребра должны иметь вес 1.");
-            return;
-        }
+    @FXML private void onTestAction() {
 
-        selectedGraph.setCurrentAction(GraphGroup.Action.SelectTwoVertices);
-        disableOtherTab(selectedTab);
-        setDisableActionButtons(true);
-        selectedGraph.setOnTwoVerticesSelected(this::testOnTwoVerticesSelected);
-    }
-
-    private void testOnTwoVerticesSelected(Vertex v1, Vertex v2) {
-        GraphTab selectedTab = getSelectedGraphTab();
-        GraphGroup selectedGraph = getSelectedGraphGroup();
-        if (selectedTab == null || selectedGraph == null) {
-            System.out.println("Error selected tab or selected graph is null, but it is not expected.");
-            return;
-        }
-
-        //TODO algorithm
-        GraphAlgorithms.GraphPath resultPath = GraphAlgorithms.breadthSearch(v1, v2);
-        System.out.println(resultPath);
-
-        selectedGraph.setCurrentAction(currentAction);
-        setDisableActionButtons(false);
-        enableAllTabs();
-        selectedGraph.setOnTwoVerticesSelected(null);
     }
 
     // File
-    @FXML private void onNewGraph(ActionEvent event) {
+    @FXML private void onNewGraph() {
         createEmptyGraphTab();
     }
 
-    @FXML private void onOpenFile(ActionEvent event) {
+    @FXML private void onOpenFile() {
         if (prevOpenDir != null)
             fileChooser.setInitialDirectory(prevOpenDir);
         File file = fileChooser.showOpenDialog(null);
@@ -298,26 +364,26 @@ public class MainController implements Initializable {
             }
         }
         catch (Exception e) {
-            GraphAlert.showAndWait("Ошибка открытия файла: " + e.getMessage());
+            GraphAlert.showErrorAndWait("Ошибка открытия файла: " + e.getMessage());
             return;
         }
 
         createGraphTabBy(GraphTab.makeValidTabText(file.getName()), graphData);
     }
 
-    @FXML private void onSaveFile(ActionEvent event) {
+    @FXML private void onSaveFile() {
         GraphTab selectedTab = getSelectedGraphTab();
         if (selectedTab == null)
             return;
 
         if (selectedTab.getGraphGroup().isEmpty()) {
-            GraphAlert.showAndWait("Граф пуст.");
+            GraphAlert.showErrorAndWait("Граф пуст.");
             return;
         }
         trySaveGraph(selectedTab);
     }
 
-    @FXML private void onSaveAsImage(ActionEvent event) {
+    @FXML private void onSaveAsImage() {
         GraphGroup graphGroup = getSelectedGraphGroup();
         if (graphGroup == null)
             return;
@@ -335,15 +401,11 @@ public class MainController implements Initializable {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
         }
         catch (IOException e) {
-            GraphAlert.showAndWait("Ошибка сохранения файла: " + e.getMessage());
+            GraphAlert.showErrorAndWait("Ошибка сохранения файла: " + e.getMessage());
         }
     }
 
-    @FXML private void onExit(ActionEvent event) {
-        onExit();
-    }
-
-    public void onExit() {
+    @FXML public void onExit() {
         authorPane.setVisible(false);
         helpPane.setVisible(false);
         graphEditorPane.setVisible(true);
@@ -353,19 +415,19 @@ public class MainController implements Initializable {
     }
 
     // Edit
-    @FXML private void onUndoAction(ActionEvent event) {
+    @FXML private void onUndoAction() {
         GraphTab selectedTab = getSelectedGraphTab();
         if (selectedTab != null)
             selectedTab.getGraphGroup().undo();
     }
 
-    @FXML private void onRedoAction(ActionEvent event) {
+    @FXML private void onRedoAction() {
         GraphGroup graphGroup = getSelectedGraphGroup();
         if (graphGroup != null)
             graphGroup.redo();
     }
 
-    @FXML private void onChangeWidth(ActionEvent event) {
+    @FXML private void onChangeWidth() {
         GraphGroup graphGroup = getSelectedGraphGroup();
         if (graphGroup == null)
             return;
@@ -375,7 +437,7 @@ public class MainController implements Initializable {
             graphGroup.setWidth(width, true);
     }
 
-    @FXML private void onChangeHeight(ActionEvent event) {
+    @FXML private void onChangeHeight() {
         GraphGroup graphGroup = getSelectedGraphGroup();
         if (graphGroup == null)
             return;
@@ -385,14 +447,37 @@ public class MainController implements Initializable {
             graphGroup.setHeight(height, true);
     }
 
+    // Graph tasks
+    @FXML private void onTaskSelected(ActionEvent event) {
+        if (currentTaskController != null && currentTaskController.isBusy()) {
+            GraphAlert.showInfoAndWait("Текущее задание не выполнено!");
+            return;
+        }
+
+        TaskController nextController;
+        switch (((MenuItem) event.getSource()).getId()) {
+            case "2":
+                nextController = taskControllers.get("2");
+                break;
+            default:
+                System.out.println("Unknown task selected!");
+                return;
+        }
+
+        currentTaskController = nextController;
+        if (taskVBox.getChildren().size() >= 2)
+            taskVBox.getChildren().remove(1);
+        taskVBox.getChildren().add(currentTaskController.getRoot());
+    }
+
     // ?
-    @FXML private void onAboutProgram(ActionEvent event) {
+    @FXML private void onAboutProgram() {
         graphEditorPane.setVisible(false);
         authorPane.setVisible(false);
         helpPane.setVisible(true);
     }
 
-    @FXML private void onAboutAuthor(ActionEvent event) {
+    @FXML private void onAboutAuthor() {
         graphEditorPane.setVisible(false);
         helpPane.setVisible(false);
         authorPane.setVisible(true);
@@ -401,12 +486,12 @@ public class MainController implements Initializable {
     //----------------------|
     //   About... actions   |
     //----------------------|
-    @FXML private void onBackFromAuthor(ActionEvent event) {
+    @FXML private void onBackFromAuthor() {
         authorPane.setVisible(false);
         graphEditorPane.setVisible(true);
     }
 
-    @FXML private void onBackFromHelp(ActionEvent event) {
+    @FXML private void onBackFromHelp() {
         helpPane.setVisible(false);
         graphEditorPane.setVisible(true);
     }

@@ -7,7 +7,8 @@ public class Style {
     static final double lineWidth = 2;
     static final Color lineColor = Color.web("BCBABE");
     static final Color textColor = Color.web("086070");
-    static final Color pathColor = Color.BLUE;
+    static final Color pathColor = Color.web("C38864");
+
     //edge
     static final double edgeCircleRadius = 8;
     static final double weightStrokeWidth = 0.3;

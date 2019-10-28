@@ -6,7 +6,7 @@ import javafx.scene.control.ButtonType;
 import java.util.Optional;
 
 public class GraphAlert {
-    public static void showAndWait(String contentString) {
+    public static void showErrorAndWait(String contentString) {
         Alert alert = new Alert(Alert.AlertType.ERROR, contentString, ButtonType.OK);
         alert.setTitle("ლ(ಠ益ಠლ)");
         alert.setHeaderText("Ошибка");
@@ -22,5 +22,12 @@ public class GraphAlert {
 
         Optional<ButtonType> result = alert.showAndWait();
         return result.orElse(ButtonType.CANCEL);
+    }
+
+    public static void showInfoAndWait(String info) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, info, ButtonType.OK);
+        alert.setTitle("|◔◡◉|");
+        alert.setHeaderText("Информация");
+        alert.showAndWait();
     }
 }

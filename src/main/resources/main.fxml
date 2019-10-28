@@ -6,10 +6,12 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.input.KeyCodeCombination?>
@@ -60,7 +62,10 @@
                   </Menu>
               </items>
             </Menu>
-          <Menu mnemonicParsing="false" text="Задачи теории графов" />
+          <Menu mnemonicParsing="false" text="Задачи теории графов">
+               <items>
+                  <MenuItem id="2" mnemonicParsing="false" onAction="#onTaskSelected" text="2. Поиск в ширину" />
+               </items></Menu>
           <Menu mnemonicParsing="false" text="?">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#onAboutProgram" text="О программе" />
@@ -88,7 +93,7 @@
                               <ToggleGroup fx:id="toggleGroup" />
                            </toggleGroup>
                            <graphic>
-                              <Glyph fontFamily="FontAwesome" icon="HAND_ALT_UP" />
+                              <Glyph fontFamily="FontAwesome" fontSize="18.0" icon="HAND_ALT_UP" />
                            </graphic>
                         </ToggleButton>
                         <ToggleButton fx:id="vertexButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
@@ -96,7 +101,7 @@
                               <Insets left="4.0" right="4.0" top="4.0" />
                            </VBox.margin>
                            <graphic>
-                              <Glyph fontFamily="FontAwesome" icon="CIRCLE_ALT" />
+                              <Glyph fontFamily="FontAwesome" fontSize="18.0" icon="CIRCLE_ALT" />
                            </graphic>
                         </ToggleButton>
                         <ToggleButton fx:id="edgeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
@@ -104,7 +109,7 @@
                               <Insets left="4.0" right="4.0" top="4.0" />
                            </VBox.margin>
                            <graphic>
-                              <Glyph fontFamily="FontAwesome" icon="ARROWS_H"/>
+                              <Glyph fontFamily="FontAwesome" fontSize="14.0" icon="ARROWS_H" />
                            </graphic>
                         </ToggleButton>
                         <ToggleButton fx:id="deleteButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" toggleGroup="$toggleGroup">
@@ -112,14 +117,59 @@
                               <Insets left="4.0" right="4.0" top="4.0" />
                            </VBox.margin>
                            <graphic>
-                              <Glyph fontFamily="FontAwesome" icon="TRASH_ALT"/>
+                              <Glyph fontFamily="FontAwesome" fontSize="18.0" icon="TRASH_ALT" />
                            </graphic>
                         </ToggleButton>
+                        <Separator prefWidth="200.0">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </Separator>
+                        <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onClearCurrentPath" prefHeight="30.0" prefWidth="30.0">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" fontSize="18.0" icon="TIMES_CIRCLE" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Очистить маршрут" />
+                           </tooltip>
+                        </Button>
                      </children>
                   </VBox>
                </left>
                <center>
-                  <TabPane fx:id="tabPaneWithGraphs" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+                  <VBox BorderPane.alignment="CENTER">
+                     <children>
+                        <TabPane fx:id="tabPaneWithGraphs" prefHeight="10000.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" />
+                        <Separator prefWidth="200.0">
+                           <VBox.margin>
+                              <Insets bottom="2.0" top="2.0" />
+                           </VBox.margin>
+                        </Separator>
+                        <VBox fx:id="taskVBox" VBox.vgrow="NEVER">
+                           <children>
+                              <HBox prefHeight="0.0" prefWidth="200.0">
+                                 <children>
+                                    <Pane prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                                    <Button mnemonicParsing="false" onAction="#onHideShowTaskPane">
+                                       <HBox.margin>
+                                          <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+                                       </HBox.margin>
+                                       <graphic>
+                                          <Glyph fontFamily="FontAwesome" icon="MINUS"/>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
                </center>
             </BorderPane>
             <VBox fx:id="authorPane" prefHeight="200.0" prefWidth="100.0" visible="false">

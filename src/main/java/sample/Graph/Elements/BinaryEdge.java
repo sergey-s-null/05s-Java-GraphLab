@@ -8,7 +8,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 import sample.Main;
 
-//TODO add Arrow
+
 public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
 

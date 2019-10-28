@@ -57,6 +57,7 @@ public class GraphGroup extends Group {
 
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
     private ObservableSet<Edge> edges = FXCollections.observableSet();
+    private GraphPath currentPath = null;
 
     private GraphActionsController actionsController = new GraphActionsController();
 
@@ -162,6 +163,19 @@ public class GraphGroup extends Group {
 
     public EdgeContextMenu getEdgeContextMenu() {
         return edgeContextMenu;
+    }
+
+    public void setElementsPath(GraphPath path) {
+        clearCurrentPath();
+        currentPath = path;
+        currentPath.setSelectedAsPath(true);
+    }
+
+    public void clearCurrentPath() {
+        if (currentPath != null) {
+            currentPath.setSelectedAsPath(false);
+            currentPath = null;
+        }
     }
 
     // actions history

@@ -25,12 +25,12 @@ public class InputDialogs {
                     return doubleRes;
                 }
                 else {
-                    GraphAlert.showAndWait("Ширина должна быть в диапазоне от " +
+                    GraphAlert.showErrorAndWait("Ширина должна быть в диапазоне от " +
                             GraphGroup.minWidth + " до " + GraphGroup.maxWidth + ".");
                 }
             }
             catch (NumberFormatException e) {
-                GraphAlert.showAndWait("Неверный формат числа.");
+                GraphAlert.showErrorAndWait("Неверный формат числа.");
             }
         }
     }
@@ -57,12 +57,12 @@ public class InputDialogs {
                     return doubleRes;
                 }
                 else {
-                    GraphAlert.showAndWait("Высота должна быть в диапазоне от " +
+                    GraphAlert.showErrorAndWait("Высота должна быть в диапазоне от " +
                             GraphGroup.minHeight + " до " + GraphGroup.maxHeight + ".");
                 }
             }
             catch (NumberFormatException e) {
-                GraphAlert.showAndWait("Неверный формат числа.");
+                GraphAlert.showErrorAndWait("Неверный формат числа.");
             }
         }
     }
@@ -88,7 +88,7 @@ public class InputDialogs {
                 return res;
             }
             else {
-                GraphAlert.showAndWait("Длина названия от 1 до 16 символов.");
+                GraphAlert.showErrorAndWait("Длина названия от 1 до 16 символов.");
             }
         }
     }
@@ -106,7 +106,7 @@ public class InputDialogs {
                 return null;
 
             if (!Vertex.isNameValid(res)) {
-                GraphAlert.showAndWait("Неверное имя.");
+                GraphAlert.showErrorAndWait("Неверное имя.");
                 continue;
             }
             return res;
@@ -128,12 +128,12 @@ public class InputDialogs {
             try {
                 double weight = Double.parseDouble(res);
                 if (weight == 0)
-                    GraphAlert.showAndWait("Вес не может быть равен 0.");
+                    GraphAlert.showErrorAndWait("Вес не может быть равен 0.");
                 else
                     return weight;
             }
             catch (NumberFormatException e) {
-                GraphAlert.showAndWait("Неверный формат числа.");
+                GraphAlert.showErrorAndWait("Неверный формат числа.");
             }
         }
     }
