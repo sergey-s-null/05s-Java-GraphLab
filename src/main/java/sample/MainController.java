@@ -97,12 +97,12 @@ public class MainController implements Initializable {
         String[] taskResourcePaths = {
                 "/tasks_fxml/2_breadth_search.fxml",
                 "/tasks_fxml/3_Floyd_algorithm.fxml",
-
+                "/tasks_fxml/4_graph_characteristic.fxml",
         };
         String[] taskIds = {
                 "2",
                 "3",
-
+                "4",
         };
 
         try {
@@ -457,12 +457,12 @@ public class MainController implements Initializable {
         }
 
         TaskController nextController;
-        switch (((MenuItem) event.getSource()).getId()) {
+        String menuItemId = ((MenuItem) event.getSource()).getId();
+        switch (menuItemId) {
             case "2":
-                nextController = taskControllers.get("2");
-                break;
             case "3":
-                nextController = taskControllers.get("3");
+            case "4":
+                nextController = taskControllers.get(menuItemId);
                 break;
             default:
                 System.out.println("Unknown task selected!");

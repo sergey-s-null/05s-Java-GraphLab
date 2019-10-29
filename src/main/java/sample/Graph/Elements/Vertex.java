@@ -120,6 +120,13 @@ public class Vertex extends Element {
         return result;
     }
 
+    public int getDegree() {
+        int result = 0;
+        for (Edge edge : incidentEdges)
+            result += edge.getClass() == BinaryEdge.class ? 1 : 2;
+        return result;
+    }
+
     // init
     private void initCircle() {
         circle.setStrokeType(StrokeType.INSIDE);

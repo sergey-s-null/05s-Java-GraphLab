@@ -5,10 +5,22 @@ import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphPath;
 
 import java.util.*;
+
 import static java.lang.Math.min;
 
 public class GraphAlgorithms {
+    public static class GraphCharacteristic {
+        public double radius, diameter;
+        public List<Double> eccentricities = new ArrayList<>();
 
+        public GraphCharacteristic(double radius, double diameter, List<Double> eccentricities) {
+            this.radius = radius;
+            this.diameter = diameter;
+            this.eccentricities = eccentricities;
+        }
+    }
+
+    //2
     public static GraphPath breadthSearch(Vertex vertexFrom, Vertex vertexTo) {
         Set<Vertex> usedVertices = new HashSet<>();
         Deque<GraphPath> pathDeque = new ArrayDeque<>();
@@ -37,6 +49,7 @@ public class GraphAlgorithms {
         return null;
     }
 
+    //3
     public static Matrix floydAlgorithm(Matrix adjacencyMatrix) {
         Matrix result = adjacencyMatrix.copy();
 
@@ -64,5 +77,31 @@ public class GraphAlgorithms {
         return result;
     }
 
+    //4
+    public static GraphCharacteristic graphCharacteristic(Matrix adjacencyMatrix) {
+        Matrix floydMatrix = floydAlgorithm(adjacencyMatrix);
+
+        List<Double> eccentricities = new ArrayList<>();
+        double radius = Double.POSITIVE_INFINITY, diameter = Double.NEGATIVE_INFINITY;
+        for (double[] row : floydMatrix.getArray()) {
+            double eccentricity = maxInRow(row);
+            eccentricities.add(eccentricity);
+            if (eccentricity < radius)
+                radius = eccentricity;
+            if (eccentricity > diameter)
+                diameter = eccentricity;
+        }
+
+        return new GraphCharacteristic(radius, diameter, eccentricities);
+    }
+
+    private static double maxInRow(double[] row) {
+        double result = Double.NEGATIVE_INFINITY;
+        for (double val : row) {
+            if (val > result)
+                result = val;
+        }
+        return result;
+    }
 
 }

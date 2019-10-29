@@ -66,6 +66,7 @@
                <items>
                   <MenuItem id="2" mnemonicParsing="false" onAction="#onTaskSelected" text="2. Поиск в ширину" />
                   <MenuItem id="3" mnemonicParsing="false" onAction="#onTaskSelected" text="3. Алгоритм Флойда" />
+                  <MenuItem id="4" mnemonicParsing="false" onAction="#onTaskSelected" text="4. Эксцентриситет, радиус, диаметр" />
                </items></Menu>
           <Menu mnemonicParsing="false" text="?">
             <items>
