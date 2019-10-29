@@ -65,6 +65,7 @@
           <Menu mnemonicParsing="false" text="Задачи теории графов">
                <items>
                   <MenuItem id="2" mnemonicParsing="false" onAction="#onTaskSelected" text="2. Поиск в ширину" />
+                  <MenuItem id="3" mnemonicParsing="false" onAction="#onTaskSelected" text="3. Алгоритм Флойда" />
                </items></Menu>
           <Menu mnemonicParsing="false" text="?">
             <items>
@@ -161,7 +162,7 @@
                                           <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
                                        </HBox.margin>
                                        <graphic>
-                                          <Glyph fontFamily="FontAwesome" icon="MINUS"/>
+                                          <Glyph fontFamily="FontAwesome" icon="MINUS" />
                                        </graphic>
                                     </Button>
                                  </children>

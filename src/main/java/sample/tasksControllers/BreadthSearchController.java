@@ -10,6 +10,7 @@ import sample.Graph.GraphGroup;
 import sample.Graph.GraphPath;
 import sample.GraphAlert;
 import sample.GraphAlgorithms;
+import sample.MatrixView.MatrixView;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -52,13 +53,6 @@ public class BreadthSearchController extends TaskController implements Initializ
         return true;
     }
 
-    @FXML private void onStart() {
-        if (isBusy())
-            return;
-        for (Consumer<TaskController> startConsumer : startListeners)
-            startConsumer.accept(this);
-    }
-
     @FXML private void onSave() {
         if (!haveResult) {
             GraphAlert.showErrorAndWait("Нечего сохранить.");
@@ -83,8 +77,8 @@ public class BreadthSearchController extends TaskController implements Initializ
     }
 
     @Override
-    public void start(GraphGroup graphGroup) {
-        super.start(graphGroup);
+    public void start(GraphGroup graphGroup, MatrixView matrixView) {
+        super.start(graphGroup, matrixView);
         graphGroup.setOnTwoVerticesSelected(this::onTwoVerticesSelected);
         graphGroup.setCurrentAction(GraphGroup.Action.SelectTwoVertices);
         currentGraph = graphGroup;

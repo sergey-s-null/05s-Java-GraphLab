@@ -85,7 +85,7 @@ public class OutputFileSaver {
     }
 
     // toString
-    private StringBuilder toString(Matrix matrix) {
+    private String toString(Matrix matrix) {
         StringBuilder builder = new StringBuilder();
         for (int row = 0; row < matrix.getRowDimension(); ++row) {
             if (row > 0)
@@ -98,10 +98,10 @@ public class OutputFileSaver {
             }
             builder.append(']');
         }
-        return builder;
+        return builder.toString();
     }
 
-    private StringBuilder toString(EdgesData data) {
+    private String toString(EdgesData data) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < data.getEdges().size(); ++i) {
             EdgeData edgeData = data.getEdges().get(i);
@@ -130,10 +130,10 @@ public class OutputFileSaver {
             }
             builder.append(')');
         }
-        return builder;
+        return builder.toString();
     }
 
-    private StringBuilder toStringValues(EdgesData data) {
+    private String toStringValues(EdgesData data) {
         StringBuilder builder = new StringBuilder();
         boolean isFirst = true;
         for (EdgeData edgeData : data.getEdges()) {
@@ -153,10 +153,10 @@ public class OutputFileSaver {
                 builder.append(((UnaryEdgeData) edgeData).getCirclePos().getY());
             builder.append(')');
         }
-        return builder;
+        return builder.toString();
     }
 
-    private StringBuilder toString(VerticesData data) {
+    private String toString(VerticesData data) {
         StringBuilder builder = new StringBuilder();
         List<VertexData> verticesDataList = data.get();
         for (int i = 0; i < verticesDataList.size(); ++i) {
@@ -170,7 +170,7 @@ public class OutputFileSaver {
             builder.append(vertexData.getY());
             builder.append(')');
         }
-        return builder;
+        return builder.toString();
     }
 
     private String toString(Resolution resolution) {

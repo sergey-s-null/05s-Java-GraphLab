@@ -16,9 +16,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
 import sample.Graph.Elements.Style;
-import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
-import sample.Graph.GraphPath;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
 import sample.Parser.GraphData;
@@ -97,11 +95,13 @@ public class MainController implements Initializable {
 
     private void initTasks() {
         String[] taskResourcePaths = {
-                "/tasks_fxml/breadth_search.fxml",
+                "/tasks_fxml/2_breadth_search.fxml",
+                "/tasks_fxml/3_Floyd_algorithm.fxml",
 
         };
         String[] taskIds = {
                 "2",
+                "3",
 
         };
 
@@ -245,14 +245,16 @@ public class MainController implements Initializable {
             return;
         }
         GraphGroup selectedGroup = getSelectedGraphGroup();
-        if (selectedGroup == null)
+        GraphTab selectedTab = getSelectedGraphTab();
+        if (selectedGroup == null || selectedTab == null)
             return;
 
         if (!controller.validateGraph(selectedGroup))
             return;
 
+
         setDisableControlsForTask(true);
-        controller.start(selectedGroup);
+        controller.start(selectedGroup, selectedTab.getMatrixView());
     }
 
     private void onTaskEnd(TaskController controller) {
@@ -458,6 +460,9 @@ public class MainController implements Initializable {
         switch (((MenuItem) event.getSource()).getId()) {
             case "2":
                 nextController = taskControllers.get("2");
+                break;
+            case "3":
+                nextController = taskControllers.get("3");
                 break;
             default:
                 System.out.println("Unknown task selected!");

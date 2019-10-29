@@ -1,7 +1,9 @@
 package sample.tasksControllers;
 
+import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import sample.Graph.GraphGroup;
+import sample.MatrixView.MatrixView;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,29 +14,37 @@ abstract public class TaskController {
     private Set<Consumer<TaskController> > endListeners = new HashSet<>();
     private boolean isBusy = false;
 
-    abstract public Parent getRoot();
 
-    public void addStartListener(Consumer<TaskController> consumer) {
+    final public void addStartListener(Consumer<TaskController> consumer) {
         startListeners.add(consumer);
     }
 
-    public void addEndListener(Consumer<TaskController> consumer) {
+    final public void addEndListener(Consumer<TaskController> consumer) {
         endListeners.add(consumer);
     }
 
-    public boolean isBusy() {
+    final public boolean isBusy() {
         return isBusy;
     }
 
+    abstract public Parent getRoot();
+
     abstract public boolean validateGraph(GraphGroup graphGroup);
 
-    public void start(GraphGroup graphGroup) {
+    @FXML private void onStart() {
+        if (isBusy())
+            return;
+        for (Consumer<TaskController> startConsumer : startListeners)
+            startConsumer.accept(this);
+    }
+
+    public void start(GraphGroup graphGroup, MatrixView matrixView) {
         isBusy = true;
     }
 
-    protected void end() {
+    final void end() {
+        isBusy = false;
         for (Consumer<TaskController> endConsumer : endListeners)
             endConsumer.accept(this);
-        isBusy = false;
     }
 }

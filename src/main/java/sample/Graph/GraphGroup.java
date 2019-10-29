@@ -118,6 +118,12 @@ public class GraphGroup extends Group {
         return true;
     }
 
+    public boolean isAllEdgesWeightsPositive() {
+        for (Edge edge : edges)
+            if (edge.getWeight() <= 0) return false;
+        return true;
+    }
+
     private ListOfActions getVerticesActionsForNewResolution(Resolution resolution) {
         ListOfActions listOfActions = new ListOfActions();
         for (Vertex vertex : vertices) {

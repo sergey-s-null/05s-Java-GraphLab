@@ -196,7 +196,6 @@ public class MatrixView extends SpreadsheetView {
             sumWeight += edge.getWeight();
         }
 
-
         SpreadsheetCell cell = getCell(indexVertex, indexVertex);
         cell.setEditable(true);
         cell.setItem(sumWeight);
