@@ -1,5 +1,6 @@
 package sample;
 
+import Jama.Matrix;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -16,6 +17,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
 import sample.Graph.Elements.Style;
+import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
@@ -29,9 +31,12 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class MainController implements Initializable {
@@ -82,12 +87,14 @@ public class MainController implements Initializable {
 
     private void initAboutProgram() {
         try {
-            URI path = getClass().getResource("/aboutProgram/main.html").toURI();
-            List<String> htmlLines = Files.readAllLines(Paths.get(path));
-            String html = htmlLines.stream().reduce((s1, s2) -> s1 + s2).orElse("");
-            webView.getEngine().loadContent(html);
+            InputStream stream = getClass().getResourceAsStream("/aboutProgram/main.html");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            StringBuilder html = new StringBuilder();
+            while(reader.ready())
+                html.append(reader.readLine());
+            webView.getEngine().loadContent(html.toString());
         }
-        catch (IOException|URISyntaxException e) {
+        catch (IOException e) {
             GraphAlert.showErrorAndWait("Error while loading about program.");
             System.exit(-1);
         }
@@ -473,6 +480,44 @@ public class MainController implements Initializable {
         if (taskVBox.getChildren().size() >= 2)
             taskVBox.getChildren().remove(1);
         taskVBox.getChildren().add(currentTaskController.getRoot());
+    }
+
+    @FXML private void on6TaskSelected() {
+        GraphTab tab = getSelectedGraphTab();
+        if (tab == null)
+            return;
+        // TODO other checks
+
+
+        // TODO
+        Matrix adjMatrix = tab.getMatrixView().getMatrix();
+        Matrix aga = makeAdjacencyMtxSymmetric(adjMatrix);
+
+        List<List<Integer> > defComponents = GraphAlgorithms.findConnectivityComponents(adjMatrix);
+        List<List<Integer> > ifComponents = GraphAlgorithms.findConnectivityComponents(aga);
+
+        System.out.println("Default:       " + defComponents);
+        System.out.println("If conn graph: " + ifComponents);
+
+    }
+
+    private Matrix makeAdjacencyMtxSymmetric(Matrix adjMatrix) {// TODO move to another place
+        Matrix result = adjMatrix.copy();
+        for (int i = 0; i < adjMatrix.getRowDimension(); ++i) {
+            for (int j = i + 1; j < adjMatrix.getColumnDimension(); ++j) {
+                double max = Math.max(adjMatrix.get(i, j), adjMatrix.get(j, i));
+                result.set(i, j, max);
+                result.set(j, i, max);
+            }
+        }
+        return result;
+    }
+
+    @FXML private void on12TaskSelected() {
+
+
+        // TODO
+
     }
 
     // ?

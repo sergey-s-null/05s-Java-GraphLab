@@ -5,6 +5,8 @@ import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphPath;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.lang.Math.min;
 
@@ -25,13 +27,14 @@ public class GraphAlgorithms {
         Set<Vertex> usedVertices = new HashSet<>();
         Deque<GraphPath> pathDeque = new ArrayDeque<>();
         pathDeque.addLast(new GraphPath(vertexFrom));
+        usedVertices.add(vertexFrom);
 
         while (pathDeque.size() > 0) {
             GraphPath currentPath = pathDeque.removeFirst();
             Vertex pathLastVertex = currentPath.getLastVertex();
-            if (usedVertices.contains(pathLastVertex))
-                continue;
-            usedVertices.add(pathLastVertex);
+//            if (usedVertices.contains(pathLastVertex))
+//                continue;
+//            usedVertices.add(pathLastVertex);
             if (pathLastVertex == vertexTo) {
                 return currentPath;
             }
@@ -44,6 +47,7 @@ public class GraphAlgorithms {
                 GraphPath newPath = new GraphPath(currentPath);
                 newPath.add(pair.edge, pair.vertex);
                 pathDeque.addLast(newPath);
+                usedVertices.add(pair.vertex);
             }
         }
         return null;
@@ -103,5 +107,44 @@ public class GraphAlgorithms {
         }
         return result;
     }
+
+    //5
+    public static boolean checkIsomorphism(Matrix adjacencyMtx1, Matrix adjacencyMtx2) {
+
+        // TODO
+        return false;
+    }
+
+    //6
+    public static List<List<Integer> > findConnectivityComponents(Matrix adjacencyMatrix) {
+        Matrix shortestDistMtx = floydAlgorithm(adjacencyMatrix);
+        List<List<Integer> > components = new ArrayList<>();
+        Set<Integer> unusedIndices = IntStream.range(0, shortestDistMtx.getRowDimension())
+                .boxed().collect(Collectors.toSet());
+
+        while (!unusedIndices.isEmpty()) {
+            List<Integer> component = makeStrongComponentBy(unusedIndices.iterator().next(), shortestDistMtx);
+            for (int i : component) unusedIndices.remove(i);
+            components.add(component);
+        }
+
+        return components;
+    }
+
+    private static List<Integer> makeStrongComponentBy(int i, Matrix shortestDistMtx) {
+        List<Integer> component = new ArrayList<>();
+        for (int j = 0; j < shortestDistMtx.getColumnDimension(); ++j) {
+            if (shortestDistMtx.get(i, j) < Double.POSITIVE_INFINITY &&
+                    shortestDistMtx.get(j, i) < Double.POSITIVE_INFINITY)
+            {
+                component.add(j);
+            }
+        }
+        return component;
+    }
+
+
+
+
 
 }

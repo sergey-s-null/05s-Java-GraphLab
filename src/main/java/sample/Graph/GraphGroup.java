@@ -124,6 +124,12 @@ public class GraphGroup extends Group {
         return true;
     }
 
+    public boolean isGraphOriented() {
+        for (Edge edge : edges)
+            if (edge.getDirection() != Edge.Direction.Both) return true;
+        return false;
+    }
+
     private ListOfActions getVerticesActionsForNewResolution(Resolution resolution) {
         ListOfActions listOfActions = new ListOfActions();
         for (Vertex vertex : vertices) {
