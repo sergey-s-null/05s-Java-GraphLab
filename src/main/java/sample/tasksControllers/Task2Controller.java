@@ -11,6 +11,7 @@ import sample.GraphAlgorithms;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 
 public class Task2Controller extends TaskController {
     @FXML private VBox root;
@@ -37,7 +38,7 @@ public class Task2Controller extends TaskController {
             end.run();
             return;
         }
-        if (!validateGraph(graphGroup)) {
+        if (!validateForBreadthSearch(graphGroup)) {
             end.run();
             return;
         }
@@ -45,18 +46,7 @@ public class Task2Controller extends TaskController {
         GraphAlert.showInfoAndWait("Выберите две вершины.");
         graphGroup.setOnTwoVerticesSelected((vertexFrom, vertexTo) -> {
             GraphPath path = GraphAlgorithms.breadthSearch(vertexFrom, vertexTo);
-            // TODO move to func saveResult (maybe after 2 another algs)
-            if (path == null) {
-                resultField.setText("Маршрут не найден.");
-                pathLengthField.setText("-");
-                pathField.setText("-");
-            }
-            else {
-                graphGroup.setElementsPath(path);
-                resultField.setText("Маршрут найден.");
-                pathLengthField.setText(Integer.toString(path.getEdgeCount()));
-                pathField.setText(path.toString());
-            }
+            setResult(graphGroup, path);
             haveResult = (path != null);
             graphGroup.setOnTwoVerticesSelected(null);
             end.run();
@@ -65,7 +55,32 @@ public class Task2Controller extends TaskController {
     }
 
     @FXML private void onAStar() {
-        // TODO
+        if (!startIfCan.apply(this)) {
+            GraphAlert.showErrorAndWait("Невозможно начать.");
+            return;
+        }
+
+        GraphGroup graphGroup = currentGraph.get().orElse(null);
+        if (graphGroup == null) {
+            GraphAlert.showInfoAndWait("Граф не выбран.");
+            end.run();
+            return;
+        }
+        if (!validateForAStarSearch(graphGroup)) {
+            end.run();
+            return;
+        }
+
+        GraphAlert.showInfoAndWait("Выберите две вершины.");
+        graphGroup.setOnTwoVerticesSelected((vertexFrom, vertexTo) -> {
+            GraphPath path = GraphAlgorithms
+                    .AStarSearch(vertexFrom, vertexTo, graphGroup.getEdges()).orElse(null);
+            setResult(graphGroup, path);
+            haveResult = (path != null);
+            graphGroup.setOnTwoVerticesSelected(null);
+            end.run();
+        });
+        graphGroup.setCurrentAction(GraphGroup.Action.SelectTwoVertices);
     }
 
     @FXML private void onIterativeDeepeningAStar() {
@@ -96,7 +111,7 @@ public class Task2Controller extends TaskController {
     }
 
     // methods
-    private boolean validateGraph(GraphGroup graphGroup) {
+    private boolean validateForBreadthSearch(GraphGroup graphGroup) {
         if (graphGroup.getVerticesCount() < 2) {
             GraphAlert.showErrorAndWait("Кол-во вершин меньше 2.");
             return false;
@@ -106,6 +121,33 @@ public class Task2Controller extends TaskController {
             return false;
         }
         return true;
+    }
+
+    private boolean validateForAStarSearch(GraphGroup graphGroup) {
+        if (graphGroup.getVerticesCount() < 2) {
+            GraphAlert.showErrorAndWait("Кол-во вершин меньше 2.");
+            return false;
+        }
+        if (!graphGroup.isAllEdgesWeightsPositive()) {
+            GraphAlert.showErrorAndWait("Все веса должны быть положительны.");
+            return false;
+        }
+        return true;
+    }
+
+    private void setResult(GraphGroup graphGroup, GraphPath path) {
+        if (path == null) {
+            graphGroup.clearCurrentPath();
+            resultField.setText("Маршрут не найден.");
+            pathLengthField.setText("-");
+            pathField.setText("-");
+        }
+        else {
+            graphGroup.setElementsPath(path);
+            resultField.setText("Маршрут найден.");
+            pathLengthField.setText(Double.toString(path.getLength()));
+            pathField.setText(path.toString());
+        }
     }
 
 }

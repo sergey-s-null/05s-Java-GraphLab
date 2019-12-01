@@ -9,6 +9,8 @@ import java.util.List;
 
 public class GraphPath {
     private List<Element> path = new ArrayList<>();
+    private double length = 0;
+
 
     public GraphPath(Vertex firstVertex) {
         path.add(firstVertex);
@@ -16,15 +18,22 @@ public class GraphPath {
 
     public GraphPath(GraphPath other) {
         path.addAll(other.path);
+        length = other.length;
     }
 
     public void add(Edge edge, Vertex nextVertex) {
         path.add(edge);
         path.add(nextVertex);
+
+        length += edge.getWeight();
     }
 
     public Vertex getLastVertex() {
         return (Vertex) path.get(path.size() - 1);
+    }
+
+    public double getLength() {
+        return length;
     }
 
     public List<Element> getPathCopy() {

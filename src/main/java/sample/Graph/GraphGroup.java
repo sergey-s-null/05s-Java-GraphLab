@@ -204,7 +204,10 @@ public class GraphGroup extends Group {
     }
 
     // graph
-    public void setGraph(GraphData data, boolean createAction) {
+    public void setGraph(GraphData data) {
+        setResolution(data.getResolution(), false);
+
+
         // создание новых
         Map<String, Vertex> nameToVertex = new HashMap<>();
         for (VertexData vertexData : data.getVerticesData().get()) {
@@ -216,19 +219,19 @@ public class GraphGroup extends Group {
             newEdges.add(edgeData.create(this, nameToVertex));
 
         // создание действия
-        if (createAction) {
-            ListOfActions actions = new ListOfActions();
-            for (Edge edge : edges)
-                actions.add(new DeleteEdge(edge, this));
-            for (Vertex vertex : vertices)
-                actions.add(new DeleteVertex(vertex, null, this));
-            for (Vertex vertex : nameToVertex.values())
-                actions.add(new CreateVertex(vertex, this));
-            for (Edge edge : newEdges)
-                actions.add(new CreateEdge(edge, this));
-            actions.add(getChangeResolutionActionWithVerticesRedo(data.getResolution()));
-            actionsController.addAction(actions);
-        }
+//        if (createAction) {
+//            ListOfActions actions = new ListOfActions();
+//            for (Edge edge : edges)
+//                actions.add(new DeleteEdge(edge, this));
+//            for (Vertex vertex : vertices)
+//                actions.add(new DeleteVertex(vertex, null, this));
+//            for (Vertex vertex : nameToVertex.values())
+//                actions.add(new CreateVertex(vertex, this));
+//            for (Edge edge : newEdges)
+//                actions.add(new CreateEdge(edge, this));
+//            actions.add(getChangeResolutionActionWithVerticesRedo(data.getResolution()));
+//            actionsController.addAction(actions);
+//        }
 
         // исполнение
         clear();
@@ -236,7 +239,6 @@ public class GraphGroup extends Group {
             addVertex(vertex, false);
         for (Edge edge : newEdges)
             addEdge(edge, false);
-        setResolution(data.getResolution(), false);
 
         needToSave = false;
     }
@@ -267,6 +269,7 @@ public class GraphGroup extends Group {
                     getChangeResolutionActionWithVerticesRedo(new Resolution(width, getHeight())));
         }
         backgroundRect.setWidth(width);
+        clipRect.setWidth(width);
     }
 
     public void setHeight(double height, boolean createAction) {
@@ -276,6 +279,7 @@ public class GraphGroup extends Group {
                     getChangeResolutionActionWithVerticesRedo(new Resolution(getWidth(), height)));
         }
         backgroundRect.setHeight(height);
+        clipRect.setHeight(height);
     }
 
     public double getWidth() {

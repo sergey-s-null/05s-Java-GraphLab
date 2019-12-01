@@ -22,7 +22,7 @@ public class GraphTab extends Tab {
     public GraphTab(String tabText, GraphData data) {
         this();
         setText(tabText);
-        graphGroup.setGraph(data, false);
+        graphGroup.setGraph(data);
     }
 
     public GraphTab() {

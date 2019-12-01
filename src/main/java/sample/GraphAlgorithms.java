@@ -1,6 +1,8 @@
 package sample;
 
 import Jama.Matrix;
+import javafx.collections.transformation.SortedList;
+import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphPath;
 
@@ -32,12 +34,8 @@ public class GraphAlgorithms {
         while (pathDeque.size() > 0) {
             GraphPath currentPath = pathDeque.removeFirst();
             Vertex pathLastVertex = currentPath.getLastVertex();
-//            if (usedVertices.contains(pathLastVertex))
-//                continue;
-//            usedVertices.add(pathLastVertex);
-            if (pathLastVertex == vertexTo) {
+            if (pathLastVertex == vertexTo)
                 return currentPath;
-            }
 
             List<Vertex.EdgeWithVertex> nextVertices = pathLastVertex.getNextVertices();
             for (Vertex.EdgeWithVertex pair : nextVertices) {
@@ -51,6 +49,55 @@ public class GraphAlgorithms {
             }
         }
         return null;
+    }
+
+    static int testCounter = 0;// TODO del
+    public static Optional<GraphPath> AStarSearch(Vertex start, Vertex goal, Collection<Edge> edges) {
+        testCounter = 0;
+
+        double weightToDistanceCoef = calcAverageWeightToDistance(edges);
+        Set<Vertex> closed = new HashSet<>();
+        SortedSet<GraphPath> pathsQueue = new TreeSet<>((p1, p2) -> {
+            System.out.println("Compare paths: " + testCounter++);
+            double f1 = p1.getLength() + calcHeuristic(p1.getLastVertex(), goal, weightToDistanceCoef);
+            double f2 = p2.getLength() + calcHeuristic(p2.getLastVertex(), goal, weightToDistanceCoef);
+            return Double.compare(f1, f2);
+        });
+        pathsQueue.add(new GraphPath(start));
+
+        while (!pathsQueue.isEmpty()) {
+            GraphPath currentPath = pathsQueue.first();
+            pathsQueue.remove(currentPath);
+            Vertex lastVertex = currentPath.getLastVertex();
+            if (closed.contains(lastVertex))
+                continue;
+            if (lastVertex == goal)
+                return Optional.of(currentPath);
+
+            closed.add(lastVertex);
+            for (Vertex.EdgeWithVertex pair : lastVertex.getNextVertices()) {
+                GraphPath newPath = new GraphPath(currentPath);
+                newPath.add(pair.edge, pair.vertex);
+                pathsQueue.add(newPath);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static double calcAverageWeightToDistance(Collection<Edge> edges) {
+        // среднее отношение веса ребра к расстоянию между вершинами
+        double sum = 0;
+        for (Edge edge : edges) {
+            Vertex v1 = edge.getFirstVertex(), v2 = edge.getSecondVertex();
+            double distance = v1.getCenterPos().distance(v2.getCenterPos());
+            sum += edge.getWeight() / distance;
+        }
+        return sum / edges.size();
+    }
+
+    private static double calcHeuristic(Vertex v1, Vertex goal, double weightToDistanceCoef) {
+        return v1.getCenterPos().distance(goal.getCenterPos()) * weightToDistanceCoef;
     }
 
     //3
