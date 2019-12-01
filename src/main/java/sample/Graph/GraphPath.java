@@ -28,6 +28,10 @@ public class GraphPath {
         length += edge.getWeight();
     }
 
+    public boolean contains(Vertex vertex) {
+        return path.contains(vertex);
+    }
+
     public Vertex getLastVertex() {
         return (Vertex) path.get(path.size() - 1);
     }

@@ -84,7 +84,32 @@ public class Task2Controller extends TaskController {
     }
 
     @FXML private void onIterativeDeepeningAStar() {
-        // TODO
+        if (!startIfCan.apply(this)) {
+            GraphAlert.showErrorAndWait("Невозможно начать.");
+            return;
+        }
+
+        GraphGroup graphGroup = currentGraph.get().orElse(null);
+        if (graphGroup == null) {
+            GraphAlert.showInfoAndWait("Граф не выбран.");
+            end.run();
+            return;
+        }
+        if (!validateForAStarSearch(graphGroup)) {
+            end.run();
+            return;
+        }
+
+        GraphAlert.showInfoAndWait("Выберите две вершины.");
+        graphGroup.setOnTwoVerticesSelected((vertexFrom, vertexTo) -> {
+            GraphPath path = GraphAlgorithms
+                    .IDAStarSearch(vertexFrom, vertexTo, graphGroup.getEdges()).orElse(null);
+            setResult(graphGroup, path);
+            haveResult = (path != null);
+            graphGroup.setOnTwoVerticesSelected(null);
+            end.run();
+        });
+        graphGroup.setCurrentAction(GraphGroup.Action.SelectTwoVertices);
     }
 
     @FXML private void onSave() {

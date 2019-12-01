@@ -94,7 +94,7 @@ public class InputDialogs {
     }
 
     public static String getVertexName(String defaultName) {
-        dialog.setTitle("Что тут обычно пишется?");
+        dialog.setTitle("ب_ب");
         dialog.setHeaderText("Введите имя вершины (длина от 1 до 10, запрещенные символы: \"%()[]{},\" и пробельные)");
         dialog.setContentText("Имя:");
         dialog.getEditor().setText(defaultName);
@@ -114,7 +114,7 @@ public class InputDialogs {
     }
 
     public static Double getEdgeWeight(double defaultWeight) {
-        dialog.setTitle("Так и не понял, что тут писать.");
+        dialog.setTitle("ᕦ(ò_óˇ)ᕤ");
         dialog.setHeaderText("Введите вес ребра");
         dialog.setContentText("Вес:");
         dialog.getEditor().setText(Double.toString(defaultWeight));

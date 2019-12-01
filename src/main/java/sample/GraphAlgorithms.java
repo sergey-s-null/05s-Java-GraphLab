@@ -1,12 +1,12 @@
 package sample;
 
 import Jama.Matrix;
-import javafx.collections.transformation.SortedList;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphPath;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -23,6 +23,52 @@ public class GraphAlgorithms {
             this.eccentricities = eccentricities;
         }
     }
+
+    private static class IDAStarResult {
+        public enum State {
+            FOUND, NOT_FOUND, NEW_BOUND
+        }
+
+        public static IDAStarResult notFound() {
+            IDAStarResult result = new IDAStarResult();
+            result.state = State.NOT_FOUND;
+            return result;
+        }
+
+        public static IDAStarResult found(GraphPath path) {
+            IDAStarResult result = new IDAStarResult();
+            result.state = State.FOUND;
+            result.path = path;
+            return result;
+        }
+
+        public static IDAStarResult newBound(double bound) {
+            IDAStarResult result = new IDAStarResult();
+            result.state = State.NEW_BOUND;
+            result.newBound = bound;
+            return result;
+        }
+
+
+        private State state;
+        private GraphPath path;
+        private double newBound;
+
+        private IDAStarResult() {}
+
+        public State getState() {
+            return state;
+        }
+
+        public GraphPath getPath() {
+            return path;
+        }
+
+        public double getNewBound() {
+            return newBound;
+        }
+    }
+
 
     //2
     public static GraphPath breadthSearch(Vertex vertexFrom, Vertex vertexTo) {
@@ -51,14 +97,10 @@ public class GraphAlgorithms {
         return null;
     }
 
-    static int testCounter = 0;// TODO del
     public static Optional<GraphPath> AStarSearch(Vertex start, Vertex goal, Collection<Edge> edges) {
-        testCounter = 0;
-
         double weightToDistanceCoef = calcAverageWeightToDistance(edges);
         Set<Vertex> closed = new HashSet<>();
         SortedSet<GraphPath> pathsQueue = new TreeSet<>((p1, p2) -> {
-            System.out.println("Compare paths: " + testCounter++);
             double f1 = p1.getLength() + calcHeuristic(p1.getLastVertex(), goal, weightToDistanceCoef);
             double f2 = p2.getLength() + calcHeuristic(p2.getLastVertex(), goal, weightToDistanceCoef);
             return Double.compare(f1, f2);
@@ -85,6 +127,50 @@ public class GraphAlgorithms {
         return Optional.empty();
     }
 
+    public static Optional<GraphPath> IDAStarSearch(Vertex start, Vertex goal, Collection<Edge> edges) {
+        double weightToDistanceCoef = calcAverageWeightToDistance(edges);
+        Function<Vertex, Double> heuristic = vertex -> calcHeuristic(vertex, goal, weightToDistanceCoef);
+        double bound = heuristic.apply(start);
+
+        while (true) {
+            IDAStarResult result = IDAStarRecursion(new GraphPath(start), goal, bound, heuristic);
+            switch (result.getState()) {
+                case FOUND:
+                    return Optional.of(result.getPath());
+                case NOT_FOUND:
+                    return Optional.empty();
+                case NEW_BOUND:
+                    bound = result.getNewBound();
+            }
+        }
+    }
+
+    private static IDAStarResult IDAStarRecursion(GraphPath path, Vertex goal, double bound,
+                                                  Function<Vertex, Double> heuristic)
+    {
+        double f = path.getLength() + heuristic.apply(path.getLastVertex());
+        if (f > bound) return IDAStarResult.newBound(f);
+        if (path.getLastVertex() == goal) return IDAStarResult.found(path);
+        double min = Double.POSITIVE_INFINITY;
+        for (Vertex.EdgeWithVertex pair : path.getLastVertex().getNextVertices()) {
+            if (path.contains(pair.vertex)) continue;
+
+            GraphPath nextPath = new GraphPath(path);
+            nextPath.add(pair.edge, pair.vertex);
+            IDAStarResult result = IDAStarRecursion(nextPath, goal, bound, heuristic);
+            switch (result.getState()) {
+                case FOUND:
+                case NOT_FOUND:
+                    return result;
+                case NEW_BOUND:
+                    if (result.getNewBound() < min) min = result.getNewBound();
+            }
+        }
+        if (min == Double.POSITIVE_INFINITY)
+            return IDAStarResult.notFound();
+        return IDAStarResult.newBound(min);
+    }
+
     private static double calcAverageWeightToDistance(Collection<Edge> edges) {
         // среднее отношение веса ребра к расстоянию между вершинами
         double sum = 0;
@@ -97,7 +183,10 @@ public class GraphAlgorithms {
     }
 
     private static double calcHeuristic(Vertex v1, Vertex goal, double weightToDistanceCoef) {
-        return v1.getCenterPos().distance(goal.getCenterPos()) * weightToDistanceCoef;
+        if (v1 == goal)
+            return 0;
+        else
+            return v1.getCenterPos().distance(goal.getCenterPos()) * weightToDistanceCoef;
     }
 
     //3
