@@ -1,50 +1,43 @@
 package sample.tasksControllers;
 
-import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.stage.FileChooser;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Consumer;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 abstract public class TaskController {
-    protected Set<Consumer<TaskController> > startListeners = new HashSet<>();
-    private Set<Consumer<TaskController> > endListeners = new HashSet<>();
-    private boolean isBusy = false;
+    protected static Function<TaskController, Boolean> startIfCan;
+    protected static Runnable end;
+    protected static Supplier<Optional<GraphGroup> > currentGraph;
+    protected static Supplier<Optional<MatrixView> > currentMatrixView;
 
-
-    final public void addStartListener(Consumer<TaskController> consumer) {
-        startListeners.add(consumer);
+    public static void initOnStart(Function<TaskController, Boolean> startIfCan) {
+        TaskController.startIfCan = startIfCan;
     }
 
-    final public void addEndListener(Consumer<TaskController> consumer) {
-        endListeners.add(consumer);
+    public static void initOnEnd(Runnable end) {
+        TaskController.end = end;
     }
 
-    final public boolean isBusy() {
-        return isBusy;
+    public static void initGraphReceiver(Supplier<Optional<GraphGroup> > currentGraph) {
+        TaskController.currentGraph = currentGraph;
+    }
+
+    public static void initMatrixViewReceiver(Supplier<Optional<MatrixView> > currentMatrixView) {
+        TaskController.currentMatrixView = currentMatrixView;
+    }
+
+    protected FileChooser fileChooser = new FileChooser();
+
+    protected TaskController() {
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Текстовый файл", "*.txt"));
     }
 
     abstract public Parent getRoot();
 
-    abstract public boolean validateGraph(GraphGroup graphGroup);
-
-    @FXML private void onStart() {
-        if (isBusy())
-            return;
-        for (Consumer<TaskController> startConsumer : startListeners)
-            startConsumer.accept(this);
-    }
-
-    public void start(GraphGroup graphGroup, MatrixView matrixView) {
-        isBusy = true;
-    }
-
-    final void end() {
-        isBusy = false;
-        for (Consumer<TaskController> endConsumer : endListeners)
-            endConsumer.accept(this);
-    }
 }

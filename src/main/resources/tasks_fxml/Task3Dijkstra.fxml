@@ -9,19 +9,34 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.spreadsheet.SpreadsheetView?>
 
-<VBox fx:id="root" prefHeight="260.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.FloydAlgorithmController">
+<VBox fx:id="root" prefHeight="260.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.Task3Controller">
    <children>
       <HBox prefHeight="0.0" prefWidth="200.0">
          <children>
-            <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onStart" prefWidth="80.0" text="Начать" HBox.hgrow="NEVER">
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFloydWarshell" text="Флойд-Уоршелл" HBox.hgrow="NEVER">
                <HBox.margin>
-                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
                </HBox.margin>
             </Button>
-            <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="10000.0" HBox.hgrow="ALWAYS" />
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDijkstra" text="Дейкстра">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onBellmanFord" text="Беллман-Форд">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onJohnson" text="Джонсон">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="200.0" prefWidth="10000.0" HBox.hgrow="ALWAYS" />
             <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onSave" prefWidth="80.0" text="Сохранить" HBox.hgrow="NEVER">
                <HBox.margin>
-                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                  <Insets bottom="6.0" left="24.0" right="6.0" top="6.0" />
                </HBox.margin>
             </Button>
          </children>

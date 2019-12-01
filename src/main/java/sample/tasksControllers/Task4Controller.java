@@ -1,11 +1,9 @@
 package sample.tasksControllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 import sample.GraphAlert;
@@ -15,23 +13,51 @@ import sample.MatrixView.MatrixView;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
-public class GraphCharacteristicController extends TaskController implements Initializable {
+public class Task4Controller extends TaskController {
     @FXML private VBox root;
     @FXML private TextField eccentricitiesField, radiusField, diameterField,
             verticesDegreesField;
     private boolean haveResult = false;
-    private FileChooser fileChooser = new FileChooser();//TODO move this to parent class
-
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-                "Текстовый файл", "*.txt"));
+    public Parent getRoot() {
+        return root;
+    }
+
+    //------------|
+    //   events   |
+    //------------|
+    @FXML private void onStart() {
+        if (!startIfCan.apply(this)) {
+            GraphAlert.showErrorAndWait("Невозможно начать.");
+            return;
+        }
+
+        GraphGroup graphGroup = currentGraph.get().orElse(null);
+        MatrixView matrixView = currentMatrixView.get().orElse(null);
+        if (graphGroup == null || matrixView == null) {
+            GraphAlert.showInfoAndWait("Граф не выбран.");
+            end.run();
+            return;
+        }
+        if (!validateGraph(graphGroup)) {
+            end.run();
+            return;
+        }
+
+        GraphAlgorithms.GraphCharacteristic characteristic = GraphAlgorithms.graphCharacteristic(
+                matrixView.getMatrix());
+        List<Integer> verticesDegrees = new ArrayList<>();
+        for (Vertex vertex : graphGroup.getVertices())
+            verticesDegrees.add(vertex.getDegree());
+
+        setResult(characteristic, verticesDegrees);
+        haveResult = true;
+
+        end.run();
     }
 
     @FXML private void onSave() {
@@ -65,13 +91,8 @@ public class GraphCharacteristicController extends TaskController implements Ini
         }
     }
 
-    @Override
-    public Parent getRoot() {
-        return root;
-    }
-
-    @Override
-    public boolean validateGraph(GraphGroup graphGroup) {
+    // methods
+    private boolean validateGraph(GraphGroup graphGroup) {
         if (graphGroup.getVerticesCount() < 2) {
             GraphAlert.showErrorAndWait("Кол-во вершин меньше 2.");
             return false;
@@ -83,24 +104,13 @@ public class GraphCharacteristicController extends TaskController implements Ini
         return true;
     }
 
-    @Override
-    public void start(GraphGroup graphGroup, MatrixView matrixView) {
-        super.start(graphGroup, matrixView);
-
-        GraphAlgorithms.GraphCharacteristic characteristic = GraphAlgorithms.graphCharacteristic(
-                matrixView.getMatrix());
-        List<Integer> verticesDegrees = new ArrayList<>();
-        for (Vertex vertex : graphGroup.getVertices()) {
-            verticesDegrees.add(vertex.getDegree());
-        }
-
+    private void setResult(GraphAlgorithms.GraphCharacteristic characteristic,
+                           List<Integer> verticesDegrees)
+    {
         eccentricitiesField.setText(vectorToString(characteristic.eccentricities));
         radiusField.setText(Double.toString(characteristic.radius));
         diameterField.setText(Double.toString(characteristic.diameter));
         verticesDegreesField.setText(vectorToString(verticesDegrees));
-        haveResult = true;
-
-        end();
     }
 
     private String vectorToString(List<? extends Number> eccentricities) {

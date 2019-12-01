@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" prefHeight="0.0" prefWidth="0.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.GraphCharacteristicController">
+<VBox fx:id="root" prefHeight="0.0" prefWidth="0.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.Task4Controller">
    <children>
       <HBox prefHeight="0.0" prefWidth="0.0">
          <children>

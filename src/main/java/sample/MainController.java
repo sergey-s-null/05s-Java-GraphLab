@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
@@ -17,7 +18,6 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
 import sample.Graph.Elements.Style;
-import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
@@ -28,15 +28,9 @@ import sample.tasksControllers.TaskController;
 
 import javax.imageio.ImageIO;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 public class MainController implements Initializable {
@@ -59,6 +53,7 @@ public class MainController implements Initializable {
     @FXML private VBox taskVBox;
     private TaskController currentTaskController;
     private Map<String, TaskController> taskControllers = new HashMap<>();
+    private boolean isTaskStarted = false;
 
 
     @Override
@@ -101,10 +96,18 @@ public class MainController implements Initializable {
     }
 
     private void initTasks() {
+        TaskController.initOnStart(this::onTaskStart);
+        TaskController.initOnEnd(this::onTaskEnd);
+        TaskController.initGraphReceiver(() -> Optional.ofNullable(getSelectedGraphGroup()));
+        TaskController.initMatrixViewReceiver(() -> {
+            GraphTab tab = getSelectedGraphTab();
+            return tab == null ? Optional.empty() : Optional.ofNullable(tab.getMatrixView());
+        });
+
         String[] taskResourcePaths = {
-                "/tasks_fxml/2_breadth_search.fxml",
-                "/tasks_fxml/3_Floyd_algorithm.fxml",
-                "/tasks_fxml/4_graph_characteristic.fxml",
+                "/tasks_fxml/Task2PathSearch.fxml",
+                "/tasks_fxml/Task3Dijkstra.fxml",
+                "/tasks_fxml/Task4.fxml",
         };
         String[] taskIds = {
                 "2",
@@ -118,8 +121,6 @@ public class MainController implements Initializable {
                         getClass().getResource(taskResourcePaths[i]));
                 loader.load();
                 TaskController controller = loader.getController();
-                controller.addStartListener(this::onTaskStart);
-                controller.addEndListener(this::onTaskEnd);
                 taskControllers.put(taskIds[i], controller);
             }
         }
@@ -129,7 +130,7 @@ public class MainController implements Initializable {
         }
     }
 
-    //
+    // methods
     private GraphGroup getSelectedGraphGroup() {
         GraphTab selectedTab = getSelectedGraphTab();
         return selectedTab == null ? null : selectedTab.getGraphGroup();
@@ -214,6 +215,7 @@ public class MainController implements Initializable {
     }
 
     private void setDisableControlsForTask(boolean disable) {
+        // TODO disable MORE
         setDisableActionButtons(disable);
 
         GraphTab tab = getSelectedGraphTab();
@@ -244,32 +246,24 @@ public class MainController implements Initializable {
     }
 
     //------------------|
-    //   Other events   |
+    //   Tasks events   |
     //------------------|
-    private void onTaskStart(TaskController controller) {
-        if (currentTaskController != controller) {
-            System.out.println("WARNING! Called onTaskStart, but currentTaskController != receivedController!");
-            return;
-        }
-        GraphGroup selectedGroup = getSelectedGraphGroup();
-        GraphTab selectedTab = getSelectedGraphTab();
-        if (selectedGroup == null || selectedTab == null)
-            return;
-
-        if (!controller.validateGraph(selectedGroup))
-            return;
-
+    private boolean onTaskStart(TaskController controller) {
+        if (isTaskStarted)
+            return false;
 
         setDisableControlsForTask(true);
-        controller.start(selectedGroup, selectedTab.getMatrixView());
+        isTaskStarted = true;
+        return true;
     }
 
-    private void onTaskEnd(TaskController controller) {
+    private void onTaskEnd() {
         setDisableControlsForTask(false);
+        isTaskStarted = false;
 
-        GraphGroup selectedGraph = getSelectedGraphGroup();
-        if (selectedGraph != null) {
-            selectedGraph.setCurrentAction(currentAction);
+        GraphGroup graphGroup = getSelectedGraphGroup();
+        if (graphGroup != null) {
+            graphGroup.setCurrentAction(currentAction);
         }
     }
 
@@ -327,12 +321,10 @@ public class MainController implements Initializable {
 
     @FXML private void onHideShowTaskPane() {
         if (currentTaskController != null) {
-            if (taskVBox.getChildren().size() == 1) {
-                taskVBox.getChildren().add(currentTaskController.getRoot());
-            }
-            else if (taskVBox.getChildren().size() == 2) {
-                taskVBox.getChildren().remove(1);
-            }
+            Parent parent = currentTaskController.getRoot();
+            boolean prevState = parent.isVisible();
+            parent.setVisible(!prevState);
+            parent.setManaged(!prevState);
         }
     }
 
@@ -458,11 +450,6 @@ public class MainController implements Initializable {
 
     // Graph tasks
     @FXML private void onTaskSelected(ActionEvent event) {
-        if (currentTaskController != null && currentTaskController.isBusy()) {
-            GraphAlert.showInfoAndWait("Текущее задание не выполнено!");
-            return;
-        }
-
         TaskController nextController;
         String menuItemId = ((MenuItem) event.getSource()).getId();
         switch (menuItemId) {
@@ -476,12 +463,15 @@ public class MainController implements Initializable {
                 return;
         }
 
+        nextController.getRoot().setVisible(true);
+        nextController.getRoot().setManaged(true);
+
         currentTaskController = nextController;
         if (taskVBox.getChildren().size() >= 2)
             taskVBox.getChildren().remove(1);
-        taskVBox.getChildren().add(currentTaskController.getRoot());
+        taskVBox.getChildren().add(1, currentTaskController.getRoot());
     }
-
+    // TODO
     @FXML private void on6TaskSelected() {
         GraphTab tab = getSelectedGraphTab();
         if (tab == null)
@@ -500,8 +490,8 @@ public class MainController implements Initializable {
         System.out.println("If conn graph: " + ifComponents);
 
     }
-
-    private Matrix makeAdjacencyMtxSymmetric(Matrix adjMatrix) {// TODO move to another place
+    // TODO move to another place
+    private Matrix makeAdjacencyMtxSymmetric(Matrix adjMatrix) {
         Matrix result = adjMatrix.copy();
         for (int i = 0; i < adjMatrix.getRowDimension(); ++i) {
             for (int j = i + 1; j < adjMatrix.getColumnDimension(); ++j) {
@@ -512,11 +502,11 @@ public class MainController implements Initializable {
         }
         return result;
     }
-
+    // TODO
     @FXML private void on12TaskSelected() {
 
 
-        // TODO
+
 
     }
 

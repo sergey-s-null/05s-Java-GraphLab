@@ -13,7 +13,7 @@ import static java.lang.Math.min;
 public class GraphAlgorithms {
     public static class GraphCharacteristic {
         public double radius, diameter;
-        public List<Double> eccentricities = new ArrayList<>();
+        public List<Double> eccentricities;
 
         public GraphCharacteristic(double radius, double diameter, List<Double> eccentricities) {
             this.radius = radius;

@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import org.controlsfx.control.spreadsheet.GridBase;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
@@ -24,19 +23,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class FloydAlgorithmController extends TaskController implements Initializable {
+public class Task3Controller extends TaskController implements Initializable {
     @FXML private VBox root;
     @FXML private SpreadsheetView spreadsheetView;
     private boolean haveResult = false;
-    private FileChooser fileChooser = new FileChooser();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         spreadsheetView.setGrid(new GridBase(0, 0));
         spreadsheetView.setEditable(false);
-
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-                "Текстовый файл", "*.txt"));
     }
 
     @Override
@@ -44,17 +39,48 @@ public class FloydAlgorithmController extends TaskController implements Initiali
         return root;
     }
 
-    @Override
-    public boolean validateGraph(GraphGroup graphGroup) {
-        if (graphGroup.getVerticesCount() < 2) {
-            GraphAlert.showErrorAndWait("Кол-во вершин меньше 2.");
-            return false;
+    //------------|
+    //   events   |
+    //------------|
+    @FXML private void onFloydWarshell() {
+        if (!startIfCan.apply(this)) {
+            GraphAlert.showErrorAndWait("Невозможно начать.");
+            return;
         }
-        if (!graphGroup.isAllEdgesWeightsPositive()) {
-            GraphAlert.showErrorAndWait("Все ребра должны быть положительны.");
-            return false;
+
+        GraphGroup graphGroup = currentGraph.get().orElse(null);
+        MatrixView matrixView = currentMatrixView.get().orElse(null);
+        if (graphGroup == null || matrixView == null) {
+            GraphAlert.showInfoAndWait("Граф не выбран.");
+            end.run();
+            return;
         }
-        return true;
+        if (!validateGraph(graphGroup)) {
+            end.run();
+            return;
+        }
+
+        Matrix matrix = matrixView.getMatrix();
+        Matrix result = GraphAlgorithms.floydAlgorithm(matrix);
+        setResult(result, graphGroup);
+        haveResult = true;
+
+        end.run();
+    }
+
+    @FXML private void onDijkstra() {
+        System.out.println("Not work.");
+        // TODO
+    }
+
+    @FXML private void onBellmanFord() {
+        System.out.println("Not work.");
+        // TODO
+    }
+
+    @FXML private void onJohnson() {
+        System.out.println("Not work.");
+        // TODO
     }
 
     @FXML private void onSave() {
@@ -85,6 +111,19 @@ public class FloydAlgorithmController extends TaskController implements Initiali
         }
     }
 
+    // methods
+    private boolean validateGraph(GraphGroup graphGroup) {
+        if (graphGroup.getVerticesCount() < 2) {
+            GraphAlert.showErrorAndWait("Кол-во вершин меньше 2.");
+            return false;
+        }
+        if (!graphGroup.isAllEdgesWeightsPositive()) {
+            GraphAlert.showErrorAndWait("Все ребра должны быть положительны.");
+            return false;
+        }
+        return true;
+    }
+
     private String rowToString(ObservableList<SpreadsheetCell> row) {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
@@ -97,18 +136,6 @@ public class FloydAlgorithmController extends TaskController implements Initiali
         }
         builder.append("]");
         return builder.toString();
-    }
-
-    @Override
-    public void start(GraphGroup graphGroup, MatrixView matrixView) {
-        super.start(graphGroup, matrixView);
-
-        Matrix matrix = matrixView.getMatrix();
-        Matrix result = GraphAlgorithms.floydAlgorithm(matrix);
-        setResult(result, graphGroup);
-        haveResult = true;
-
-        end();
     }
 
     private void setResult(Matrix matrix, GraphGroup graphGroup) {

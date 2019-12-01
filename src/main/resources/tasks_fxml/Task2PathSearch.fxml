@@ -11,14 +11,24 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" prefHeight="0.0" prefWidth="0.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.BreadthSearchController">
+<VBox fx:id="root" prefHeight="0.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.Task2Controller">
    <children>
       <HBox prefHeight="0.0" prefWidth="0.0" VBox.vgrow="NEVER">
          <children>
-            <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onStart" text="Начать" HBox.hgrow="ALWAYS">
+            <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onBreadthSearch" text="Breadth Search" HBox.hgrow="ALWAYS">
                <HBox.margin>
-                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
                </HBox.margin></Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onAStar" text="A*">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onIterativeDeepeningAStar" text="Iterative deepening A*">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
             <Pane prefHeight="44.0" prefWidth="124.0" HBox.hgrow="ALWAYS" />
             <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onSave" text="Сохранить" HBox.hgrow="NEVER">
                <HBox.margin>

@@ -64,8 +64,8 @@
             </Menu>
           <Menu mnemonicParsing="false" text="Задачи теории графов">
                <items>
-                  <MenuItem id="2" mnemonicParsing="false" onAction="#onTaskSelected" text="2. Поиск в ширину" />
-                  <MenuItem id="3" mnemonicParsing="false" onAction="#onTaskSelected" text="3. Алгоритм Флойда" />
+                  <MenuItem id="2" mnemonicParsing="false" onAction="#onTaskSelected" text="2. Поиск пути" />
+                  <MenuItem id="3" mnemonicParsing="false" onAction="#onTaskSelected" text="3. Алгоритм Дейкстры и т.п." />
                   <MenuItem id="4" mnemonicParsing="false" onAction="#onTaskSelected" text="4. Эксцентриситет, радиус, диаметр" />
                   <MenuItem mnemonicParsing="false" onAction="#on6TaskSelected" text="6. Связность графа" />
                   <MenuItem mnemonicParsing="false" onAction="#on12TaskSelected" text="12. Остовное дерево" />
