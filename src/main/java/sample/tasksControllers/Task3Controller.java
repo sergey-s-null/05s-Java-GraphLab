@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class Task3Controller extends TaskController implements Initializable {
@@ -69,8 +71,33 @@ public class Task3Controller extends TaskController implements Initializable {
     }
 
     @FXML private void onDijkstra() {
-        System.out.println("Not work.");
-        // TODO
+        if (!startIfCan.apply(this)) {
+            GraphAlert.showErrorAndWait("Невозможно начать.");
+            return;
+        }
+
+        GraphGroup graphGroup = currentGraph.get().orElse(null);
+        if (graphGroup == null) {
+            GraphAlert.showInfoAndWait("Граф не выбран.");
+            end.run();
+            return;
+        }
+        if (!validateGraph(graphGroup)) {
+            end.run();
+            return;
+        }
+
+        List<Vertex> vertices = graphGroup.getVertices();
+        Matrix result = new Matrix(vertices.size(), vertices.size(), Double.POSITIVE_INFINITY);
+        for (int i = 0; i < vertices.size(); ++i) {
+            Map<Vertex, Double> distances = GraphAlgorithms.dijkstraAlgorithm(vertices.get(i), vertices);
+            for (int j = 0; j < vertices.size(); ++j) {
+                result.set(i, j, distances.get(vertices.get(j)));
+            }
+        }
+        setResult(result, graphGroup);
+
+        end.run();
     }
 
     @FXML private void onBellmanFord() {

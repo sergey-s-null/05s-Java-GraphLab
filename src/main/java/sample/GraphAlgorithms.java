@@ -1,6 +1,7 @@
 package sample;
 
 import Jama.Matrix;
+import javafx.collections.transformation.SortedList;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphPath;
@@ -13,17 +14,7 @@ import java.util.stream.IntStream;
 import static java.lang.Math.min;
 
 public class GraphAlgorithms {
-    public static class GraphCharacteristic {
-        public double radius, diameter;
-        public List<Double> eccentricities;
-
-        public GraphCharacteristic(double radius, double diameter, List<Double> eccentricities) {
-            this.radius = radius;
-            this.diameter = diameter;
-            this.eccentricities = eccentricities;
-        }
-    }
-
+    //2
     private static class IDAStarResult {
         public enum State {
             FOUND, NOT_FOUND, NEW_BOUND
@@ -70,7 +61,6 @@ public class GraphAlgorithms {
     }
 
 
-    //2
     public static GraphPath breadthSearch(Vertex vertexFrom, Vertex vertexTo) {
         Set<Vertex> usedVertices = new HashSet<>();
         Deque<GraphPath> pathDeque = new ArrayDeque<>();
@@ -217,7 +207,50 @@ public class GraphAlgorithms {
         return result;
     }
 
+    public static Map<Vertex, Double> dijkstraAlgorithm(Vertex start, List<Vertex> vertices) {
+        Map<Vertex, Double> marks = new HashMap<>();
+        for (Vertex vertex : vertices) marks.put(vertex, Double.POSITIVE_INFINITY);
+        marks.put(start, 0.0);
+
+        Queue<Vertex> unvisitedSorted = new PriorityQueue<>(vertices.size(),
+                Comparator.comparingDouble(marks::get));
+        unvisitedSorted.addAll(vertices);
+
+        Set<Vertex> visited = new HashSet<>();
+
+        while (!unvisitedSorted.isEmpty()) {
+            Vertex vertex = unvisitedSorted.poll();
+            visited.add(vertex);
+
+            for (Vertex.EdgeWithVertex pair : vertex.getNextVertices()) {
+                if (visited.contains(pair.vertex)) continue;
+
+                double testValue = marks.get(vertex) + pair.edge.getWeight();
+                double oldValue = marks.get(pair.vertex);
+                if (testValue < oldValue) {
+                    unvisitedSorted.remove(pair.vertex);
+                    marks.put(pair.vertex, testValue);
+                    unvisitedSorted.add(pair.vertex);
+                }
+            }
+        }
+
+        return marks;
+    }
+
     //4
+    public static class GraphCharacteristic {
+        public double radius, diameter;
+        public List<Double> eccentricities;
+
+        public GraphCharacteristic(double radius, double diameter, List<Double> eccentricities) {
+            this.radius = radius;
+            this.diameter = diameter;
+            this.eccentricities = eccentricities;
+        }
+    }
+
+
     public static GraphCharacteristic graphCharacteristic(Matrix adjacencyMatrix) {
         Matrix floydMatrix = floydAlgorithm(adjacencyMatrix);
 
