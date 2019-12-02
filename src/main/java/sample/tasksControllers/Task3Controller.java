@@ -57,7 +57,7 @@ public class Task3Controller extends TaskController implements Initializable {
             end.run();
             return;
         }
-        if (!validateGraph(graphGroup)) {
+        if (!validateGraph(graphGroup, true, true)) {
             end.run();
             return;
         }
@@ -82,7 +82,7 @@ public class Task3Controller extends TaskController implements Initializable {
             end.run();
             return;
         }
-        if (!validateGraph(graphGroup)) {
+        if (!validateGraph(graphGroup, true, true)) {
             end.run();
             return;
         }
@@ -101,13 +101,85 @@ public class Task3Controller extends TaskController implements Initializable {
     }
 
     @FXML private void onBellmanFord() {
-        System.out.println("Not work.");
-        // TODO
+        if (!startIfCan.apply(this)) {
+            GraphAlert.showErrorAndWait("Невозможно начать.");
+            return;
+        }
+
+        GraphGroup graphGroup = currentGraph.get().orElse(null);
+        if (graphGroup == null) {
+            GraphAlert.showInfoAndWait("Граф не выбран.");
+            end.run();
+            return;
+        }
+        if (!validateGraph(graphGroup, true, false)) {
+            end.run();
+            return;
+        }
+
+        List<Vertex> vertices = graphGroup.getVertices();
+        Matrix result = new Matrix(vertices.size(), vertices.size(), Double.POSITIVE_INFINITY);
+        boolean foundInfCycles = false;
+        for (int i = 0; i < vertices.size(); ++i) {
+            Map<Vertex, Double> distances = GraphAlgorithms.bellmanFordAlgorithm(vertices.get(i),
+                    vertices, graphGroup.getEdges()).orElse(null);
+            if (distances == null) {
+                foundInfCycles = true;
+                break;
+            }
+            for (int j = 0; j < vertices.size(); ++j) {
+                result.set(i, j, distances.get(vertices.get(j)));
+            }
+        }
+
+        if (foundInfCycles) {
+            setResult(new Matrix(0, 0), graphGroup);
+            GraphAlert.showInfoAndWait("Найден цикл с отрицательным весом.");
+        }
+        else {
+            setResult(result, graphGroup);
+        }
+
+        end.run();
     }
 
     @FXML private void onJohnson() {
-        System.out.println("Not work.");
-        // TODO
+        if (!startIfCan.apply(this)) {
+            GraphAlert.showErrorAndWait("Невозможно начать.");
+            return;
+        }
+
+        GraphGroup graphGroup = currentGraph.get().orElse(null);
+        if (graphGroup == null) {
+            GraphAlert.showInfoAndWait("Граф не выбран.");
+            end.run();
+            return;
+        }
+        if (!validateGraph(graphGroup, true, false)) {
+            end.run();
+            return;
+        }
+
+        List<Vertex> vertices = graphGroup.getVertices();
+        Map<Vertex, Map<Vertex, Double> > distances = GraphAlgorithms.johnsonAlgorithm(
+                graphGroup, vertices, graphGroup.getEdges()).orElse(null);
+        if (distances == null) {
+            setResult(new Matrix(0, 0), graphGroup);
+            GraphAlert.showInfoAndWait("Найден цикл с отрицательным весом.");
+        }
+        else {
+            Matrix result = new Matrix(vertices.size(), vertices.size(), Double.POSITIVE_INFINITY);
+            for (int i = 0; i < vertices.size(); ++i) {
+                for (int j = 0; j < vertices.size(); ++j) {
+                    Vertex v1 = vertices.get(i), v2 = vertices.get(j);
+                    result.set(i, j, distances.get(v1).get(v2));
+                }
+            }
+
+            setResult(result, graphGroup);
+        }
+
+        end.run();
     }
 
     @FXML private void onSave() {
@@ -139,12 +211,12 @@ public class Task3Controller extends TaskController implements Initializable {
     }
 
     // methods
-    private boolean validateGraph(GraphGroup graphGroup) {
-        if (graphGroup.getVerticesCount() < 2) {
+    private boolean validateGraph(GraphGroup graphGroup, boolean more1Vertex, boolean positiveWeights) {
+        if (more1Vertex && graphGroup.getVerticesCount() < 2) {
             GraphAlert.showErrorAndWait("Кол-во вершин меньше 2.");
             return false;
         }
-        if (!graphGroup.isAllEdgesWeightsPositive()) {
+        if (positiveWeights && !graphGroup.isAllEdgesWeightsPositive()) {
             GraphAlert.showErrorAndWait("Все ребра должны быть положительны.");
             return false;
         }

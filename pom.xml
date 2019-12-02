@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.40.11</version>
+            <version>8.40.15</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/gov.nist.math/jama -->
         <dependency>

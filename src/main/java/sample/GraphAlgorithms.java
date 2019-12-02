@@ -1,12 +1,14 @@
 package sample;
 
 import Jama.Matrix;
-import javafx.collections.transformation.SortedList;
+import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
+import sample.Graph.GraphGroup;
 import sample.Graph.GraphPath;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -207,7 +209,13 @@ public class GraphAlgorithms {
         return result;
     }
 
-    public static Map<Vertex, Double> dijkstraAlgorithm(Vertex start, List<Vertex> vertices) {
+    public static Map<Vertex, Double> dijkstraAlgorithm(Vertex start, Collection<Vertex> vertices) {
+        return dijkstraAlgorithm(start, vertices, (edge, vertex) -> edge.getWeight());
+    }
+
+    private static Map<Vertex, Double> dijkstraAlgorithm(Vertex start, Collection<Vertex> vertices,
+                                                         BiFunction<Edge, Vertex, Double> weight)
+    {
         Map<Vertex, Double> marks = new HashMap<>();
         for (Vertex vertex : vertices) marks.put(vertex, Double.POSITIVE_INFINITY);
         marks.put(start, 0.0);
@@ -225,7 +233,7 @@ public class GraphAlgorithms {
             for (Vertex.EdgeWithVertex pair : vertex.getNextVertices()) {
                 if (visited.contains(pair.vertex)) continue;
 
-                double testValue = marks.get(vertex) + pair.edge.getWeight();
+                double testValue = marks.get(vertex) + weight.apply(pair.edge, pair.vertex);
                 double oldValue = marks.get(pair.vertex);
                 if (testValue < oldValue) {
                     unvisitedSorted.remove(pair.vertex);
@@ -236,6 +244,89 @@ public class GraphAlgorithms {
         }
 
         return marks;
+    }
+
+    public static Optional<Map<Vertex, Double> > bellmanFordAlgorithm(Vertex start, Collection<Vertex> vertices,
+                                                                      Collection<Edge> edges)
+    {
+        return bellmanFordAlgorithm(start, vertices, edges, Edge::getWeight);
+    }
+
+    private static Optional<Map<Vertex, Double> > bellmanFordAlgorithm(Vertex start, Collection<Vertex> vertices,
+                                                               Collection<Edge> edges, Function<Edge, Double> weight)
+    {
+        Map<Vertex, Double> distances = new HashMap<>();
+        for (Vertex vertex : vertices) distances.put(vertex, Double.POSITIVE_INFINITY);
+        distances.put(start, 0.0);
+
+        Map<Vertex, Double> testInfCycles = new HashMap<>();
+        for (int i = 0; i < vertices.size(); ++i) {
+            if (i == vertices.size() - 1) testInfCycles.putAll(distances);
+
+            for (Edge edge : edges) {
+                Vertex v1 = edge.getFirstVertex(), v2 = edge.getSecondVertex();
+                switch (edge.getDirection()) {
+                    case SecondVertex: case Both:
+                        if (distances.get(v2) > distances.get(v1) + weight.apply(edge))
+                            distances.put(v2, distances.get(v1) + weight.apply(edge));
+                }
+                switch (edge.getDirection()) {
+                    case FirstVertex: case Both:
+                        if (distances.get(v1) > distances.get(v2) + weight.apply(edge))
+                            distances.put(v1, distances.get(v2) + weight.apply(edge));
+                }
+            }
+        }
+
+        if (testInfCycles.equals(distances))
+            return Optional.of(distances);
+        else
+            return Optional.empty();
+    }
+
+    public static Optional<Map<Vertex, Map<Vertex, Double> > > johnsonAlgorithm(
+            GraphGroup graphGroup, Collection<Vertex> vertices, Collection<Edge> edges)
+    {
+        List<Vertex> vertices_ = new ArrayList<>(vertices);
+        List<Edge> edges_ = new ArrayList<>(edges);
+
+        Vertex s = new Vertex(graphGroup, 0, 0);
+        s.disconnect();
+        for (Vertex vertex : vertices) {
+            Edge edge = new BinaryEdge(graphGroup, s, vertex);
+            edge.disconnect();
+            edges_.add(edge);
+        }
+        vertices_.add(s);
+
+        Function<Edge, Double> weight = edge -> (edge.getFirstVertex() == s ? 0 : edge.getWeight());
+
+
+        Map<Vertex, Map<Vertex, Double> > bellmanFordResult = new HashMap<>();
+        for (Vertex vertex : vertices_) {
+            Map<Vertex, Double> result = bellmanFordAlgorithm(vertex, vertices_, edges_).orElse(null);
+            if (result == null) return Optional.empty();
+            bellmanFordResult.put(vertex, result);
+        }
+
+        Function<Vertex, Double> fi = vertex -> bellmanFordResult.get(s).get(vertex);
+        BiFunction<Edge, Vertex, Double> weight_fi = (edge, vertex) -> {
+            Vertex anotherVertex = edge.getFirstVertex() == vertex ? edge.getSecondVertex() : edge.getFirstVertex();
+            return weight.apply(edge) + fi.apply(anotherVertex) - fi.apply(vertex);
+        };
+
+        Map<Vertex, Map<Vertex, Double> > result = new HashMap<>();
+        for (Vertex vertex : vertices) {
+            Map<Vertex, Double> distances = dijkstraAlgorithm(vertex, vertices, weight_fi);
+            for (Vertex vertex1 : vertices) {
+                double validDistance = distances.get(vertex1) + fi.apply(vertex1) - fi.apply(vertex);
+
+                Map<Vertex, Double> aga = result.computeIfAbsent(vertex, k -> new HashMap<>());
+                aga.put(vertex1, validDistance);
+            }
+        }
+
+        return Optional.of(result);
     }
 
     //4
