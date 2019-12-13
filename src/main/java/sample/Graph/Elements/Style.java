@@ -24,4 +24,10 @@ public class Style {
     //Glyph
     public static final Color glyphSelectColor = vertexSelectColor;
 
+    //Spider and bugs
+    static final Color spiderColor = Color.web("65009c");
+    static final Color bugColor = Color.web("2d2c38");
+    static final double spiderStrokeWidth = 0.6;
+    static final double spiderVerticalShift = -22;
+
 }

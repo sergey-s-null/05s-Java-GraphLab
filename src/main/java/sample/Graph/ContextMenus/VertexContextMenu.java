@@ -41,7 +41,6 @@ public class VertexContextMenu extends ContextMenu {
         loop.setOnAction(this::onActionMakeLoop);
         rename.setOnAction(this::onActionRename);
         delete.setOnAction(this::onActionDelete);
-
     }
 
     public void configureFor(Vertex vertex) {

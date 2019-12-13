@@ -8,58 +8,68 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphPath {
-    private List<Element> path = new ArrayList<>();
-    private double length = 0;
+    protected List<Vertex> vertices = new ArrayList<>();
+    protected List<Edge> edges = new ArrayList<>();
+    protected double length = 0;
 
 
     public GraphPath(Vertex firstVertex) {
-        path.add(firstVertex);
+        vertices.add(firstVertex);
     }
 
     public GraphPath(GraphPath other) {
-        path.addAll(other.path);
+        vertices.addAll(other.vertices);
+        edges.addAll(other.edges);
         length = other.length;
     }
 
     public void add(Edge edge, Vertex nextVertex) {
-        path.add(edge);
-        path.add(nextVertex);
-
+        edges.add(edge);
+        vertices.add(nextVertex);
         length += edge.getWeight();
     }
 
+    public void removeLast() {
+        if (edges.size() == 0) return;
+        length -= edges.get(edges.size() - 1).getWeight();
+        edges.remove(edges.size() - 1);
+        vertices.remove(vertices.size() - 1);
+    }
+
     public boolean contains(Vertex vertex) {
-        return path.contains(vertex);
+        return vertices.contains(vertex);
+    }
+
+    public Vertex getFirstVertex() {
+        return vertices.get(0);
     }
 
     public Vertex getLastVertex() {
-        return (Vertex) path.get(path.size() - 1);
+        return vertices.get(vertices.size() - 1);
     }
 
     public double getLength() {
         return length;
     }
 
-    public List<Element> getPathCopy() {
-        return new ArrayList<>(path);
-    }
-
-    public int getEdgeCount() {
-        return (path.size() - 1) / 2;
+    public List<Vertex> getVertices() {
+        return vertices;
     }
 
     public void setSelectedAsPath(boolean flag) {
-        for (Element element : path)
-            element.setSelectedAsPath(flag);
+        for (Vertex vertex : vertices)
+            vertex.setSelectedAsPath(flag);
+        for (Edge edge : edges)
+            edge.setSelectedAsPath(flag);
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < path.size(); i += 2) {
-            builder.append(((Vertex) path.get(i)).getName());
-            if (i < path.size() - 1)
-                builder.append(" -> ");
+        builder.append(vertices.get(0).getName());
+        for (int i = 1; i < vertices.size(); ++i) {
+            builder.append(" -> ");
+            builder.append(vertices.get(i).getName());
         }
         return builder.toString();
     }

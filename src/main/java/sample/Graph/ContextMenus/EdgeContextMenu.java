@@ -93,10 +93,6 @@ public class EdgeContextMenu extends ContextMenu {
     //------------|
     //   events   |
     //------------|
-    public void setOnItemAction(EventHandler<EdgeEvent> handler) {
-        this.handler = handler;
-    }
-
     private void onActionChangeWeight(ActionEvent ignored) {
         handleOrIgnore(Action.ChangeWeight);
     }
@@ -114,7 +110,7 @@ public class EdgeContextMenu extends ContextMenu {
     }
 
     private void onActionDelete(ActionEvent ignored) {
-        handleOrIgnore(Action.SelectSecondDirection);
+        handleOrIgnore(Action.Delete);
     }
 
     private void handleOrIgnore(Action action) {

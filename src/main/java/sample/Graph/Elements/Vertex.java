@@ -76,6 +76,24 @@ public class Vertex extends Element {
         setCenter(x, y);
     }
 
+    // init
+    private void initCircle() {
+        circle.setStrokeType(StrokeType.INSIDE);
+        circle.setStrokeWidth(Style.lineWidth);
+        circle.setStroke(Style.lineColor);
+        circle.setFill(Style.vertexFillColor);
+        circle.setRadius(Style.vertexCircleRadius);
+    }
+
+    private void initName(String name) {
+        this.name.setTextAlignment(TextAlignment.CENTER);
+        this.name.setTextOrigin(VPos.CENTER);
+        this.name.setText(name);
+        this.name.setFill(Style.textColor);
+        this.name.setStroke(Style.textColor);
+        this.name.setStrokeWidth(Style.vertexNameStrokeWidth);
+    }
+
     //
     public int getVertexId() {
         return id;
@@ -120,6 +138,10 @@ public class Vertex extends Element {
         return result;
     }
 
+    public Set<Edge> getIncidentEdges() {
+        return incidentEdges;
+    }
+
     public int getDegree() {
         int result = 0;
         for (Edge edge : incidentEdges)
@@ -127,22 +149,17 @@ public class Vertex extends Element {
         return result;
     }
 
-    // init
-    private void initCircle() {
-        circle.setStrokeType(StrokeType.INSIDE);
-        circle.setStrokeWidth(Style.lineWidth);
-        circle.setStroke(Style.lineColor);
-        circle.setFill(Style.vertexFillColor);
-        circle.setRadius(Style.vertexCircleRadius);
+    // Spider and bugs
+    public boolean isBug() {
+        return graphGroup.isBug(this);
     }
 
-    private void initName(String name) {
-        this.name.setTextAlignment(TextAlignment.CENTER);
-        this.name.setTextOrigin(VPos.CENTER);
-        this.name.setText(name);
-        this.name.setFill(Style.textColor);
-        this.name.setStroke(Style.textColor);
-        this.name.setStrokeWidth(Style.vertexNameStrokeWidth);
+    public boolean isSpider() {
+        return graphGroup.isSpider(this);
+    }
+
+    public Spider getSpider() {
+        return isSpider() ? graphGroup.getSpider() : null;
     }
 
     // center methods
@@ -180,7 +197,7 @@ public class Vertex extends Element {
         return new Vector2D(circle.getCenterX(), circle.getCenterY());
     }
 
-    ObservableValue<Vector2D> positionObservable() {
+    public ObservableValue<Vector2D> positionObservable() {
         return position;
     }
 

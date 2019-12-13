@@ -31,6 +31,7 @@ abstract public class TaskController {
         TaskController.currentMatrixView = currentMatrixView;
     }
 
+
     protected FileChooser fileChooser = new FileChooser();
 
     protected TaskController() {

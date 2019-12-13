@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.Task6Controller">
+   <children>
+      <HBox prefHeight="0.0" prefWidth="0.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#onStart" text="Начать">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+      <GridPane minHeight="-Infinity" minWidth="-Infinity">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="-Infinity" />
+          <ColumnConstraints hgrow="ALWAYS" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="-Infinity" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label minHeight="-Infinity" minWidth="-Infinity" text="Тип графа:">
+               <GridPane.margin>
+                  <Insets left="6.0" right="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label minHeight="-Infinity" minWidth="-Infinity" text="Связность графа:" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="6.0" right="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label minHeight="-Infinity" minWidth="-Infinity" text="Компоненты сильной связности:" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="6.0" right="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label minHeight="-Infinity" minWidth="-Infinity" text="Компоненты слабой связности:" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="6.0" right="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label minHeight="-Infinity" minWidth="-Infinity" text="Кол-во мостов:" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="6.0" right="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label minHeight="-Infinity" minWidth="-Infinity" text="Кол-во шарниров:" GridPane.columnIndex="2" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="6.0" right="6.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="graphTypeField" editable="false" minHeight="-Infinity" minWidth="-Infinity" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3">
+               <GridPane.margin>
+                  <Insets right="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="connectivityField" editable="false" minHeight="-Infinity" minWidth="-Infinity" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets right="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="strongComponentsField" editable="false" minHeight="-Infinity" minWidth="-Infinity" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets right="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="weakComponentsField" editable="false" minHeight="-Infinity" minWidth="-Infinity" text="-" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets right="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="bridgesField" editable="false" minHeight="-Infinity" minWidth="-Infinity" prefWidth="52.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="hingesField" editable="false" minHeight="-Infinity" minWidth="-Infinity" prefWidth="52.0" text="-" GridPane.columnIndex="3" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets right="6.0" />
+               </GridPane.margin>
+            </TextField>
+         </children>
+         <padding>
+            <Insets bottom="4.0" />
+         </padding>
+      </GridPane>
+   </children>
+</VBox>

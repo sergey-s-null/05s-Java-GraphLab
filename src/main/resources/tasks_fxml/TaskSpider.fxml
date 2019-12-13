@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" minHeight="-Infinity" minWidth="-Infinity" prefWidth="376.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.TaskSpiderController">
+   <children>
+      <HBox prefHeight="0.0" prefWidth="0.0">
+         <children>
+            <ToggleButton fx:id="spiderButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Паук">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+               <toggleGroup>
+                  <ToggleGroup fx:id="spiderToggle" />
+               </toggleGroup>
+            </ToggleButton>
+            <ToggleButton fx:id="bugsButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Мухи" toggleGroup="$spiderToggle">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </HBox.margin>
+            </ToggleButton>
+            <Pane prefHeight="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox prefHeight="0.0" prefWidth="0.0">
+         <children>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onFindPath" text="Найти">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onStartSpider" text="Старт">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onStopSpider" text="Стоп">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Pane prefHeight="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onOpenConfig" text="Открыть">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+            <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSaveConfig" text="Сохранить">
+               <HBox.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+      <GridPane>
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="-Infinity" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="-Infinity" valignment="CENTER" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+          <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+          <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
+        </rowConstraints>
+         <children>
+            <Label text="Длина найденного маршрута:" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Маршрут:" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Максимальная длина маршрута:">
+               <GridPane.margin>
+                  <Insets left="6.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Количество мух:" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="6.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="maxPathLengthField" text="1" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="pathLengthField" editable="false" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="pathField" editable="false" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <TextField fx:id="bugsCountField" editable="false" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </TextField>
+            <Separator prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets top="6.0" />
+               </GridPane.margin>
+            </Separator>
+         </children>
+      </GridPane>
+   </children>
+</VBox>

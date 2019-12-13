@@ -17,10 +17,7 @@ import sample.Graph.ContextMenus.EdgeContextMenu;
 import sample.Graph.ContextMenus.EdgeEvent;
 import sample.Graph.ContextMenus.VertexContextMenu;
 import sample.Graph.ContextMenus.VertexEvent;
-import sample.Graph.Elements.BinaryEdge;
-import sample.Graph.Elements.Edge;
-import sample.Graph.Elements.UnaryEdge;
-import sample.Graph.Elements.Vertex;
+import sample.Graph.Elements.*;
 import sample.Graph.EventsContainers.*;
 import sample.Graph.GraphActions.*;
 import sample.InputDialogs;
@@ -32,6 +29,7 @@ import sample.Parser.SimpleData.VertexData;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 public class GraphGroup extends Group {
@@ -41,7 +39,9 @@ public class GraphGroup extends Group {
         CreateEdge,
         Delete,
         Move,
-        SelectTwoVertices
+        SelectTwoVertices,
+        SelectSpider,
+        SelectBug
     }
 
     public static final double minWidth = 200, minHeight = 200, maxWidth = 5000, maxHeight = 5000;
@@ -58,6 +58,10 @@ public class GraphGroup extends Group {
     private ObservableList<Vertex> vertices = FXCollections.observableArrayList();
     private ObservableSet<Edge> edges = FXCollections.observableSet();
     private GraphPath currentPath = null;
+    // Spider and bugs
+    private Vertex spiderVertex = null;
+    private Spider spider = new Spider();
+    private Map<Vertex, Bug> bugs = new HashMap<>();
 
     private GraphActionsController actionsController = new GraphActionsController();
 
@@ -66,7 +70,7 @@ public class GraphGroup extends Group {
         super();
 
         initRects();
-        getChildren().add(backgroundRect);
+        getChildren().addAll(backgroundRect);
         setClip(clipRect);
 
         setOnMouseClicked(this::onMouseClick);
@@ -130,6 +134,16 @@ public class GraphGroup extends Group {
         return false;
     }
 
+    public boolean isMultiGraph() {
+        Set<VerticesPair> pairs = new HashSet<>();
+        for (Edge edge : edges) {
+            VerticesPair pair = new VerticesPair(edge.getFirstVertex(), edge.getSecondVertex());
+            if (pairs.contains(pair)) return true;
+            pairs.add(pair);
+        }
+        return false;
+    }
+
     private ListOfActions getVerticesActionsForNewResolution(Resolution resolution) {
         ListOfActions listOfActions = new ListOfActions();
         for (Vertex vertex : vertices) {
@@ -188,6 +202,77 @@ public class GraphGroup extends Group {
             currentPath.setSelectedAsPath(false);
             currentPath = null;
         }
+    }
+
+    // Spider and bugs
+    public List<Vertex> getVerticesByName(String name) {
+        return vertices.stream().filter(vertex ->
+                vertex.nameProperty().get().equals(name)).collect(Collectors.toList());
+    }
+
+    public void setSpider(Vertex vertex) {
+        if (bugs.containsKey(vertex)) toggleBug(vertex);
+
+        clearSpider();
+        spiderVertex = vertex;
+        spider.connect(spiderVertex);
+        spiderVertex.getChildren().add(spider);
+    }
+
+    public Spider getSpider() {
+        return spider;
+    }
+
+    public void clearSpider() {
+        if (spiderVertex != null) {
+            spider.disconnect();
+            spiderVertex.getChildren().remove(spider);
+            spiderVertex = null;
+        }
+    }
+
+    public void toggleBug(Vertex vertex) {
+        if (spiderVertex == vertex) clearSpider();
+
+        Bug bug = bugs.get(vertex);
+        if (bug == null) {
+            bug = new Bug(vertex);
+            bugs.put(vertex, bug);
+            vertex.getChildren().add(bug);
+        }
+        else {
+            bug.disconnect();
+            bugs.remove(vertex);
+            vertex.getChildren().remove(bug);
+        }
+    }
+
+    public void clearBugs() {
+        for (Map.Entry<Vertex, Bug> pair : bugs.entrySet()) {
+            pair.getValue().disconnect();
+            pair.getKey().getChildren().remove(pair.getValue());
+        }
+        bugs.clear();
+    }
+
+    public Optional<Vertex> getSpiderVertex() {
+        return Optional.ofNullable(spiderVertex);
+    }
+
+    public Collection<Vertex> getBugs() {
+        return bugs.keySet();
+    }
+
+    public int getBugsCount() {
+        return bugs.size();
+    }
+
+    public boolean isSpider(Vertex vertex) {
+        return vertex == spiderVertex;
+    }
+
+    public boolean isBug(Vertex vertex) {
+        return bugs.get(vertex) != null;
     }
 
     // actions history
@@ -390,7 +475,9 @@ public class GraphGroup extends Group {
                         createVertexEvents = new CreateVertexEvents(this),
                         createEdgeEvents = new CreateEdgeEvents(this),
                         deleteEvents = new DeleteEvents(this),
-                        selectTwoVerticesEvents = new SelectTwoVerticesEvents();
+                        selectTwoVerticesEvents = new SelectTwoVerticesEvents(),
+                        selectSpiderEvents = new SelectSpiderEvents(this),
+                        selectBugsEvents = new SelectBugsEvents(this);
     private MouseEvents currentEvents = emptyEvents;
 
     private void configureEventsFor(Action action) {
@@ -408,6 +495,10 @@ public class GraphGroup extends Group {
                 currentEvents = deleteEvents; break;
             case SelectTwoVertices:
                 currentEvents = selectTwoVerticesEvents; break;
+            case SelectSpider:
+                currentEvents = selectSpiderEvents; break;
+            case SelectBug:
+                currentEvents = selectBugsEvents; break;
         }
     }
 

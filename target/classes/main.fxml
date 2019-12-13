@@ -33,8 +33,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="Файл">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onNewGraph" text="Новый граф" />
-                  <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="Открыть" />
+                  <MenuItem fx:id="newGraph" mnemonicParsing="false" onAction="#onNewGraph" text="Новый граф" />
+                  <MenuItem fx:id="openGraph" mnemonicParsing="false" onAction="#onOpenFile" text="Открыть" />
                   <MenuItem mnemonicParsing="false" onAction="#onSaveFile" text="Сохранить" />
                   <MenuItem mnemonicParsing="false" onAction="#onSaveAsImage" text="Сохранить изображение" />
                   <SeparatorMenuItem mnemonicParsing="false" />
@@ -42,7 +42,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#onTestAction" text="testAction" />
             </items>
           </Menu>
-            <Menu mnemonicParsing="false" text="Редактировать">
+            <Menu fx:id="editMenu" mnemonicParsing="false" text="Редактировать">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onUndoAction" text="Отмена">
                      <accelerator>
@@ -62,12 +62,13 @@
                   </Menu>
               </items>
             </Menu>
-          <Menu mnemonicParsing="false" text="Задачи теории графов">
+          <Menu fx:id="taskMenu" mnemonicParsing="false" text="Задачи теории графов">
                <items>
+                  <MenuItem id="1" mnemonicParsing="false" onAction="#onTaskSelected" text="Паук и мухи" />
                   <MenuItem id="2" mnemonicParsing="false" onAction="#onTaskSelected" text="2. Поиск пути" />
                   <MenuItem id="3" mnemonicParsing="false" onAction="#onTaskSelected" text="3. Алгоритм Дейкстры и т.п." />
                   <MenuItem id="4" mnemonicParsing="false" onAction="#onTaskSelected" text="4. Эксцентриситет, радиус, диаметр" />
-                  <MenuItem mnemonicParsing="false" onAction="#on6TaskSelected" text="6. Связность графа" />
+                  <MenuItem id="6" mnemonicParsing="false" onAction="#onTaskSelected" text="6. Связность графа" />
                   <MenuItem mnemonicParsing="false" onAction="#on12TaskSelected" text="12. Остовное дерево" />
                </items></Menu>
           <Menu mnemonicParsing="false" text="?">

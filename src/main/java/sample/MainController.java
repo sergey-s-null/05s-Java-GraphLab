@@ -24,6 +24,7 @@ import sample.Parser.Exceptions.EqualsNamesException;
 import sample.Parser.GraphData;
 import sample.Parser.InputFileParser;
 import sample.Parser.OutputFileSaver;
+import sample.tasksControllers.Task6Controller;
 import sample.tasksControllers.TaskController;
 
 import javax.imageio.ImageIO;
@@ -37,6 +38,10 @@ public class MainController implements Initializable {
 //    private static final File filesDirectory = new File("C:\\Users\\Sergey\\Desktop\\debug_saves");
 
     private GraphGroup.Action currentAction = GraphGroup.Action.Empty;
+    // menu items for block while task execute
+    @FXML private MenuItem newGraph, openGraph;
+    @FXML private Menu editMenu, taskMenu;
+
     @FXML private ToggleButton moveButton, vertexButton, edgeButton, deleteButton;
     @FXML private ToggleGroup toggleGroup;
     @FXML private TabPane tabPaneWithGraphs;
@@ -105,14 +110,18 @@ public class MainController implements Initializable {
         });
 
         String[] taskResourcePaths = {
+                "/tasks_fxml/TaskSpider.fxml",
                 "/tasks_fxml/Task2PathSearch.fxml",
                 "/tasks_fxml/Task3Dijkstra.fxml",
                 "/tasks_fxml/Task4.fxml",
+                "/tasks_fxml/Task6.fxml"
         };
         String[] taskIds = {
+                "1",
                 "2",
                 "3",
                 "4",
+                "6"
         };
 
         try {
@@ -125,7 +134,7 @@ public class MainController implements Initializable {
             }
         }
         catch (IOException e) {
-            System.out.println("Error while loading task resource.");
+            System.out.println("Error while loading task resource: " + e);
             System.exit(-1);
         }
     }
@@ -215,8 +224,8 @@ public class MainController implements Initializable {
     }
 
     private void setDisableControlsForTask(boolean disable) {
-        // TODO disable MORE
         setDisableActionButtons(disable);
+        setDisableMenuItems(disable);
 
         GraphTab tab = getSelectedGraphTab();
         if (disable) {
@@ -233,6 +242,13 @@ public class MainController implements Initializable {
         vertexButton.setDisable(flag);
         edgeButton.setDisable(flag);
         deleteButton.setDisable(flag);
+    }
+
+    private void setDisableMenuItems(boolean flag) {
+        newGraph.setDisable(flag);
+        openGraph.setDisable(flag);
+        editMenu.setDisable(flag);
+        taskMenu.setDisable(flag);
     }
 
     private void disableOtherTab(Tab tab) {
@@ -332,6 +348,22 @@ public class MainController implements Initializable {
     //   MenuBar actions   |
     //---------------------|
     @FXML private void onTestAction() {
+//        Matrix test = new Matrix(new double[][] {
+//                {1, 2, 3, 33},
+//                {4, 5, 6, 66},
+//                {7, 8, 9, 99},
+//                {77, 88, 91, 999}
+//        });
+//        for (int i = 0; i < 4; ++i) {
+//            Matrix newMtx = Task6Controller.getSubMatrix(test, i);
+//            for (double[] row : newMtx.getArray()) {
+//                for (double cell : row) {
+//                    System.out.print(cell + ", ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println();
+//        }
 
     }
 
@@ -417,12 +449,16 @@ public class MainController implements Initializable {
 
     // Edit
     @FXML private void onUndoAction() {
+        if (isTaskStarted) return;
+
         GraphTab selectedTab = getSelectedGraphTab();
         if (selectedTab != null)
             selectedTab.getGraphGroup().undo();
     }
 
     @FXML private void onRedoAction() {
+        if (isTaskStarted) return;
+
         GraphGroup graphGroup = getSelectedGraphGroup();
         if (graphGroup != null)
             graphGroup.redo();
@@ -453,9 +489,11 @@ public class MainController implements Initializable {
         TaskController nextController;
         String menuItemId = ((MenuItem) event.getSource()).getId();
         switch (menuItemId) {
+            case "1":
             case "2":
             case "3":
             case "4":
+            case "6":
                 nextController = taskControllers.get(menuItemId);
                 break;
             default:
@@ -471,37 +509,7 @@ public class MainController implements Initializable {
             taskVBox.getChildren().remove(1);
         taskVBox.getChildren().add(1, currentTaskController.getRoot());
     }
-    // TODO
-    @FXML private void on6TaskSelected() {
-        GraphTab tab = getSelectedGraphTab();
-        if (tab == null)
-            return;
-        // TODO other checks
 
-
-        // TODO
-        Matrix adjMatrix = tab.getMatrixView().getMatrix();
-        Matrix aga = makeAdjacencyMtxSymmetric(adjMatrix);
-
-        List<List<Integer> > defComponents = GraphAlgorithms.findConnectivityComponents(adjMatrix);
-        List<List<Integer> > ifComponents = GraphAlgorithms.findConnectivityComponents(aga);
-
-        System.out.println("Default:       " + defComponents);
-        System.out.println("If conn graph: " + ifComponents);
-
-    }
-    // TODO move to another place
-    private Matrix makeAdjacencyMtxSymmetric(Matrix adjMatrix) {
-        Matrix result = adjMatrix.copy();
-        for (int i = 0; i < adjMatrix.getRowDimension(); ++i) {
-            for (int j = i + 1; j < adjMatrix.getColumnDimension(); ++j) {
-                double max = Math.max(adjMatrix.get(i, j), adjMatrix.get(j, i));
-                result.set(i, j, max);
-                result.set(j, i, max);
-            }
-        }
-        return result;
-    }
     // TODO
     @FXML private void on12TaskSelected() {
 

@@ -6,6 +6,7 @@ import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 import sample.Graph.GraphPath;
+import sample.Graph.SpiderPath;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -16,6 +17,63 @@ import java.util.stream.IntStream;
 import static java.lang.Math.min;
 
 public class GraphAlgorithms {
+    // Spider and bugs
+    public static Optional<SpiderPath> niceSpiderPath(Vertex spiderVertex, Collection<Vertex> bugsVertices,
+                                            Collection<Edge> edges, double maxLength)
+    {
+        Map<Vertex, SpiderPath> spiderToBugs = new HashMap<>();
+        for (Vertex bugVertex : bugsVertices) {
+            GraphPath path = AStarSearch(spiderVertex, bugVertex, edges).orElse(null);
+            if (path != null) spiderToBugs.put(bugVertex, SpiderPath.of(path));
+        }
+
+        Map<Vertex, Map<Vertex, SpiderPath> > betweenBugs = new HashMap<>();
+        for (Vertex bug1 : bugsVertices) {
+            for (Vertex bug2 : bugsVertices) {
+                if (bug1 == bug2) continue;
+                GraphPath path = AStarSearch(bug1, bug2, edges).orElse(null);
+                if (path != null)
+                    betweenBugs.computeIfAbsent(bug1, vertex -> new HashMap<>()).put(bug2, SpiderPath.of(path));
+            }
+        }
+
+        List<SpiderPath> bestPaths = new ArrayList<>();
+        for (SpiderPath toFirstBug : spiderToBugs.values()) {
+            SpiderPath newPath = niceRecursion(toFirstBug, betweenBugs, maxLength);
+            if (newPath != null) bestPaths.add(newPath);
+        }
+
+        return Optional.ofNullable(chooseBest(bestPaths));
+    }
+
+    private static SpiderPath niceRecursion(SpiderPath path, Map<Vertex, Map<Vertex, SpiderPath> > betweenBugs,
+                                      double maxLength)
+    {
+        if (path.getLength() > maxLength) return null;
+
+        List<SpiderPath> paths = new ArrayList<>();
+        paths.add(path);
+
+        Map<Vertex, SpiderPath> nextBugs = betweenBugs.getOrDefault(path.getLastVertex(), new HashMap<>());
+        for (Vertex nextBug : nextBugs.keySet()) {
+            if (path.containsBug(nextBug)) continue;
+            SpiderPath newPath = niceRecursion(SpiderPath.concat(path, nextBugs.get(nextBug)), betweenBugs, maxLength);
+            if (newPath != null) paths.add(newPath);
+        }
+
+        return chooseBest(paths);
+    }
+
+    private static SpiderPath chooseBest(List<SpiderPath> paths) {
+        SpiderPath best = null;
+        for (SpiderPath path : paths) {
+            if (best == null || path.getBugsCount() > best.getBugsCount() ||
+                    (path.getBugsCount() == best.getBugsCount() && path.getLength() < best.getLength()))
+                best = path;
+        }
+        return best;
+    }
+
     //2
     private static class IDAStarResult {
         public enum State {
