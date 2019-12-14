@@ -18,10 +18,14 @@ public class BinaryEdge extends Edge {
 
     // constructors
     public BinaryEdge(GraphGroup graphGroup, Vertex firstVertex, Vertex secondVertex) {
+        this(graphGroup, firstVertex, secondVertex, Direction.SecondVertex);
+    }
+
+    public BinaryEdge(GraphGroup graphGroup, Vertex v1, Vertex v2, Direction direction) {
         super(graphGroup);
 
-        this.firstVertex = firstVertex;
-        this.secondVertex = secondVertex;
+        this.firstVertex = v1;
+        this.secondVertex = v2;
 
         initArc();
         initCircle();
@@ -33,11 +37,11 @@ public class BinaryEdge extends Edge {
         weight.addListener((obj, prevValuew, newValue) -> {
             changedWeight();
         });
-        direction.addListener((observable, oldValue, newValue) -> {
+        this.direction.addListener((observable, oldValue, newValue) -> {
             changedDirection(newValue);
         });
 
-        setDirection(Direction.SecondVertex, false);
+        setDirection(direction, false);
     }
 
     //

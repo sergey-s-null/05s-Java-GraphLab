@@ -224,8 +224,6 @@ public class TaskSpiderController extends TaskController implements Initializabl
     }
 
     // methods
-
-
     private void setResult(GraphGroup graphGroup, SpiderPath path) {
         graphGroup.setElementsPath(path);
         pathLengthField.setText(Double.toString(path.getLength()));

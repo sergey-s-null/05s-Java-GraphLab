@@ -17,7 +17,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
+import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Style;
+import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
@@ -103,9 +105,9 @@ public class MainController implements Initializable {
     private void initTasks() {
         TaskController.initOnStart(this::onTaskStart);
         TaskController.initOnEnd(this::onTaskEnd);
-        TaskController.initGraphReceiver(() -> Optional.ofNullable(getSelectedGraphGroup()));
+        TaskController.initGraphReceiver(this::getSelectedGraphGroup);
         TaskController.initMatrixViewReceiver(() -> {
-            GraphTab tab = getSelectedGraphTab();
+            GraphTab tab = getSelectedGraphTab().orElse(null);
             return tab == null ? Optional.empty() : Optional.ofNullable(tab.getMatrixView());
         });
 
@@ -140,20 +142,29 @@ public class MainController implements Initializable {
     }
 
     // methods
-    private GraphGroup getSelectedGraphGroup() {
-        GraphTab selectedTab = getSelectedGraphTab();
-        return selectedTab == null ? null : selectedTab.getGraphGroup();
+    private Optional<GraphGroup> getSelectedGraphGroup() {
+        GraphTab selectedTab = getSelectedGraphTab().orElse(null);
+        return selectedTab == null ? Optional.empty() :
+                Optional.ofNullable(selectedTab.getGraphGroup());
     }
 
-    private GraphTab getSelectedGraphTab() {
-        return (GraphTab) tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
+    private Optional<MatrixView> getSelectedMatrixView() {
+        GraphTab selectedTab = getSelectedGraphTab().orElse(null);
+        return selectedTab == null ? Optional.empty() :
+                Optional.ofNullable(selectedTab.getMatrixView());
+    }
+
+    private Optional<GraphTab> getSelectedGraphTab() {
+        Tab tab = tabPaneWithGraphs.getSelectionModel().selectedItemProperty().get();
+        return Optional.ofNullable((GraphTab) tab);
     }
     //TODO одинаковый код
-    private void createEmptyGraphTab() {
+    private GraphTab createEmptyGraphTab() {
         GraphTab tab = new GraphTab();
         tab.getGraphGroup().setCurrentAction(currentAction);
         tab.setOnCloseAction(event -> onTabClose(tab));
         tabPaneWithGraphs.getTabs().add(tab);
+        return tab;
     }
     //TODO одинаковый код
     private void createGraphTabBy(String tabName, GraphData graphData) {
@@ -227,7 +238,7 @@ public class MainController implements Initializable {
         setDisableActionButtons(disable);
         setDisableMenuItems(disable);
 
-        GraphTab tab = getSelectedGraphTab();
+        GraphTab tab = getSelectedGraphTab().orElse(null);
         if (disable) {
             if (tab != null)
                 disableOtherTab(tab);
@@ -277,10 +288,8 @@ public class MainController implements Initializable {
         setDisableControlsForTask(false);
         isTaskStarted = false;
 
-        GraphGroup graphGroup = getSelectedGraphGroup();
-        if (graphGroup != null) {
-            graphGroup.setCurrentAction(currentAction);
-        }
+        getSelectedGraphGroup().ifPresent(graphGroup ->
+                graphGroup.setCurrentAction(currentAction));
     }
 
     // Tab event
@@ -329,10 +338,7 @@ public class MainController implements Initializable {
     }
 
     @FXML private void onClearCurrentPath() {
-        GraphGroup selectedGroup = getSelectedGraphGroup();
-        if (selectedGroup != null) {
-            selectedGroup.clearCurrentPath();
-        }
+        getSelectedGraphGroup().ifPresent(GraphGroup::clearCurrentPath);
     }
 
     @FXML private void onHideShowTaskPane() {
@@ -405,7 +411,7 @@ public class MainController implements Initializable {
     }
 
     @FXML private void onSaveFile() {
-        GraphTab selectedTab = getSelectedGraphTab();
+        GraphTab selectedTab = getSelectedGraphTab().orElse(null);
         if (selectedTab == null)
             return;
 
@@ -417,7 +423,7 @@ public class MainController implements Initializable {
     }
 
     @FXML private void onSaveAsImage() {
-        GraphGroup graphGroup = getSelectedGraphGroup();
+        GraphGroup graphGroup = getSelectedGraphGroup().orElse(null);
         if (graphGroup == null)
             return;
 
@@ -429,7 +435,6 @@ public class MainController implements Initializable {
         prevSaveDir = file.getParentFile();
 
         WritableImage image = graphGroup.getGraphImage();
-        assert image != null;
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
         }
@@ -450,22 +455,16 @@ public class MainController implements Initializable {
     // Edit
     @FXML private void onUndoAction() {
         if (isTaskStarted) return;
-
-        GraphTab selectedTab = getSelectedGraphTab();
-        if (selectedTab != null)
-            selectedTab.getGraphGroup().undo();
+        getSelectedGraphGroup().ifPresent(GraphGroup::undo);
     }
 
     @FXML private void onRedoAction() {
         if (isTaskStarted) return;
-
-        GraphGroup graphGroup = getSelectedGraphGroup();
-        if (graphGroup != null)
-            graphGroup.redo();
+        getSelectedGraphGroup().ifPresent(GraphGroup::redo);
     }
 
     @FXML private void onChangeWidth() {
-        GraphGroup graphGroup = getSelectedGraphGroup();
+        GraphGroup graphGroup = getSelectedGraphGroup().orElse(null);
         if (graphGroup == null)
             return;
 
@@ -475,7 +474,7 @@ public class MainController implements Initializable {
     }
 
     @FXML private void onChangeHeight() {
-        GraphGroup graphGroup = getSelectedGraphGroup();
+        GraphGroup graphGroup = getSelectedGraphGroup().orElse(null);
         if (graphGroup == null)
             return;
 
@@ -508,6 +507,24 @@ public class MainController implements Initializable {
         if (taskVBox.getChildren().size() >= 2)
             taskVBox.getChildren().remove(1);
         taskVBox.getChildren().add(1, currentTaskController.getRoot());
+    }
+
+    @FXML private void on7TaskSelected() {
+        GraphGroup graphGroup = getSelectedGraphGroup().orElse(null);
+        MatrixView matrixView = getSelectedMatrixView().orElse(null);
+        if (graphGroup == null || matrixView == null) return;
+
+        Matrix adjMatrix = matrixView.getMatrix();
+        if (GraphAlgorithms.isGraphFull(adjMatrix))
+            GraphAlert.showInfoAndWait("Граф является полным.");
+
+        GraphTab newTab = createEmptyGraphTab();
+        GraphGroup newGraphGroup = newTab.getGraphGroup();
+
+        for (Vertex vertex : graphGroup.getVertices())
+            newGraphGroup.addVertex(vertex.getCenterX(), vertex.getCenterY(), false);
+
+        GraphAlgorithms.makeGraphAddition(newGraphGroup, adjMatrix);
     }
 
     // TODO

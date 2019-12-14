@@ -69,6 +69,7 @@
                   <MenuItem id="3" mnemonicParsing="false" onAction="#onTaskSelected" text="3. Алгоритм Дейкстры и т.п." />
                   <MenuItem id="4" mnemonicParsing="false" onAction="#onTaskSelected" text="4. Эксцентриситет, радиус, диаметр" />
                   <MenuItem id="6" mnemonicParsing="false" onAction="#onTaskSelected" text="6. Связность графа" />
+                  <MenuItem mnemonicParsing="false" onAction="#on7TaskSelected" text="7. Дополнение графа" />
                   <MenuItem mnemonicParsing="false" onAction="#on12TaskSelected" text="12. Остовное дерево" />
                </items></Menu>
           <Menu mnemonicParsing="false" text="?">

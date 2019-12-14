@@ -461,7 +461,39 @@ public class GraphAlgorithms {
         return component;
     }
 
+    //7
+    public static boolean isGraphFull(Matrix adjMatrix) {
+        for (int i = 0; i < adjMatrix.getRowDimension(); ++i) {
+            for (int j = 0; j < adjMatrix.getColumnDimension(); ++j) {
+                if (adjMatrix.get(i, j) == 0) return false;
+            }
+        }
+        return true;
+    }
 
+    public static void makeGraphAddition(GraphGroup resultGraph, Matrix oldAdjMatrix) {
+        for (int i = 0; i < oldAdjMatrix.getRowDimension(); ++i) {
+            for (int j = i; j < oldAdjMatrix.getColumnDimension(); ++j) {
+                if (i == j) {
+                    double val = oldAdjMatrix.get(i, i);
+                    Vertex vertex = resultGraph.getVertices().get(i);
+                    if (val == 0)
+                        resultGraph.addEdge(vertex, false);
+                }
+                else {
+                    double to2nd = oldAdjMatrix.get(i, j), to1st = oldAdjMatrix.get(j, i);
+                    Vertex v1 = resultGraph.getVertices().get(i),
+                           v2 = resultGraph.getVertices().get(j);
+                    if (to2nd == 0 && to1st == 0)
+                        resultGraph.addEdge(v1, v2, Edge.Direction.Both, false);
+                    else if (to2nd != 0 && to1st == 0)
+                        resultGraph.addEdge(v1, v2, Edge.Direction.FirstVertex, false);
+                    else if (to2nd == 0 && to1st != 0)
+                        resultGraph.addEdge(v1, v2, Edge.Direction.SecondVertex, false);
+                }
+            }
+        }
+    }
 
 
 

@@ -396,11 +396,12 @@ public class GraphGroup extends Group {
         getChildren().remove(1, getChildren().size());
     }
 
-    public void addVertex(double x, double y, boolean createAction) {
+    public Vertex addVertex(double x, double y, boolean createAction) {
         needToSave = true;
 
         Vertex vertex = new Vertex(this, x, y);
         addVertex(vertex, createAction);
+        return vertex;
     }
 
     public void addVertex(Vertex vertex, boolean createAction) {
@@ -415,8 +416,13 @@ public class GraphGroup extends Group {
 
     public void addEdge(Vertex firstVertex, Vertex secondVertex, boolean createAction) {
         needToSave = true;
-
         BinaryEdge edge = new BinaryEdge(this, firstVertex, secondVertex);
+        addEdge(edge, createAction);
+    }
+
+    public void addEdge(Vertex v1, Vertex v2, Edge.Direction direction, boolean createAction) {
+        needToSave = true;
+        BinaryEdge edge = new BinaryEdge(this, v1, v2, direction);
         addEdge(edge, createAction);
     }
 

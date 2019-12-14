@@ -2,7 +2,6 @@ package sample;
 
 import Jama.Matrix;
 import javafx.application.Application;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +10,6 @@ import org.apache.commons.math3.exception.MathArithmeticException;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import java.io.IOException;
-import java.util.*;
 
 
 public class Main extends Application {
@@ -38,33 +36,7 @@ public class Main extends Application {
         }
     }
 
-
-    static Random random = new Random();
-    static class Test {
-        public double value = random.nextDouble();
-
-        @Override
-        public String toString() {
-            return "Test[" + value + "]";
-        }
-    }
-
     public static void main(String[] args) {
-//        Queue<Test> queue = new PriorityQueue<>(Comparator.comparingDouble(o -> o.value));
-//        for (int i = 0; i < 10; ++i)
-//            queue.add(new Test());
-//
-//
-//
-//        System.out.println(queue);
-//        Test test = queue.element();
-//        test.value = 10;
-//        queue.add(test);
-//        System.out.println(queue);
-//
-//
-//        System.exit(0);
-
         launch(args);
     }
 
