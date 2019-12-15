@@ -1,12 +1,15 @@
 package sample;
 
 import Jama.Matrix;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
 import sample.Graph.GraphPath;
 import sample.Graph.SpiderPath;
+import sample.Graph.VerticesPair;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -529,6 +532,134 @@ public class GraphAlgorithms {
             }
         }
     }
+
+    //9
+    public static void makeSpanningTreeByPrim(GraphGroup emptyGraph, GraphGroup baseGraph, Vertex root) {
+        Map<Vertex, Vertex> verticesMapping = copyVertices(baseGraph, emptyGraph);
+
+        Set<Vertex> used = new HashSet<>();
+        used.add(root);
+        Set<Vertex> next = new HashSet<>(baseGraph.getVertices());
+        next.remove(root);
+
+        Multimap<VerticesPair, BinaryEdge> vertexPairToEdges = HashMultimap.create();
+        for (Edge edge : baseGraph.getEdges()) {
+            if (edge instanceof BinaryEdge) {
+                BinaryEdge binaryEdge = (BinaryEdge) edge;
+                vertexPairToEdges.put(VerticesPair.of(binaryEdge.getFirstVertex(),
+                        binaryEdge.getSecondVertex()), binaryEdge);
+            }
+        }
+
+        while (!next.isEmpty()) {
+            BinaryEdge bestEdge = null;
+            Vertex bestTo = null;
+            for (Vertex from : used) {
+                for (Vertex to : next) {
+                    Collection<BinaryEdge> edges = vertexPairToEdges.get(VerticesPair.of(from, to));
+                    for (BinaryEdge edge : edges) {
+                        if (bestEdge == null || edge.getWeight() < bestEdge.getWeight()) {
+                            bestEdge = edge;
+                            bestTo = to;
+                        }
+                    }
+                }
+            }
+
+            if (bestEdge == null) throw new RuntimeException("Not found bestEdge.");
+
+            Vertex v1 = verticesMapping.get(bestEdge.getFirstVertex());
+            Vertex v2 = verticesMapping.get(bestEdge.getSecondVertex());
+            BinaryEdge edge = emptyGraph.addEdge(v1, v2, Edge.Direction.Both, false);
+            edge.setWeight(bestEdge.getWeight(), false);
+
+            used.add(bestTo);
+            next.remove(bestTo);
+        }
+    }
+
+    public static void makeSpanningTreeByKraskal(GraphGroup emptyGraph, GraphGroup baseGraph) {
+        Map<Vertex, Vertex> verticesMapping = copyVertices(baseGraph, emptyGraph);
+
+        PriorityQueue<BinaryEdge> sortedEdges = new PriorityQueue<>(Comparator.comparingDouble(Edge::getWeight));
+        sortedEdges.addAll(baseGraph.getBinaryEdges());
+
+        Map<Vertex, Set<Vertex> > groups = new HashMap<>();
+
+        while (!sortedEdges.isEmpty()) {
+            BinaryEdge next = sortedEdges.poll();
+            Vertex v1 = next.getFirstVertex(), v2 = next.getSecondVertex();
+            Set<Vertex> group1 = groups.get(v1), group2 = groups.get(v2);
+            if (group1 == null && group2 == null) {
+                Set<Vertex> newGroup = new HashSet<>();
+                newGroup.add(v1);
+                newGroup.add(v2);
+                groups.put(v1, newGroup);
+                groups.put(v2, newGroup);
+            }
+            else if (group1 == null) {
+                group2.add(v1);
+                groups.put(v1, group2);
+            }
+            else if (group2 == null) {
+                group1.add(v2);
+                groups.put(v2, group1);
+            }
+            else if (group1 != group2) {
+                for (Vertex vertex : group2)
+                    groups.put(vertex, group1);
+                group1.addAll(group2);
+            }
+
+            if (group1 == null || group1 != group2) {
+                BinaryEdge edge = emptyGraph.addEdge(verticesMapping.get(v1), verticesMapping.get(v2),
+                        Edge.Direction.Both, false);
+                edge.setWeight(next.getWeight(), false);
+            }
+        }
+    }
+
+    public static void makeSpanningTreeByBoruwka(GraphGroup emptyGraph, GraphGroup baseGraph) {
+        Map<Vertex, Vertex> verticesMapping = copyVertices(baseGraph, emptyGraph);
+
+        PriorityQueue<BinaryEdge> sortedEdges = new PriorityQueue<>(Comparator.comparingDouble(Edge::getWeight));
+        sortedEdges.addAll(baseGraph.getBinaryEdges());
+
+        Map<Vertex, Set<Vertex> > groups = new HashMap<>();
+        for (Vertex vertex : baseGraph.getVertices()) {
+            Set<Vertex> group = new HashSet<>();
+            group.add(vertex);
+            groups.put(vertex, group);
+        }
+
+        int addedEdges = 0;
+        while (addedEdges < baseGraph.getVerticesCount() - 1 && !sortedEdges.isEmpty()) {
+            BinaryEdge next = sortedEdges.poll();
+            Vertex v1 = next.getFirstVertex(), v2 = next.getSecondVertex();
+            Set<Vertex> group1 = groups.get(v1), group2 = groups.get(v2);
+            if (group1 != group2) {
+                for (Vertex vertex : group2)
+                    groups.put(vertex, group1);
+                group1.addAll(group2);
+
+                addedEdges++;
+                BinaryEdge edge = emptyGraph.addEdge(verticesMapping.get(v1), verticesMapping.get(v2),
+                        Edge.Direction.Both, false);
+                edge.setWeight(next.getWeight(), false);
+            }
+        }
+    }
+
+    private static Map<Vertex, Vertex> copyVertices(GraphGroup from, GraphGroup to) {
+        Map<Vertex, Vertex> verticesMapping = new HashMap<>();
+        for (Vertex vertex : from.getVertices()) {
+            Vertex newVertex = to.addVertex(vertex.getCenterX(), vertex.getCenterY(), false);
+            newVertex.setName(vertex.getName(), false);
+            verticesMapping.put(vertex, newVertex);
+        }
+        return verticesMapping;
+    }
+
 
 
 }

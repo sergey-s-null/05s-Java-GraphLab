@@ -28,6 +28,7 @@ import sample.Parser.SimpleData.VertexData;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -38,6 +39,7 @@ public class GraphGroup extends Group {
         CreateEdge,
         Delete,
         Move,
+        SelectVertex,
         SelectTwoVertices,
         SelectSpider,
         SelectBug
@@ -113,6 +115,11 @@ public class GraphGroup extends Group {
 
     public ObservableSet<Edge> getEdges() {
         return edges;
+    }
+
+    public Set<BinaryEdge> getBinaryEdges() {
+        return edges.stream().filter(edge -> edge instanceof BinaryEdge).map(edge -> (BinaryEdge) edge)
+                .collect(Collectors.toSet());
     }
 
     public boolean isAllEdgesWeightsUnit() {
@@ -419,10 +426,11 @@ public class GraphGroup extends Group {
         addEdge(edge, createAction);
     }
 
-    public void addEdge(Vertex v1, Vertex v2, Edge.Direction direction, boolean createAction) {
+    public BinaryEdge addEdge(Vertex v1, Vertex v2, Edge.Direction direction, boolean createAction) {
         needToSave = true;
         BinaryEdge edge = new BinaryEdge(this, v1, v2, direction);
         addEdge(edge, createAction);
+        return edge;
     }
 
     public void addEdge(Vertex vertex, boolean createAction) {
@@ -475,14 +483,16 @@ public class GraphGroup extends Group {
     //   events   |
     //------------|
     // mouse
-    private MouseEvents emptyEvents = new MouseEvents(),
-                        moveEvents = new MoveEvents(this),
-                        createVertexEvents = new CreateVertexEvents(this),
-                        createEdgeEvents = new CreateEdgeEvents(this),
-                        deleteEvents = new DeleteEvents(this),
-                        selectTwoVerticesEvents = new SelectTwoVerticesEvents(),
-                        selectSpiderEvents = new SelectSpiderEvents(this),
-                        selectBugsEvents = new SelectBugsEvents(this);
+    private MouseEvents emptyEvents = new MouseEvents();
+    private MoveEvents moveEvents = new MoveEvents(this);
+    private CreateVertexEvents createVertexEvents = new CreateVertexEvents(this);
+    private CreateEdgeEvents createEdgeEvents = new CreateEdgeEvents(this);
+    private DeleteEvents deleteEvents = new DeleteEvents(this);
+    private SelectVertexEvents selectVertexEvents = new SelectVertexEvents();
+    private SelectTwoVerticesEvents selectTwoVerticesEvents = new SelectTwoVerticesEvents();
+    private SelectSpiderEvents selectSpiderEvents = new SelectSpiderEvents(this);
+    private SelectBugsEvents selectBugsEvents = new SelectBugsEvents(this);
+
     private MouseEvents currentEvents = emptyEvents;
 
     private void configureEventsFor(Action action) {
@@ -498,6 +508,8 @@ public class GraphGroup extends Group {
                 currentEvents = createEdgeEvents; break;
             case Delete:
                 currentEvents = deleteEvents; break;
+            case SelectVertex:
+                currentEvents = selectVertexEvents; break;
             case SelectTwoVertices:
                 currentEvents = selectTwoVerticesEvents; break;
             case SelectSpider:
@@ -508,7 +520,11 @@ public class GraphGroup extends Group {
     }
 
     public void setOnTwoVerticesSelected(BiConsumer<Vertex, Vertex> consumer) {
-        ((SelectTwoVerticesEvents) selectTwoVerticesEvents).setOnSelected(consumer);
+        selectTwoVerticesEvents.setOnSelected(consumer);
+    }
+
+    public void setOnVertexSelected(Consumer<Vertex> consumer) {
+        selectVertexEvents.setOnSelected(consumer);
     }
 
     private void onMouseClick(MouseEvent event) {

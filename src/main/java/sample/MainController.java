@@ -1,6 +1,8 @@
 package sample;
 
 import Jama.Matrix;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -17,9 +19,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
+import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Style;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
+import sample.Graph.VerticesPair;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
 import sample.Parser.GraphData;
@@ -35,6 +39,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class MainController implements Initializable {
@@ -78,9 +83,9 @@ public class MainController implements Initializable {
     // init
     private void initFileChoosers() {
         fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Ребра", "*.ed"),
                 new FileChooser.ExtensionFilter("Матрица смежности", "*.adj"),
-                new FileChooser.ExtensionFilter("Матрица инцидентности", "*.inc"),
-                new FileChooser.ExtensionFilter("Ребра", "*.ed")
+                new FileChooser.ExtensionFilter("Матрица инцидентности", "*.inc")
         );
 
         imageFileChooser.getExtensionFilters().add(
@@ -122,7 +127,8 @@ public class MainController implements Initializable {
                 "/tasks_fxml/Task3Dijkstra.fxml",
                 "/tasks_fxml/Task4.fxml",
                 "/tasks_fxml/Task6.fxml",
-                "/tasks_fxml/Task8.fxml"
+                "/tasks_fxml/Task8.fxml",
+                "/tasks_fxml/Task12.fxml"
         };
         String[] taskIds = {
                 "1",
@@ -130,7 +136,8 @@ public class MainController implements Initializable {
                 "3",
                 "4",
                 "6",
-                "8"
+                "8",
+                "12"
         };
 
         try {
@@ -361,11 +368,15 @@ public class MainController implements Initializable {
     //   MenuBar actions   |
     //---------------------|
     @FXML private void onTestAction() {
-        SelectGraphDialog dialog = new SelectGraphDialog();
-        List<GraphTab> tabs = tabPaneWithGraphs.getTabs().stream().map(tab ->
-                (GraphTab) tab).collect(Collectors.toList());
-        GraphTab tab = dialog.select(tabs).orElse(null);
-        System.out.println(tab);
+        GraphGroup graphGroup = getSelectedGraphGroup().orElse(null);
+        if (graphGroup == null) return;
+
+        Multimap<VerticesPair, String> map = HashMultimap.create();
+        Vertex v1 = new Vertex(graphGroup, 0, 0);
+        Vertex v2 = new Vertex(graphGroup, 10, 120);
+        map.put(VerticesPair.of(v1, v2), "aga");
+        map.put(VerticesPair.of(v2, v1), "GAga");
+        System.out.println(map.get(VerticesPair.of(v2, v1)));
     }
 
     // File
@@ -489,6 +500,7 @@ public class MainController implements Initializable {
             case "4":
             case "6":
             case "8":
+            case "12":
                 nextController = taskControllers.get(menuItemId);
                 break;
             default:
@@ -521,14 +533,6 @@ public class MainController implements Initializable {
             newGraphGroup.addVertex(vertex.getCenterX(), vertex.getCenterY(), false);
 
         GraphAlgorithms.makeGraphAddition(newGraphGroup, adjMatrix);
-    }
-
-    // TODO
-    @FXML private void on12TaskSelected() {
-
-
-
-
     }
 
     // ?

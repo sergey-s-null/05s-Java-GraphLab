@@ -307,4 +307,8 @@ public class BinaryEdge extends Edge {
     }
 
 
+    @Override
+    public String toString() {
+        return "BinaryEdge[" + firstVertex.getName() + " -> " + secondVertex.getName() + " : " + weight.get() + "]";
+    }
 }
