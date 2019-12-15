@@ -17,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
-import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Style;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
@@ -26,7 +25,8 @@ import sample.Parser.Exceptions.EqualsNamesException;
 import sample.Parser.GraphData;
 import sample.Parser.InputFileParser;
 import sample.Parser.OutputFileSaver;
-import sample.tasksControllers.Task6Controller;
+import sample.dialogs.InputDialogs;
+import sample.dialogs.SelectGraphDialog;
 import sample.tasksControllers.TaskController;
 
 import javax.imageio.ImageIO;
@@ -34,6 +34,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class MainController implements Initializable {
@@ -105,25 +106,31 @@ public class MainController implements Initializable {
     private void initTasks() {
         TaskController.initOnStart(this::onTaskStart);
         TaskController.initOnEnd(this::onTaskEnd);
+        TaskController.initGraphTabReceiver(this::getSelectedGraphTab);
         TaskController.initGraphReceiver(this::getSelectedGraphGroup);
         TaskController.initMatrixViewReceiver(() -> {
             GraphTab tab = getSelectedGraphTab().orElse(null);
             return tab == null ? Optional.empty() : Optional.ofNullable(tab.getMatrixView());
         });
+        TaskController.initAllGraphTabsReceiver(() -> tabPaneWithGraphs.getTabs().stream().map(tab ->
+                (GraphTab) tab).collect(Collectors.toList()));
+        TaskController.initNewGraphCreator(this::createEmptyGraphTab);
 
         String[] taskResourcePaths = {
                 "/tasks_fxml/TaskSpider.fxml",
                 "/tasks_fxml/Task2PathSearch.fxml",
                 "/tasks_fxml/Task3Dijkstra.fxml",
                 "/tasks_fxml/Task4.fxml",
-                "/tasks_fxml/Task6.fxml"
+                "/tasks_fxml/Task6.fxml",
+                "/tasks_fxml/Task8.fxml"
         };
         String[] taskIds = {
                 "1",
                 "2",
                 "3",
                 "4",
-                "6"
+                "6",
+                "8"
         };
 
         try {
@@ -354,23 +361,11 @@ public class MainController implements Initializable {
     //   MenuBar actions   |
     //---------------------|
     @FXML private void onTestAction() {
-//        Matrix test = new Matrix(new double[][] {
-//                {1, 2, 3, 33},
-//                {4, 5, 6, 66},
-//                {7, 8, 9, 99},
-//                {77, 88, 91, 999}
-//        });
-//        for (int i = 0; i < 4; ++i) {
-//            Matrix newMtx = Task6Controller.getSubMatrix(test, i);
-//            for (double[] row : newMtx.getArray()) {
-//                for (double cell : row) {
-//                    System.out.print(cell + ", ");
-//                }
-//                System.out.println();
-//            }
-//            System.out.println();
-//        }
-
+        SelectGraphDialog dialog = new SelectGraphDialog();
+        List<GraphTab> tabs = tabPaneWithGraphs.getTabs().stream().map(tab ->
+                (GraphTab) tab).collect(Collectors.toList());
+        GraphTab tab = dialog.select(tabs).orElse(null);
+        System.out.println(tab);
     }
 
     // File
@@ -493,6 +488,7 @@ public class MainController implements Initializable {
             case "3":
             case "4":
             case "6":
+            case "8":
                 nextController = taskControllers.get(menuItemId);
                 break;
             default:

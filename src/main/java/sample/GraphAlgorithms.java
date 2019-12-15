@@ -427,8 +427,8 @@ public class GraphAlgorithms {
     }
 
     //5
+    // TODO
     public static boolean checkIsomorphism(Matrix adjacencyMtx1, Matrix adjacencyMtx2) {
-
         // TODO
         return false;
     }
@@ -495,6 +495,40 @@ public class GraphAlgorithms {
         }
     }
 
+    //8
+    public static void applyBinaryOperation(GraphGroup resultGraph, Matrix firstAdjMtx, Matrix secondAdjMtx,
+                                               BiFunction<Boolean, Boolean, Boolean> op)
+    {
+        for (int i = 0; i < firstAdjMtx.getRowDimension(); ++i) {
+            for (int j = i; j < firstAdjMtx.getColumnDimension(); ++j) {
+                if (i == j) {
+                    boolean val1 = firstAdjMtx.get(i, i) != 0;
+                    boolean val2 = secondAdjMtx.get(i, i) != 0;
+                    Vertex vertex = resultGraph.getVertices().get(i);
+                    if (op.apply(val1, val2))
+                        resultGraph.addEdge(vertex, false);
+                }
+                else {
+                    boolean to2nd_1 = firstAdjMtx.get(i, j) != 0;
+                    boolean to2nd_2 = secondAdjMtx.get(i, j) != 0;
+                    boolean to2ndResult = op.apply(to2nd_1, to2nd_2);
+
+                    boolean to1st_1 = firstAdjMtx.get(j, i) != 0;
+                    boolean to1st_2 = secondAdjMtx.get(j, i) != 0;
+                    boolean to1stResult = op.apply(to1st_1, to1st_2);
+
+                    Vertex v1 = resultGraph.getVertices().get(i);
+                    Vertex v2 = resultGraph.getVertices().get(j);
+                    if (to2ndResult && to1stResult)
+                        resultGraph.addEdge(v1, v2, Edge.Direction.Both, false);
+                    else if (to2ndResult)
+                        resultGraph.addEdge(v1, v2, Edge.Direction.SecondVertex, false);
+                    else if (to1stResult)
+                        resultGraph.addEdge(v1, v2, Edge.Direction.FirstVertex, false);
+                }
+            }
+        }
+    }
 
 
 }

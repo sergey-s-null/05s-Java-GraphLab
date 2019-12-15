@@ -20,7 +20,7 @@ import sample.Graph.ContextMenus.VertexEvent;
 import sample.Graph.Elements.*;
 import sample.Graph.EventsContainers.*;
 import sample.Graph.GraphActions.*;
-import sample.InputDialogs;
+import sample.dialogs.InputDialogs;
 import sample.Parser.SimpleData.EdgeData;
 import sample.Parser.GraphData;
 import sample.Parser.SimpleData.Resolution;
@@ -28,7 +28,6 @@ import sample.Parser.SimpleData.VertexData;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 

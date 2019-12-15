@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<HBox fx:id="root" prefHeight="97.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.tasksControllers.Task8Controller">
+   <children>
+      <GridPane>
+         <columnConstraints>
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="-Infinity" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="-Infinity" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="-Infinity" />
+            <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="-Infinity" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="-Infinity" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Button id="0" mnemonicParsing="false" onAction="#onSelectOperation" text="A or B">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="4" mnemonicParsing="false" onAction="#onSelectOperation" text="A -&gt; B" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="8" mnemonicParsing="false" onAction="#onSelectOperation" text="A xor B" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="16.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="1" mnemonicParsing="false" onAction="#onSelectOperation" text="A and B" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="5" mnemonicParsing="false" onAction="#onSelectOperation" text="B -&gt; A" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="9" mnemonicParsing="false" onAction="#onSelectOperation" text="Эквивалентность A и B" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="16.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="2" mnemonicParsing="false" onAction="#onSelectOperation" text="A \ B" GridPane.columnIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="6" mnemonicParsing="false" onAction="#onSelectOperation" text="not (A -&gt; B)" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="10" mnemonicParsing="false" onAction="#onSelectOperation" text="Штрих Шефера" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="16.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="3" mnemonicParsing="false" onAction="#onSelectOperation" text="B \ A" GridPane.columnIndex="3">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="7" mnemonicParsing="false" onAction="#onSelectOperation" text="not (B -&gt; A)" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+            <Button id="11" mnemonicParsing="false" onAction="#onSelectOperation" text="Стрелка Пирса" GridPane.columnIndex="3" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="16.0" left="6.0" right="6.0" top="6.0" />
+               </GridPane.margin>
+            </Button>
+         </children>
+      </GridPane>
+      <Pane prefHeight="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+   </children>
+</HBox>

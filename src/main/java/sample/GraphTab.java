@@ -11,6 +11,7 @@ import javafx.scene.control.Tab;
 import sample.Graph.GraphGroup;
 import sample.MatrixView.MatrixView;
 import sample.Parser.GraphData;
+import sample.dialogs.InputDialogs;
 
 import java.io.IOException;
 
@@ -77,6 +78,11 @@ public class GraphTab extends Tab {
 
     public void setOnCloseAction(EventHandler<ActionEvent> handler) {
         close.setOnAction(handler);
+    }
+
+    @Override
+    public String toString() {
+        return getText();
     }
 
     //-----------------------|
