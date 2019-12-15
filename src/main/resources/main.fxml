@@ -72,6 +72,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#on7TaskSelected" text="7. Дополнение графа" />
                   <MenuItem id="8" mnemonicParsing="false" onAction="#onTaskSelected" text="8. Бинарные операции" />
                   <MenuItem id="12" mnemonicParsing="false" onAction="#onTaskSelected" text="12. Остовное дерево" />
+                  <MenuItem mnemonicParsing="false" onAction="#on14TaskSelected" text="14. Раскраска графа" />
                </items></Menu>
           <Menu mnemonicParsing="false" text="?">
             <items>
@@ -144,6 +145,17 @@
                            </graphic>
                            <tooltip>
                               <Tooltip text="Очистить маршрут" />
+                           </tooltip>
+                        </Button>
+                        <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onClearVerticesColor" prefHeight="30.0" prefWidth="30.0">
+                           <VBox.margin>
+                              <Insets left="4.0" right="4.0" top="4.0" />
+                           </VBox.margin>
+                           <graphic>
+                              <Glyph fontFamily="FontAwesome" fontSize="18.0" icon="TIMES_CIRCLE" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Убрать раскраску вершин" />
                            </tooltip>
                         </Button>
                      </children>

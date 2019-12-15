@@ -355,6 +355,14 @@ public class MainController implements Initializable {
         getSelectedGraphGroup().ifPresent(GraphGroup::clearCurrentPath);
     }
 
+    @FXML private void onClearVerticesColor() {
+        GraphGroup graphGroup = getSelectedGraphGroup().orElse(null);
+        if (graphGroup == null) return;
+
+        for (Vertex vertex : graphGroup.getVertices())
+            vertex.clearColor();
+    }
+
     @FXML private void onHideShowTaskPane() {
         if (currentTaskController != null) {
             Parent parent = currentTaskController.getRoot();
@@ -533,6 +541,27 @@ public class MainController implements Initializable {
             newGraphGroup.addVertex(vertex.getCenterX(), vertex.getCenterY(), false);
 
         GraphAlgorithms.makeGraphAddition(newGraphGroup, adjMatrix);
+    }
+
+    @FXML private void on14TaskSelected() {
+        GraphGroup graphGroup = getSelectedGraphGroup().orElse(null);
+        MatrixView matrixView = getSelectedMatrixView().orElse(null);
+        if (graphGroup == null || matrixView == null) return;
+
+        if (!graphGroup.isAllEdgesWeightsPositive()) {
+            GraphAlert.showInfoAndWait("Все ребра должны быть положительны.");
+            return;
+        }
+        if (graphGroup.getVerticesCount() < 1) {
+            GraphAlert.showInfoAndWait("Граф пуст.");
+            return;
+        }
+
+        Matrix adjMatrix = matrixView.getMatrix();
+        int chromaticNumber = GraphAlgorithms.colorizeGraph(graphGroup, adjMatrix);
+
+
+        // TODO
     }
 
     // ?

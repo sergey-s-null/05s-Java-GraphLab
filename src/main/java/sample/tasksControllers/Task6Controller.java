@@ -72,7 +72,7 @@ public class Task6Controller extends TaskController {
             weakComponentsField.setText("-");
         }
         else {
-            Matrix adjSymmetric = makeAdjacencyMtxSymmetric(adjMatrix);
+            Matrix adjSymmetric = GraphAlgorithms.makeMtxSymmetric(adjMatrix, (a, b) -> a == 0 ? b : a);
             List<List<String> > weakComponents = indicesToNames(
                     GraphAlgorithms.findConnectivityComponents(adjSymmetric), vertices);
             graphTypeField.setText("Ориентированный");
@@ -84,18 +84,6 @@ public class Task6Controller extends TaskController {
                 connectivityField.setText("Несвязный");
             weakComponentsField.setText(beautifyComponents(weakComponents));
         }
-    }
-
-    private Matrix makeAdjacencyMtxSymmetric(Matrix adjMatrix) {
-        Matrix result = adjMatrix.copy();
-        for (int i = 0; i < adjMatrix.getRowDimension(); ++i) {
-            for (int j = i + 1; j < adjMatrix.getColumnDimension(); ++j) {
-                double max = Math.max(adjMatrix.get(i, j), adjMatrix.get(j, i));
-                result.set(i, j, max);
-                result.set(j, i, max);
-            }
-        }
-        return result;
     }
 
     private int findBridgesCount(Matrix adjMatrix, int baseComponentsCount) {
@@ -130,23 +118,11 @@ public class Task6Controller extends TaskController {
     private int findHingesCount(Matrix adjMatrix, int baseComponentsCount) {
         int hingesCount = 0;
         for (int i = 0; i < adjMatrix.getRowDimension(); ++i) {
-            Matrix subMatrix = getSubMatrix(adjMatrix, i);
+            Matrix subMatrix = GraphAlgorithms.subMatrix(adjMatrix, i, i);
             int componentsCount = GraphAlgorithms.findConnectivityComponents(subMatrix).size();
             if (componentsCount > baseComponentsCount) hingesCount++;
         }
         return hingesCount;
-    }
-
-    private Matrix getSubMatrix(Matrix matrix, int removeIndex) {
-        Matrix result = new Matrix(matrix.getRowDimension() - 1, matrix.getColumnDimension() - 1);
-        for (int i = 0; i < result.getRowDimension(); ++i) {
-            for (int j = 0; j < result.getColumnDimension(); ++j) {
-                int row = i >= removeIndex ? i + 1 : i;
-                int col = j >= removeIndex ? j + 1 : j;
-                result.set(i, j, matrix.get(row, col));
-            }
-        }
-        return result;
     }
 
     private List<List<String> > indicesToNames(List<List<Integer> > components, List<Vertex> vertices) {

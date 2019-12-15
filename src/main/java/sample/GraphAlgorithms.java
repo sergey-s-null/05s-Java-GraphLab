@@ -3,6 +3,7 @@ package sample;
 import Jama.Matrix;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import javafx.scene.paint.Color;
 import sample.Graph.Elements.BinaryEdge;
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
@@ -660,6 +661,142 @@ public class GraphAlgorithms {
         return verticesMapping;
     }
 
+    //14
+    private static class IndicesPair {
+        public int i, j;
+        public IndicesPair(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public static int colorizeGraph(GraphGroup graphGroup, Matrix adjMatrix) {
+        int chromaticNumber = findChromaticNumber(adjMatrix);
+        Matrix matrix = makeMtxSymmetric(adjMatrix, (a, b) -> a == 0 ? b : a);
+
+        Map<Integer, Integer> colorizedVertices = new HashMap<>();
+        colorizedVertices.put(0, 0);
+
+        boolean res = colorizeRecursion(colorizedVertices, matrix, chromaticNumber);
+        if (!res)
+            throw new RuntimeException("Что-то не так. (Либо алгоритм вычисления хроматического числа, либо раскраски.)");
+
+        List<Color> colors = generateColors(chromaticNumber);
+        for (Map.Entry<Integer, Integer> pair : colorizedVertices.entrySet()) {
+            graphGroup.getVertices().get(pair.getKey()).colorize(colors.get(pair.getValue()));
+        }
+
+        return chromaticNumber;
+    }
+
+    private static int findChromaticNumber(Matrix adjMatrix) {
+        Matrix matrix = GraphAlgorithms.makeMtxSymmetric(adjMatrix, (a, b) -> a == 0 ? b : a);
+
+        IndicesPair cell;
+        while ((cell = findUnconnectedVertices(matrix).orElse(null)) != null) {
+            int row = cell.i, col = cell.j;
+            for (int i = 0; i < matrix.getRowDimension(); ++i) {
+                if (i == row || i == col) continue;
+                double val = matrix.get(i, col);
+                if (val != 0) matrix.set(i, row, val);
+            }
+            matrix = GraphAlgorithms.subMatrix(matrix, col, col);
+        }
+
+        return matrix.getRowDimension();
+    }
+
+    private static boolean colorizeRecursion(Map<Integer, Integer> colorizedVertices, Matrix symmetricAdjMtx, int colorsCount) {
+        if (checkColorCollision(colorizedVertices, symmetricAdjMtx)) return false;
+        if (colorizedVertices.size() == symmetricAdjMtx.getRowDimension()) return true;
+
+        // пытаемся раскрасить одну нераскрашенную вершину
+        int nextVertex = 0;
+        for (int i = 0; i < symmetricAdjMtx.getRowDimension(); ++i) {
+            if (!colorizedVertices.containsKey(i)) nextVertex = i;
+        }
+
+        Set<Integer> potentialColors = IntStream.range(0, colorsCount).boxed().collect(Collectors.toSet());
+        for (Map.Entry<Integer, Integer> pair : colorizedVertices.entrySet()) {
+            if (symmetricAdjMtx.get(pair.getKey(), nextVertex) != 0)
+                potentialColors.remove(pair.getValue());
+        }
+
+        if (potentialColors.size() == 0) return false;
+
+        for (int color : potentialColors) {
+            colorizedVertices.put(nextVertex, color);
+            if (colorizeRecursion(colorizedVertices, symmetricAdjMtx, colorsCount)) return true;
+            colorizedVertices.remove(nextVertex);
+        }
+        return false;
+    }
+
+    private static boolean checkColorCollision(Map<Integer, Integer> colorizedVertices, Matrix symmetricAdjMtx) {
+        for (Map.Entry<Integer, Integer> pair1 : colorizedVertices.entrySet()) {
+            for (Map.Entry<Integer, Integer> pair2 : colorizedVertices.entrySet()) {
+                if (pair1 == pair2) continue;
+                if (symmetricAdjMtx.get(pair1.getKey(), pair2.getKey()) != 0 &&
+                        pair1.getValue().equals(pair2.getValue()))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private static Optional<IndicesPair> findUnconnectedVertices(Matrix matrix) {
+        for (int i = 0; i < matrix.getRowDimension(); ++i) {
+            for (int j = i + 1; j < matrix.getColumnDimension(); ++j) {
+                if (matrix.get(i, j) == 0) return Optional.of(new IndicesPair(i, j));
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static List<Color> generateColors(int colorsCount) {
+        List<Color> result = new ArrayList<>();
+        int groupsCount = (colorsCount - 1) / 6 + 1;
+        int step = 128 / groupsCount;
+        int shift = 0;
+        for (int i = 0; i < groupsCount; ++i) {
+            result.add(Color.rgb(255 - shift, 0, 0));
+            result.add(Color.rgb(255 - shift, 0, 255 - shift));
+            result.add(Color.rgb(0, 255 - shift, 0));
+            result.add(Color.rgb(0, 255 - shift, 255 - shift));
+            result.add(Color.rgb(255 - shift, 255 - shift, 0));
+            result.add(Color.rgb(0, 0, 255 - shift));
+            shift += step;
+        }
+        while (result.size() > colorsCount)
+            result.remove(result.size() - 1);
+        return result;
+    }
+
+
+    // common
+    public static Matrix makeMtxSymmetric(Matrix squareMatrix, BiFunction<Double, Double, Double> converter) {
+        Matrix result = squareMatrix.copy();
+        for (int i = 0; i < squareMatrix.getRowDimension(); ++i) {
+            for (int j = i + 1; j < squareMatrix.getColumnDimension(); ++j) {
+                double resVal = converter.apply(squareMatrix.get(i, j), squareMatrix.get(j, i));
+                result.set(i, j, resVal);
+                result.set(j, i, resVal);
+            }
+        }
+        return result;
+    }
+
+    public static Matrix subMatrix(Matrix matrix, int removeRow, int removeCol) {
+        Matrix result = new Matrix(matrix.getRowDimension() - 1, matrix.getColumnDimension() - 1);
+        for (int i = 0; i < result.getRowDimension(); ++i) {
+            for (int j = 0; j < result.getColumnDimension(); ++j) {
+                int row = i >= removeRow ? i + 1 : i;
+                int col = j >= removeCol ? j + 1 : j;
+                result.set(i, j, matrix.get(row, col));
+            }
+        }
+        return result;
+    }
 
 
 }

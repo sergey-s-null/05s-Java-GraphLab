@@ -54,6 +54,7 @@ public class Vertex extends Element {
     private ObjectProperty<Vector2D> position = new SimpleObjectProperty<>(new Vector2D(0, 0));
     private Text name = new Text();
     private Set<Edge> incidentEdges = new HashSet<>();
+    private Color currentFillColor = Style.vertexFillColor;
 
 
     // constructors
@@ -81,7 +82,7 @@ public class Vertex extends Element {
         circle.setStrokeType(StrokeType.INSIDE);
         circle.setStrokeWidth(Style.lineWidth);
         circle.setStroke(Style.lineColor);
-        circle.setFill(Style.vertexFillColor);
+        circle.setFill(currentFillColor);
         circle.setRadius(Style.vertexCircleRadius);
     }
 
@@ -104,7 +105,7 @@ public class Vertex extends Element {
         if (selected)
             circle.setFill(Style.vertexSelectColor);
         else
-            circle.setFill(Style.vertexFillColor);
+            circle.setFill(currentFillColor);
     }
 
     @Override
@@ -113,6 +114,16 @@ public class Vertex extends Element {
             circle.setStroke(Style.pathColor);
         else
             circle.setStroke(Style.lineColor);
+    }
+
+    public void colorize(Color color) {
+        currentFillColor = color;
+        circle.setFill(currentFillColor);
+    }
+
+    public void clearColor() {
+        currentFillColor = Style.vertexFillColor;
+        circle.setFill(currentFillColor);
     }
 
     public Action getActionForNewResolution(Resolution resolution) {
@@ -247,4 +258,9 @@ public class Vertex extends Element {
         setOnMousePressed(null);
     }
 
+
+    @Override
+    public String toString() {
+        return "Vertex[" + getName() + "]";
+    }
 }
