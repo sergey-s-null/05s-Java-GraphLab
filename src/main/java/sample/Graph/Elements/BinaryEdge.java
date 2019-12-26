@@ -8,6 +8,8 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import sample.Graph.GraphGroup;
 import sample.Main;
 
+import java.util.Optional;
+
 
 public class BinaryEdge extends Edge {
     private static final double defaultArcRadius = 20000;
@@ -74,6 +76,15 @@ public class BinaryEdge extends Edge {
             default:
                 return false;
         }
+    }
+
+    public Optional<Vertex> getAnother(Vertex vertex) {
+        if (vertex == firstVertex)
+            return Optional.of(secondVertex);
+        else if (vertex == secondVertex)
+            return Optional.of(firstVertex);
+        else
+            return Optional.empty();
     }
 
     public double getPointAngle() {

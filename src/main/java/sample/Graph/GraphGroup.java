@@ -150,6 +150,12 @@ public class GraphGroup extends Group {
         return false;
     }
 
+    public boolean hasUnaryEdges() {
+        for (Vertex vertex : vertices)
+            if (vertex.getUnaryEdges().size() > 0) return true;
+        return false;
+    }
+
     private ListOfActions getVerticesActionsForNewResolution(Resolution resolution) {
         ListOfActions listOfActions = new ListOfActions();
         for (Vertex vertex : vertices) {

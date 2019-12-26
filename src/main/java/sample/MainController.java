@@ -24,6 +24,7 @@ import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Style;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
+import sample.Graph.GraphPath;
 import sample.Graph.VerticesPair;
 import sample.MatrixView.MatrixView;
 import sample.Parser.Exceptions.EqualsNamesException;
@@ -133,7 +134,8 @@ public class MainController implements Initializable {
                 "/tasks_fxml/Task5.fxml",
                 "/tasks_fxml/Task6.fxml",
                 "/tasks_fxml/Task8.fxml",
-                "/tasks_fxml/Task12.fxml"
+                "/tasks_fxml/Task12.fxml",
+                "/tasks_fxml/Task13.fxml"
         };
         String[] taskIds = {
                 "1",
@@ -143,7 +145,8 @@ public class MainController implements Initializable {
                 "5",
                 "6",
                 "8",
-                "12"
+                "12",
+                "13"
         };
 
         try {
@@ -521,6 +524,7 @@ public class MainController implements Initializable {
             case "6":
             case "8":
             case "12":
+            case "13":
                 nextController = taskControllers.get(menuItemId);
                 break;
             default:

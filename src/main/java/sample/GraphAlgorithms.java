@@ -548,7 +548,7 @@ public class GraphAlgorithms {
     }
 
     //6
-    public static List<List<Integer> > findConnectivityComponents(Matrix adjacencyMatrix) {
+    public static List<List<Integer>> findConnectivityComponents(Matrix adjacencyMatrix) {
         Matrix shortestDistMtx = floydAlgorithm(adjacencyMatrix);
         List<List<Integer> > components = new ArrayList<>();
         Set<Integer> unusedIndices = IntStream.range(0, shortestDistMtx.getRowDimension())
@@ -769,6 +769,144 @@ public class GraphAlgorithms {
             verticesMapping.put(vertex, newVertex);
         }
         return verticesMapping;
+    }
+
+    //13
+    public static boolean hasCycle(GraphGroup graphGroup) {
+        return hasCycleRecursion(new HashSet<>(), null, graphGroup.getVertices().get(0));
+    }
+
+    private static boolean hasCycleRecursion(Set<Vertex> used, Vertex prev, Vertex next) {
+        for (Vertex.EdgeWithVertex pair : next.getNextVertices()) {
+            if (pair.vertex == prev) continue;
+            if (used.contains(pair.vertex)) return true;
+            used.add(next);
+            if (hasCycleRecursion(used, next, pair.vertex)) return true;
+            used.remove(next);
+        }
+        return false;
+    }
+
+    public static Optional<GraphPath> findMinCycle(GraphGroup graphGroup) {
+        GraphPath startPath = new GraphPath(graphGroup.getVertices().get(0));
+        List<GraphPath> foundCycles = new ArrayList<>();
+        for (Vertex.EdgeWithVertex pair : startPath.getLastVertex().getNextVertices())
+            minCycleRecursion(startPath, pair).ifPresent(foundCycles::add);
+        return selectShortest(foundCycles);
+    }
+
+    private static Optional<GraphPath> minCycleRecursion(GraphPath path, Vertex.EdgeWithVertex next) {
+        if (path.contains(next.vertex))
+            return new GraphPath(path, next.edge, next.vertex).highlightLastCycle();
+
+        List<GraphPath> foundCycles = new ArrayList<>();
+        for (Vertex.EdgeWithVertex pair : next.vertex.getNextVertices()) {
+            if (path.getLastVertex() == pair.vertex) continue;
+            path.add(next.edge, next.vertex);
+            minCycleRecursion(path, pair).ifPresent(foundCycles::add);
+            path.removeLast();
+        }
+        return selectShortest(foundCycles);
+    }
+
+    private static Optional<GraphPath> selectShortest(Collection<GraphPath> paths) {
+        GraphPath result = null;
+        for (GraphPath path : paths) {
+            if (result == null || path.getLength() < result.getLength())
+                result = path;
+        }
+        return Optional.ofNullable(result);
+    }
+
+    public static Optional<List<Integer>> makeCodePrefer(GraphGroup graphGroup) {
+        List<Vertex> vertices = graphGroup.getVertices();
+        Set<Vertex> removedVertices = new HashSet<>();
+        List<Integer> result = new ArrayList<>();
+        while (result.size() < vertices.size() - 2) {
+            Integer index = firstUnusedHangingIndex(vertices, removedVertices).orElse(null);
+            if (index == null) return Optional.empty();
+            removedVertices.add(vertices.get(index));
+
+            Integer resultIndex = getNeighborIndex(vertices.get(index), vertices, removedVertices).orElse(null);
+            if (resultIndex == null) return Optional.empty();
+            result.add(resultIndex);
+        }
+        return Optional.of(result);
+    }
+
+    private static Optional<Integer> firstUnusedHangingIndex(List<Vertex> vertices, Set<Vertex> used) {
+        for (int i = 0; i < vertices.size(); ++i) {
+            Vertex currentVertex = vertices.get(i);
+            if (used.contains(currentVertex)) continue;
+
+            List<BinaryEdge> edges = new ArrayList<>(currentVertex.getBinaryEdges());
+            if (edges.size() == 1) {
+                return Optional.of(i);
+            }
+            else if (edges.size() == 2) {
+                Vertex first = edges.get(0).getAnother(currentVertex).orElse(null);
+                Vertex second = edges.get(1).getAnother(currentVertex).orElse(null);
+                if (first != null && second != null) {
+                    if (used.contains(first) ^ used.contains(second))
+                        return Optional.of(i);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<Integer> getNeighborIndex(Vertex of, List<Vertex> vertices, Set<Vertex> used) {
+        List<BinaryEdge> edges = new ArrayList<>(of.getBinaryEdges());
+        if (edges.size() == 1) {
+            Vertex another = edges.get(0).getAnother(of).orElse(null);
+            if (another == null || used.contains(another)) return Optional.empty();
+            int index = vertices.indexOf(another);
+            return index >= 0 ? Optional.of(index) : Optional.empty();
+        }
+        else if (edges.size() == 2) {
+            Vertex neighbor1 = edges.get(0).getAnother(of).orElse(null);
+            Vertex neighbor2 = edges.get(1).getAnother(of).orElse(null);
+            if (neighbor1 == null || neighbor2 == null) return Optional.empty();
+
+            if (used.contains(neighbor1) && !used.contains(neighbor2))
+                return Optional.of(vertices.indexOf(neighbor2));
+            else if (used.contains(neighbor2) && !used.contains(neighbor1))
+                return Optional.of(vertices.indexOf(neighbor1));
+            else
+                return Optional.empty();
+        }
+        else {
+            return Optional.empty();
+        }
+    }
+
+    public static List<Integer> findTreeCenters(Matrix adjacencyMatrix) {
+        Matrix shortestDistances = floydAlgorithm(adjacencyMatrix);
+        List<Double> eccentricities = toEccentricities(shortestDistances);
+        return findIndicesOfMinimal(eccentricities);
+    }
+
+    private static List<Double> toEccentricities(Matrix shortestDistances) {
+        List<Double> result = new ArrayList<>();
+        for (int i = 0; i < shortestDistances.getRowDimension(); ++i) {
+            double eccentricity = Double.NEGATIVE_INFINITY;
+            for (int j = 0; j < shortestDistances.getColumnDimension(); ++j) {
+                if (shortestDistances.get(i, j) > eccentricity)
+                    eccentricity = shortestDistances.get(i, j);
+            }
+            result.add(eccentricity);
+        }
+        return result;
+    }
+
+    private static List<Integer> findIndicesOfMinimal(List<Double> values) {
+        double min = Collections.min(values);
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < values.size(); ++i) {
+            if (min == values.get(i))
+                result.add(i);
+        }
+        return result;
     }
 
     //14

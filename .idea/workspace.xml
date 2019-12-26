@@ -7,27 +7,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/sample/Pair.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/sample/tasksControllers/Task5Controller.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/tasks_fxml/Task5.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sample/tasksControllers/Task13Controller.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/tasks_fxml/Task13.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/BinaryEdge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/BinaryEdge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/Elements/Vertex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphActions/CreateVertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphActions/CreateVertex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphActions/DeleteVertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphActions/DeleteVertex.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphGroup.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphGroup.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/Graph/GraphPath.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/GraphAlgorithms.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/GraphAlgorithms.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sample/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/tasksControllers/Task8Controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/tasksControllers/Task8Controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sample/tasksControllers/TaskController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sample/tasksControllers/TaskController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/main.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/Vertex.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphActions/CreateVertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphActions/CreateVertex.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphActions/DeleteVertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphActions/DeleteVertex.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/BinaryEdge$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/BinaryEdge$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/BinaryEdge.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/Elements/BinaryEdge.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphGroup.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/Graph/GraphPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/Graph/GraphPath.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/sample/GraphAlgorithms.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/GraphAlgorithms.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/sample/MainController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/MainController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/sample/tasksControllers/TaskController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/sample/tasksControllers/TaskController.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -323,53 +319,53 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1576512730374" />
-    <state width="1877" height="141" key="GridCell.Tab.0.bottom" timestamp="1577367788865">
+    <state width="1877" height="139" key="GridCell.Tab.0.bottom" timestamp="1577388788540">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="141" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577367788865" />
-    <state width="1877" height="141" key="GridCell.Tab.0.center" timestamp="1577367788865">
+    <state width="1877" height="139" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577388788540" />
+    <state width="1877" height="139" key="GridCell.Tab.0.center" timestamp="1577388788539">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="141" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577367788865" />
-    <state width="1877" height="141" key="GridCell.Tab.0.left" timestamp="1577367788865">
+    <state width="1877" height="139" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577388788539" />
+    <state width="1877" height="139" key="GridCell.Tab.0.left" timestamp="1577388788539">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="141" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577367788865" />
-    <state width="1877" height="141" key="GridCell.Tab.0.right" timestamp="1577367788865">
+    <state width="1877" height="139" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577388788539" />
+    <state width="1877" height="139" key="GridCell.Tab.0.right" timestamp="1577388788540">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="141" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577367788865" />
-    <state width="1877" height="347" key="GridCell.Tab.1.bottom" timestamp="1577367306099">
+    <state width="1877" height="139" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577388788540" />
+    <state width="1877" height="347" key="GridCell.Tab.1.bottom" timestamp="1577380349823">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="347" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577367306099" />
-    <state width="1877" height="347" key="GridCell.Tab.1.center" timestamp="1577367306099">
+    <state width="1877" height="347" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577380349823" />
+    <state width="1877" height="347" key="GridCell.Tab.1.center" timestamp="1577380349823">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="347" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577367306099" />
-    <state width="1877" height="347" key="GridCell.Tab.1.left" timestamp="1577367306099">
+    <state width="1877" height="347" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577380349823" />
+    <state width="1877" height="347" key="GridCell.Tab.1.left" timestamp="1577380349823">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="347" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577367306099" />
-    <state width="1877" height="347" key="GridCell.Tab.1.right" timestamp="1577367306099">
+    <state width="1877" height="347" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577380349823" />
+    <state width="1877" height="347" key="GridCell.Tab.1.right" timestamp="1577380349823">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="347" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577367306099" />
+    <state width="1877" height="347" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577380349823" />
     <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1577363326864">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="655" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577363326864" />
-    <state x="657" y="257" width="606" height="526" key="find.popup" timestamp="1577364777813">
+    <state x="657" y="257" width="606" height="526" key="find.popup" timestamp="1577379015077">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="657" y="257" width="606" height="526" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1577364777813" />
+    <state x="657" y="257" width="606" height="526" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1577379015077" />
     <state x="342" y="221" key="new project wizard" timestamp="1576512779583">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="342" y="221" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1576512779583" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1576950079301">
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1577374553046">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1576950079301" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1577374553046" />
   </component>
 </project>

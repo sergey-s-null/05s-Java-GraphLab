@@ -73,6 +73,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#on7TaskSelected" text="7. Дополнение графа" />
                   <MenuItem id="8" mnemonicParsing="false" onAction="#onTaskSelected" text="8. Бинарные операции" />
                   <MenuItem id="12" mnemonicParsing="false" onAction="#onTaskSelected" text="12. Остовное дерево" />
+                  <MenuItem id="13" mnemonicParsing="false" onAction="#onTaskSelected" text="13. Задача о цикле" />
                   <MenuItem mnemonicParsing="false" onAction="#on14TaskSelected" text="14. Раскраска графа" />
                </items></Menu>
           <Menu mnemonicParsing="false" text="?">

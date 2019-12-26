@@ -6,6 +6,7 @@ import sample.Graph.Elements.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GraphPath {
     protected List<Vertex> vertices = new ArrayList<>();
@@ -15,6 +16,11 @@ public class GraphPath {
 
     public GraphPath(Vertex firstVertex) {
         vertices.add(firstVertex);
+    }
+
+    public GraphPath(GraphPath other, Edge edge, Vertex vertex) {
+        this(other);
+        add(edge, vertex);
     }
 
     public GraphPath(GraphPath other) {
@@ -61,6 +67,21 @@ public class GraphPath {
             vertex.setSelectedAsPath(flag);
         for (Edge edge : edges)
             edge.setSelectedAsPath(flag);
+    }
+
+    public Optional<GraphPath> highlightLastCycle() {
+        for (int i = vertices.size() - 2; i >= 0; --i) {
+            if (vertices.get(i) == getLastVertex())
+                return Optional.of(makeSubPath(i));
+        }
+        return Optional.empty();
+    }
+
+    private GraphPath makeSubPath(int startIndex) {
+        GraphPath result = new GraphPath(vertices.get(startIndex));
+        for (int i = startIndex + 1; i < vertices.size(); ++i)
+            result.add(edges.get(i - 1), vertices.get(i));
+        return result;
     }
 
     @Override
