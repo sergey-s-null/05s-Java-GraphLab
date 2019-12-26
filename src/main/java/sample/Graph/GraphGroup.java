@@ -453,7 +453,7 @@ public class GraphGroup extends Group {
     public void removeVertexWithEdges(Vertex vertex, boolean createAction) {
         needToSave = true;
 
-        Set<Edge> incidentEdges = vertex.getEdgesCopy();
+        Set<Edge> incidentEdges = vertex.getIncidentEdgesCopy();
 
         if (createAction)
             actionsController.addAction(new DeleteVertex(vertex, incidentEdges, this));

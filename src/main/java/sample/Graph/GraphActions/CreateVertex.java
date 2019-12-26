@@ -18,7 +18,7 @@ public class CreateVertex extends VertexAction {
 
     @Override
     public void undo() {
-        savedEdges = vertex.getEdgesCopy();
+        savedEdges = vertex.getIncidentEdgesCopy();
         graphGroup.removeVertexWithEdges(vertex, false);
     }
 

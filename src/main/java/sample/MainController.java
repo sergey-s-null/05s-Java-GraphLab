@@ -20,6 +20,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import org.controlsfx.glyphfont.Glyph;
 import sample.Graph.Elements.BinaryEdge;
+import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Style;
 import sample.Graph.Elements.Vertex;
 import sample.Graph.GraphGroup;
@@ -38,6 +39,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -67,6 +69,8 @@ public class MainController implements Initializable {
     private TaskController currentTaskController;
     private Map<String, TaskController> taskControllers = new HashMap<>();
     private boolean isTaskStarted = false;
+
+    private SelectGraphDialog selectGraphDialog = new SelectGraphDialog();
 
 
     @Override
@@ -117,8 +121,8 @@ public class MainController implements Initializable {
             GraphTab tab = getSelectedGraphTab().orElse(null);
             return tab == null ? Optional.empty() : Optional.ofNullable(tab.getMatrixView());
         });
-        TaskController.initAllGraphTabsReceiver(() -> tabPaneWithGraphs.getTabs().stream().map(tab ->
-                (GraphTab) tab).collect(Collectors.toList()));
+        TaskController.initAllGraphTabsReceiver(this::getAllTabs);
+        TaskController.initSelectGraph(() -> selectGraphDialog.select(getAllTabs()));
         TaskController.initNewGraphCreator(this::createEmptyGraphTab);
 
         String[] taskResourcePaths = {
@@ -126,6 +130,7 @@ public class MainController implements Initializable {
                 "/tasks_fxml/Task2PathSearch.fxml",
                 "/tasks_fxml/Task3Dijkstra.fxml",
                 "/tasks_fxml/Task4.fxml",
+                "/tasks_fxml/Task5.fxml",
                 "/tasks_fxml/Task6.fxml",
                 "/tasks_fxml/Task8.fxml",
                 "/tasks_fxml/Task12.fxml"
@@ -135,6 +140,7 @@ public class MainController implements Initializable {
                 "2",
                 "3",
                 "4",
+                "5",
                 "6",
                 "8",
                 "12"
@@ -284,6 +290,11 @@ public class MainController implements Initializable {
     private void enableAllTabs() {
         for (Tab tab : tabPaneWithGraphs.getTabs())
             tab.setDisable(false);
+    }
+
+    private List<GraphTab> getAllTabs() {
+        return tabPaneWithGraphs.getTabs().stream().map(tab ->
+                (GraphTab) tab).collect(Collectors.toList());
     }
 
     //------------------|
@@ -506,6 +517,7 @@ public class MainController implements Initializable {
             case "2":
             case "3":
             case "4":
+            case "5":
             case "6":
             case "8":
             case "12":
@@ -559,9 +571,7 @@ public class MainController implements Initializable {
 
         Matrix adjMatrix = matrixView.getMatrix();
         int chromaticNumber = GraphAlgorithms.colorizeGraph(graphGroup, adjMatrix);
-
-
-        // TODO
+        GraphAlert.showInfoAndWait("Хроматическое число графа: " + chromaticNumber);
     }
 
     // ?

@@ -2,7 +2,6 @@ package sample.Graph.GraphActions;
 
 import sample.Graph.Elements.Edge;
 import sample.Graph.Elements.Vertex;
-import sample.Graph.GraphActionsController;
 import sample.Graph.GraphGroup;
 
 import java.util.Set;
@@ -27,7 +26,7 @@ public class DeleteVertex extends VertexAction {
 
     @Override
     public void redo() {
-        savedEdges = vertex.getEdgesCopy();
+        savedEdges = vertex.getIncidentEdgesCopy();
         graphGroup.removeVertexWithEdges(vertex, false);
     }
 }

@@ -59,6 +59,23 @@ public class BinaryEdge extends Edge {
         }
     }
 
+    public boolean isOriented() {
+        return direction.getValue() != Direction.Both;
+    }
+
+    public boolean isFromTo(Vertex from, Vertex to) {
+        switch (direction.getValue()) {
+            case Both:
+                return (firstVertex == from && secondVertex == to) || (firstVertex == to && secondVertex == from);
+            case FirstVertex:
+                return firstVertex == to && secondVertex == from;
+            case SecondVertex:
+                return secondVertex == to && firstVertex == from;
+            default:
+                return false;
+        }
+    }
+
     public double getPointAngle() {
         return pointAngle;
     }

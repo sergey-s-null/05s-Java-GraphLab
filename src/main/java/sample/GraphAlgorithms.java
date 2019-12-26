@@ -431,10 +431,120 @@ public class GraphAlgorithms {
     }
 
     //5
-    // TODO
-    public static boolean checkIsomorphism(Matrix adjacencyMtx1, Matrix adjacencyMtx2) {
-        // TODO
+    private static class VertexCharacteristic {
+        public Vertex vertex;
+        public int unaryEdgesCount;
+        public int binaryEdgesCount;
+
+        public VertexCharacteristic(Vertex vertex) {
+            this.vertex = vertex;
+            unaryEdgesCount = vertex.getUnaryEdges().size();
+            binaryEdgesCount = vertex.getBinaryEdges().size();
+        }
+
+        @Override
+        public String toString() {
+            return "Char[" + vertex.getName() + ":u=" + unaryEdgesCount + ",b=" + binaryEdgesCount + "]";
+        }
+    }
+
+    public static Optional<Map<Vertex, Vertex>> checkIsomorphism(GraphGroup firstGraph, GraphGroup secondGraph) {
+        List<VertexCharacteristic> firstCharacteristics = makeCharacteristics(firstGraph);
+        List<VertexCharacteristic> secondCharacteristics = makeCharacteristics(secondGraph);
+        if (firstCharacteristics.size() != secondCharacteristics.size()) return Optional.empty();
+
+        Matrix B = new Matrix(firstCharacteristics.size(), secondCharacteristics.size(), 1);
+        for (int i = 0; i < firstCharacteristics.size(); ++i) {
+            for (int j = 0; j < secondCharacteristics.size(); ++j) {
+                if (!isAvailableIsomorphism(firstCharacteristics.get(i), secondCharacteristics.get(j)))
+                    B.set(i, j, 0);
+            }
+        }
+        for (int i = 0; i < B.getRowDimension(); ++i) {
+            for (int j = 0; j < B.getColumnDimension(); ++j) {
+                System.out.print(B.get(i, j) + " ");
+            }
+            System.out.println();
+        }
+
+        Map<Integer, Integer> result = new HashMap<>();
+        boolean found = isomorphismRecursion(result, 0, B,
+                firstGraph.getVertices(), secondGraph.getVertices());
+        if (found) {
+            return Optional.of(convertResult(result, firstGraph.getVertices(), secondGraph.getVertices()));
+        }
+        else {
+            System.out.println("recursion failed");
+            return Optional.empty();
+        }
+    }
+
+    private static boolean isomorphismRecursion(Map<Integer, Integer> result, int currentIndex, Matrix B,
+                                                List<Vertex> vertices1, List<Vertex> vertices2)
+    {
+        if (result.size() == B.getRowDimension()) return true;
+
+        for (int i = 0; i < B.getColumnDimension(); ++i) {
+            if (B.get(currentIndex, i) == 0) continue;
+            if (result.containsValue(i)) continue;
+
+            boolean availableIsomorphism = true;
+            for (Map.Entry<Integer, Integer> pair : result.entrySet()) {
+                int i1Graph1 = pair.getKey(), i2Graph1 = currentIndex;
+                int i1Graph2 = pair.getValue(), i2Graph2 = i;
+                if (!isAvailableIsomorphism(vertices1.get(i1Graph1), vertices1.get(i2Graph1),
+                        vertices2.get(i1Graph2), vertices2.get(i2Graph2))) {
+                    availableIsomorphism = false;
+                    break;
+                }
+            }
+            if (!availableIsomorphism) continue;
+
+            result.put(currentIndex, i);
+            if (isomorphismRecursion(result, currentIndex + 1, B, vertices1, vertices2)) return true;
+            result.remove(currentIndex);
+        }
         return false;
+    }
+
+    private static List<VertexCharacteristic> makeCharacteristics(GraphGroup graphGroup) {
+        return graphGroup.getVertices().stream().map(VertexCharacteristic::new).collect(Collectors.toList());
+    }
+
+    private static boolean isAvailableIsomorphism(VertexCharacteristic first, VertexCharacteristic second) {
+        return first.unaryEdgesCount == second.unaryEdgesCount && first.binaryEdgesCount == second.binaryEdgesCount;
+    }
+
+    private static boolean isAvailableIsomorphism(Vertex vertex1Graph1, Vertex vertex2Graph1,
+                                                  Vertex vertex1Graph2, Vertex vertex2Graph2)
+    {
+        Set<BinaryEdge> between1 = Vertex.edgesBetween(vertex1Graph1, vertex2Graph1);
+        Set<BinaryEdge> between2 = Vertex.edgesBetween(vertex1Graph2, vertex2Graph2);
+        if (between1.size() == 0 && between2.size() == 0) return true;
+        if (between1.size() != 1 || between2.size() != 1) return false;
+        BinaryEdge firstEdge = between1.iterator().next();
+        BinaryEdge secondEdge = between2.iterator().next();
+
+        if (!firstEdge.isOriented() && !secondEdge.isOriented()) {
+            return true;
+        }
+        else if (firstEdge.isOriented() && secondEdge.isOriented()) {
+            return (firstEdge.isFromTo(vertex1Graph1, vertex2Graph1) && secondEdge.isFromTo(vertex1Graph2, vertex2Graph2))
+                    || (firstEdge.isFromTo(vertex2Graph1, vertex1Graph1) && secondEdge.isFromTo(vertex2Graph2, vertex1Graph2));
+        }
+        else {
+            return false;
+        }
+    }
+
+    private static Map<Vertex, Vertex> convertResult(Map<Integer, Integer> result,
+                                                     List<Vertex> vertices1, List<Vertex> vertices2)
+    {
+        Map<Vertex, Vertex> newResult = new HashMap<>();
+        for (Map.Entry<Integer, Integer> pair : result.entrySet()) {
+            newResult.put(vertices1.get(pair.getKey()), vertices2.get(pair.getValue()));
+        }
+        return newResult;
     }
 
     //6

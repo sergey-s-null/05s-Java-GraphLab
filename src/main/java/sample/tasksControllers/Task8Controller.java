@@ -19,7 +19,6 @@ import java.util.function.BiFunction;
 
 public class Task8Controller extends TaskController {
     @FXML private HBox root;
-    private SelectGraphDialog selectDialog = new SelectGraphDialog();
 
     @Override
     public Parent getRoot() {
@@ -50,7 +49,8 @@ public class Task8Controller extends TaskController {
             return;
         }
 
-        GraphTab secondTab = selectDialog.select(otherTabs).orElse(null);
+
+        GraphTab secondTab = selectGraph.get().orElse(null);
         if (secondTab == null) return;
 
         if (firstTab.getGraphGroup().getVertices().size() != secondTab.getGraphGroup().getVertices().size()) {

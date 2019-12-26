@@ -12,13 +12,14 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 abstract public class TaskController {
-    protected static Function<TaskController, Boolean> startIfCan;
-    protected static Runnable end;
-    protected static Supplier<Optional<GraphTab> > currentGraphTab;
-    protected static Supplier<Optional<GraphGroup> > currentGraph;
-    protected static Supplier<Optional<MatrixView> > currentMatrixView;
-    protected static Supplier<List<GraphTab> > allGraphTabs;
-    protected static Supplier<GraphTab> createNewGraph;
+    static Function<TaskController, Boolean> startIfCan;
+    static Runnable end;
+    static Supplier<Optional<GraphTab> > currentGraphTab;
+    static Supplier<Optional<GraphGroup> > currentGraph;
+    static Supplier<Optional<MatrixView> > currentMatrixView;
+    static Supplier<List<GraphTab> > allGraphTabs;
+    static Supplier<Optional<GraphTab> > selectGraph;
+    static Supplier<GraphTab> createNewGraph;
 
     public static void initOnStart(Function<TaskController, Boolean> startIfCan) {
         TaskController.startIfCan = startIfCan;
@@ -42,6 +43,10 @@ abstract public class TaskController {
 
     public static void initAllGraphTabsReceiver(Supplier<List<GraphTab> > allGraphTabs) {
         TaskController.allGraphTabs = allGraphTabs;
+    }
+
+    public static void initSelectGraph(Supplier<Optional<GraphTab> > selectGraph) {
+        TaskController.selectGraph = selectGraph;
     }
 
     public static void initNewGraphCreator(Supplier<GraphTab> createNewGraph) {

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class Vertex extends Element {
@@ -32,6 +33,12 @@ public class Vertex extends Element {
         Pattern pattern = Pattern.compile("[^%\\s()\\[\\]{},]{1,10}");
         Matcher matcher = pattern.matcher(name);
         return matcher.matches();
+    }
+
+    public static Set<BinaryEdge> edgesBetween(Vertex v1, Vertex v2) {
+        Set<BinaryEdge> result = new HashSet<>(v1.getBinaryEdges());
+        result.retainAll(v2.getBinaryEdges());
+        return result;
     }
 
     private static int nextId = 0;
@@ -149,10 +156,6 @@ public class Vertex extends Element {
         return result;
     }
 
-    public Set<Edge> getIncidentEdges() {
-        return incidentEdges;
-    }
-
     public int getDegree() {
         int result = 0;
         for (Edge edge : incidentEdges)
@@ -243,8 +246,22 @@ public class Vertex extends Element {
         incidentEdges.remove(edge);
     }
 
-    public Set<Edge> getEdgesCopy() {
+    public Set<Edge> getIncidentEdgesCopy() {
         return new HashSet<>(incidentEdges);
+    }
+
+    public Set<Edge> getIncidentEdges() {
+        return incidentEdges;
+    }
+
+    public Set<UnaryEdge> getUnaryEdges() {
+        return incidentEdges.stream().filter(edge -> edge instanceof UnaryEdge)
+                .map(edge -> (UnaryEdge) edge).collect(Collectors.toSet());
+    }
+
+    public Set<BinaryEdge> getBinaryEdges() {
+        return incidentEdges.stream().filter(edge -> edge instanceof BinaryEdge)
+                .map(edge -> (BinaryEdge) edge).collect(Collectors.toSet());
     }
 
     // events
